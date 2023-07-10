@@ -91,7 +91,7 @@ class MetarArchive:
         fn = os.path.join(self.CACHE_DIR, self.code + ".parquet")
         dirn = os.path.dirname(fn)
         if not os.path.exists(dirn):
-            os.path.makedirs(dirn)
+            os.makedirs(dirn)
         return fn
 
     def _fetch(self):
@@ -174,18 +174,21 @@ def get_hourly_for_month(df, month):
     # Find just observations from the requested month
     df = df.loc[df['date'].dt.month == month]
     #print(df[['date', 'vsby', 'skyl1', 'skyc1', 'skyl2', 'skyc2', 'Sky Condition']])
-    
+
+    # Move all timestamps forward by 10 minutes, so that an observation at 17:53
+    # counts as the weather for 18:00.
+    #
     # In cases where we have more than one observation in a single
     # hour, find the worst flight rule that occurred during that hour
-    worst_every_hour = df.groupby(df['date'].dt.floor('1h'))['Sky Condition'].agg('min')
+    grouping = (df['date'] + datetime.timedelta(minutes=0)).dt.floor('1h')
+    worst_every_hour = df.groupby(grouping)['Sky Condition'].agg('min')
 
     # For every one of the 24 hours, count how many times a flight
     # condition occurred during that hour
     hourly = worst_every_hour.groupby(worst_every_hour.index.hour).value_counts().unstack().fillna(0)
 
     # Convert raw counts into percentages
-    row_totals = hourly.apply(sum, axis=1)
-    hourly /= row_totals
+    hourly = hourly.apply(lambda row: row / row.sum(), axis=1)
 
     # Rename the axes
     hourly.index = hourly.index.rename('UTC hour')
@@ -194,20 +197,23 @@ def get_hourly_for_month(df, month):
     return hourly
 
 def draw_graph(args, hourly):
+    airport = args.airport.upper()
     monthname = calendar.month_name[args.month]
-    say(f'Plotting {args.airport} for {monthname}')
+    say(f'Plotting {airport} for {monthname}')
     fig = px.bar(
         hourly,
+        width=800,
+        height=400,
         color_discrete_map={'VFR': 'green', 'MVFR': 'blue', 'IFR': 'red', 'LIFR': 'magenta'},
     )
     fig.update_layout(
         xaxis={'dtick': 1},
         yaxis_title='Fraction of Days',
         legend={'traceorder': 'reversed'},
-        title=f'{args.airport}, {monthname}',
+        title=f'{airport}, {monthname}',
     )
     if not args.output:
-        args.output = f'{args.airport}-{args.month:02}.png'
+        args.output = f'{airport}-{args.month:02}.png'
     fig.write_image(args.output)
 
 def get_args():

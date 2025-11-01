@@ -406,6 +406,7 @@
         const mvfrData = [];
         const ifrData = [];
         const lifrData = [];
+        let missingHours = 0;
 
         for (let hour = 0; hour < 24; hour++) {
             hours.push(hour);
@@ -420,7 +421,16 @@
                 mvfrData.push(0);
                 ifrData.push(0);
                 lifrData.push(0);
+                missingHours++;
             }
+        }
+
+        // Show warning if there are missing hours
+        const warningElement = document.getElementById('partialCoverageWarning');
+        if (missingHours > 0) {
+            warningElement.classList.remove('hidden');
+        } else {
+            warningElement.classList.add('hidden');
         }
 
         // Create traces for each flight condition (VFR first for bottom stacking)

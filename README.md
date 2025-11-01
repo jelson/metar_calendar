@@ -9,7 +9,7 @@ A web application and command-line tool that predicts hourly airport weather con
 Have you ever planned a flight into a coastal airport and wondered, "What time will this marine layer burn off if I fly in next week?" TAFs only go out a day or two in advance. If you're planning an itinerary for next week or next month, it's hard to know what to expect.
 
 This predictor solves that problem by analyzing several years of historical METAR data to show you typical weather patterns for any month at airports with available data.
-It generate a stacked bar chart, one bar for each hour of the day, color-coded by flight condition.
+It generates a stacked bar chart, one bar for each hour of the day, color-coded by flight condition.
 
 ### Example: Santa Monica vs Van Nuys in June
 
@@ -71,8 +71,8 @@ Generate a weather prediction chart for an airport as PNG, with optional text ou
 
 ### Web Application
 
-The web application is simple: an inbox box with month and airport name. The airport name auto-completes based on a database I constructed of all airports that have weather data available: it's the intersection of the list of all stations from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) and
-the airport databaes from [OurAirports](https://ourairports.com/data/). A script finds stations that appears in both databases and emits a list to a JSON file that the web front-end loads to drive the autocomplete feature.
+The web application is simple: an input box with month and airport name. The airport name auto-completes based on a database I constructed of all airports that have weather data available: it's the intersection of the list of all stations from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) and
+the airport database from [OurAirports](https://ourairports.com/data/). A script finds stations that appear in both databases and emits a list to a JSON file that the web front-end loads to drive the autocomplete feature.
 
 
 ## Data Sources

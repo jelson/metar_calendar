@@ -19,6 +19,11 @@
     const resultTitle = document.getElementById('resultTitle');
     const errorState = document.getElementById('errorState');
     const errorMessage = document.getElementById('errorMessage');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const mobileMonthNav = document.getElementById('mobileMonthNav');
+    const prevMonthBtnMobile = document.getElementById('prevMonthBtnMobile');
+    const nextMonthBtnMobile = document.getElementById('nextMonthBtnMobile');
 
     // Initialize
     async function init() {
@@ -88,6 +93,9 @@
         const displayText = `${airport.icao || airport.iata} - ${airport.name}`;
         searchInput.value = displayText;
 
+        // Show mobile month navigation
+        mobileMonthNav.classList.remove('hidden');
+
         // Trigger search
         searchForm.requestSubmit();
     }
@@ -112,12 +120,37 @@
         // Form submission
         searchForm.addEventListener('submit', handleSubmit);
 
+        // Month navigation buttons (desktop)
+        prevMonthBtn.addEventListener('click', () => changeMonth(-1));
+        nextMonthBtn.addEventListener('click', () => changeMonth(1));
+
+        // Month navigation buttons (mobile)
+        prevMonthBtnMobile.addEventListener('click', () => changeMonth(-1));
+        nextMonthBtnMobile.addEventListener('click', () => changeMonth(1));
+
         // Click outside to close dropdown
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                 hideDropdown();
             }
         });
+    }
+
+    // Change month (direction: -1 for previous, 1 for next)
+    function changeMonth(direction) {
+        if (!selectedAirport) return;
+
+        let newMonth = parseInt(monthSelect.value) + direction;
+
+        // Wrap around
+        if (newMonth < 1) {
+            newMonth = 12;
+        } else if (newMonth > 12) {
+            newMonth = 1;
+        }
+
+        monthSelect.value = newMonth;
+        searchForm.requestSubmit();
     }
 
     // Handle input changes
@@ -307,6 +340,9 @@
         searchInput.value = displayText;
 
         hideDropdown();
+
+        // Show mobile month navigation
+        mobileMonthNav.classList.remove('hidden');
 
         // Auto-submit the form
         searchForm.requestSubmit();

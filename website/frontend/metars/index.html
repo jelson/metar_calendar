@@ -60,6 +60,16 @@ title: Home
                     </button>
                 </div>
             </div>
+
+            <!-- Mobile month navigation (only visible after airport selection) -->
+            <div id="mobileMonthNav" class="hidden md:hidden flex gap-2">
+                <button type="button" id="prevMonthBtnMobile" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">
+                    ← Prev
+                </button>
+                <button type="button" id="nextMonthBtnMobile" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">
+                    Next →
+                </button>
+            </div>
         </form>
     </div>
 
@@ -72,7 +82,7 @@ title: Home
     </div>
 </section>
 
-<section class="container mx-auto px-4 py-2 md:py-2 pb-8">
+<section class="container mx-auto px-4 py-1 md:py-1 pb-8">
     <div class="max-w-4xl mx-auto">
         <div id="loadingState" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -80,16 +90,33 @@ title: Home
         </div>
 
         <div id="resultDisplay" class="hidden">
-            <div class="backdrop-blur-card rounded-xl card-enhanced px-4 pt-4 pb-0 md:px-12 md:pb-0">
-                <h2 class="text-base md:text-2xl font-bold text-gray-800" id="resultTitle"></h2>
-                <div id="partialCoverageWarning" class="hidden mt-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p class="text-xs md:text-sm text-yellow-800">
-                        ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.
-                    </p>
+            <div class="flex items-center gap-4">
+                <!-- Previous month button (desktop only) -->
+                <button id="prevMonthBtn" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Previous month">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+
+                <!-- Main content -->
+                <div class="backdrop-blur-card rounded-xl card-enhanced px-4 pt-4 pb-0 md:px-12 md:pb-0 flex-grow">
+                    <h2 class="text-base md:text-2xl font-bold text-gray-800" id="resultTitle"></h2>
+                    <div id="partialCoverageWarning" class="hidden mt-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p class="text-xs md:text-sm text-yellow-800">
+                            ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.
+                        </p>
+                    </div>
+                    <div id="resultImage" class="flex justify-center items-center bg-gray-100/50 rounded-lg">
+                        <p class="text-gray-500">Image will appear here</p>
+                    </div>
                 </div>
-                <div id="resultImage" class="flex justify-center items-center bg-gray-100/50 rounded-lg">
-                    <p class="text-gray-500">Image will appear here</p>
-                </div>
+
+                <!-- Next month button (desktop only) -->
+                <button id="nextMonthBtn" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Next month">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>

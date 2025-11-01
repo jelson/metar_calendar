@@ -13,12 +13,12 @@ import pandas as pd
 from pathlib import Path
 import requests
 
-# Paths
-INPUT_CSV = './airports.csv.gz'
-OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports.json'
-
-# IEM station list URL
+# URLs
+OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.csv'
 IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network=_ALL_&format=csv&nohtml=on'
+
+# Output path
+OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports.json'
 
 
 def fetch_iem_stations():
@@ -47,9 +47,13 @@ def convert_airports():
     # Fetch IEM stations first
     iem_stations = fetch_iem_stations()
 
-    # Read OurAirports CSV
-    print(f"\nReading {INPUT_CSV}...")
-    df = pd.read_csv(INPUT_CSV, usecols=[
+    # Fetch OurAirports CSV
+    print(f"\nFetching OurAirports data from {OURAIRPORTS_URL}...")
+    response = requests.get(OURAIRPORTS_URL, timeout=30)
+    response.raise_for_status()
+
+    from io import StringIO
+    df = pd.read_csv(StringIO(response.text), usecols=[
         'icao_code', 'iata_code', 'name', 'municipality', 'iso_country'
     ])
 

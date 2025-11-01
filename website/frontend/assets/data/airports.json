@@ -4616,6 +4616,14 @@
     "query":"ENEV"
   },
   {
+    "name":"Statfjord B",
+    "country":"NO",
+    "city":null,
+    "icao":"ENFB",
+    "iata":null,
+    "query":"ENFB"
+  },
+  {
     "name":"Florø Airport",
     "country":"NO",
     "city":"Florø",

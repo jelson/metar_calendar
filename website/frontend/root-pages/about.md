@@ -37,7 +37,7 @@ Of course, the best way to escape June Gloom at Santa Monica is not to divert to
 
 ## How It Works
 
-The predictor downloads several years of historical METAR data from the [Iowa State University ASOS network](https://mesonet.agron.iastate.edu/request/download.phtml) for your selected airport and month, then calculates the fraction of observations that fall into each flight condition (VFR, MVFR, IFR, LIFR) for each hour of the day. The stacked bar chart makes it easy to see patterns like morning marine layers, afternoon thunderstorms, or consistently good (or bad) conditions.
+The predictor downloads several years of historical METAR data from the [Iowa Environmental Mesonet ASOS network](https://mesonet.agron.iastate.edu/request/download.phtml) for your selected airport and month, then calculates the fraction of observations that fall into each flight condition (VFR, MVFR, IFR, LIFR) for each hour of the day. The stacked bar chart makes it easy to see patterns like morning marine layers, afternoon thunderstorms, or consistently good (or bad) conditions.
 
 Flight conditions are determined by ceiling and visibility, with the more restrictive condition defining the overall flight condition:
 
@@ -52,4 +52,6 @@ Flight conditions are determined by ceiling and visibility, with the more restri
 
 Select a month, search for an airport by its code (ICAO or IATA) or name, and click Go to view the predicted hourly conditions for that location.
 
-The autocomplete search prioritizes exact code matches first, followed by airports whose names start with your search term. For example, typing NEW matches Lakefront Airport (KNEW) first, followed by airports whose names begin with "New" such as Newark and Newport. The search is fuzzy and typo-tolerant, so even partial or slightly misspelled queries will find relevant results from our database of over 8,800 airports worldwide.
+The autocomplete search prioritizes exact code matches first, followed by airports whose names start with your search term. For example, typing NEW matches Lakefront Airport (KNEW) first, followed by airports whose names begin with "New" such as Newark and Newport. The search is fuzzy and typo-tolerant, so even partial or slightly misspelled queries will find relevant results.
+
+**Note:** The autocomplete only shows airports that have historical METAR data available. Our database includes approximately 4,300 airports with weather data out of the 80,000+ airports worldwide from [OurAirports](https://ourairports.com/data/). If your airport doesn't appear in the search, it is likely because there's no historical METAR data available for it from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/).

@@ -1,0 +1,8 @@
+---
+layout: null
+title: "htaccess root"
+permalink: /.htaccess
+---
+ErrorDocument 404 /404.html
+
+#Redirect 301 / /metars/

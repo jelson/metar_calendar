@@ -178,11 +178,16 @@
 
         const codes = [airport.iata, airport.icao].filter(Boolean).join(' / ');
 
+        // Format location: "City, Country" or just "Country" if no city
+        const location = airport.city
+            ? `${escapeHtml(airport.city)}, ${escapeHtml(airport.country)}`
+            : escapeHtml(airport.country);
+
         div.innerHTML = `
             <div class="flex justify-between items-center gap-4">
                 <div class="min-w-0 flex-1">
                     <div class="font-semibold text-gray-800">${escapeHtml(airport.name)}</div>
-                    <div class="text-sm text-gray-600">${escapeHtml(airport.city)}, ${escapeHtml(airport.country)}</div>
+                    <div class="text-sm text-gray-600">${location}</div>
                 </div>
                 <div class="text-sm font-mono text-blue-600 flex-shrink-0 whitespace-nowrap">${escapeHtml(codes)}</div>
             </div>

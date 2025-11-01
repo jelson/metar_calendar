@@ -2,7 +2,7 @@
 
 A web application and command-line tool that predicts hourly airport weather conditions based on historical METAR data patterns. Perfect for pilots who want to get a sense for weather patterns at unfamiliar airports.
 
-**Live demo:** [https://metars.avmapper.com](https://metars.avmapper.com)
+**Live demo:** [https://www.avmapper.com/metars](https://www.avmapper.com/metars)
 
 ## Why?
 

@@ -1,0 +1,26 @@
+# Site settings
+title: Hourly METAR Predictor
+description: Predict hourly METAR conditions for airports worldwide
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - material-dashboard
+  - website
+  - package.json
+  - package-lock.json
+  - tailwind.config.js
+  - README.md
+
+# Collections
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"

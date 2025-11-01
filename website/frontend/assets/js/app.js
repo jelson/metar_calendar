@@ -1,0 +1,347 @@
+// Airport Search Autocomplete
+(function() {
+    'use strict';
+
+    // State
+    let airports = [];
+    let fuse = null;
+    let selectedAirport = null;
+    let currentFocusIndex = -1;
+    let currentResults = [];
+
+    // DOM Elements
+    const searchInput = document.getElementById('airportSearch');
+    const dropdown = document.getElementById('autocompleteDropdown');
+    const monthSelect = document.getElementById('monthSelect');
+    const searchForm = document.getElementById('searchForm');
+    const loadingState = document.getElementById('loadingState');
+    const resultDisplay = document.getElementById('resultDisplay');
+    const resultTitle = document.getElementById('resultTitle');
+    const errorState = document.getElementById('errorState');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Initialize
+    async function init() {
+        try {
+            // Load airport data
+            const response = await fetch('/assets/data/airports.json');
+            if (!response.ok) throw new Error('Failed to load airport data');
+            airports = await response.json();
+
+            // Initialize Fuse.js with custom options
+            fuse = new Fuse(airports, {
+                keys: [
+                    { name: 'icao', weight: 0.3 },
+                    { name: 'iata', weight: 0.3 },
+                    { name: 'name', weight: 0.2 },
+                    { name: 'city', weight: 0.2 }
+                ],
+                threshold: 0.4,
+                includeScore: true,
+                minMatchCharLength: 1,
+                ignoreLocation: true
+            });
+
+            setupEventListeners();
+            setDefaultMonth();
+            searchInput.focus();
+        } catch (error) {
+            console.error('Initialization error:', error);
+            showError('Failed to load airport database. Please refresh the page.');
+        }
+    }
+
+    // Set default month to current month
+    function setDefaultMonth() {
+        const currentMonth = new Date().getMonth() + 1;
+        monthSelect.value = currentMonth;
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        // Search input
+        searchInput.addEventListener('input', handleInput);
+        searchInput.addEventListener('focus', handleInput);
+        searchInput.addEventListener('blur', handleBlur);
+        searchInput.addEventListener('keydown', handleKeyDown);
+
+        // Form submission
+        searchForm.addEventListener('submit', handleSubmit);
+
+        // Click outside to close dropdown
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                hideDropdown();
+            }
+        });
+    }
+
+    // Handle input changes
+    function handleInput(e) {
+        const query = e.target.value.trim();
+
+        if (query.length === 0) {
+            hideDropdown();
+            return;
+        }
+
+        performSearch(query);
+    }
+
+    // Perform search with custom scoring
+    function performSearch(query) {
+        if (!fuse) return;
+
+        // Get fuzzy search results
+        let results = fuse.search(query);
+
+        // Custom scoring for exact and substring matches
+        const queryUpper = query.toUpperCase();
+
+        results = results.map(result => {
+            const airport = result.item;
+            let customScore = result.score;
+
+            // Exact code match (highest priority)
+            if (airport.icao === queryUpper || airport.iata === queryUpper) {
+                customScore = 0;
+            }
+            // Code starts with query
+            else if (airport.icao?.startsWith(queryUpper) || airport.iata?.startsWith(queryUpper)) {
+                customScore = 0.1;
+            }
+            // Substring match in codes
+            else if (airport.icao?.includes(queryUpper) || airport.iata?.includes(queryUpper)) {
+                customScore = 0.2;
+            }
+            // Name starts with query (case insensitive)
+            else if (airport.name?.toLowerCase().startsWith(query.toLowerCase())) {
+                customScore = 0.25;
+            }
+            // Substring match in name
+            else if (airport.name?.toLowerCase().includes(query.toLowerCase())) {
+                customScore = 0.3;
+            }
+            // City starts with query
+            else if (airport.city?.toLowerCase().startsWith(query.toLowerCase())) {
+                customScore = 0.35;
+            }
+
+            return {
+                ...result,
+                customScore
+            };
+        });
+
+        // Sort by custom score
+        results.sort((a, b) => a.customScore - b.customScore);
+
+        // Limit to top 10 results
+        currentResults = results.slice(0, 10);
+
+        displayResults(currentResults);
+    }
+
+    // Display search results
+    function displayResults(results) {
+        if (results.length === 0) {
+            hideDropdown();
+            return;
+        }
+
+        dropdown.innerHTML = '';
+        currentFocusIndex = -1;
+
+        results.forEach((result, index) => {
+            const airport = result.item;
+            const item = createResultItem(airport, index);
+            dropdown.appendChild(item);
+        });
+
+        showDropdown();
+    }
+
+    // Create result item element
+    function createResultItem(airport, index) {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition';
+        div.dataset.index = index;
+
+        const codes = [airport.iata, airport.icao].filter(Boolean).join(' / ');
+
+        div.innerHTML = `
+            <div class="flex justify-between items-center gap-4">
+                <div class="min-w-0 flex-1">
+                    <div class="font-semibold text-gray-800">${escapeHtml(airport.name)}</div>
+                    <div class="text-sm text-gray-600">${escapeHtml(airport.city)}, ${escapeHtml(airport.country)}</div>
+                </div>
+                <div class="text-sm font-mono text-blue-600 flex-shrink-0 whitespace-nowrap">${escapeHtml(codes)}</div>
+            </div>
+        `;
+
+        // Click handler
+        div.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent blur event
+            selectAirport(airport);
+        });
+
+        // Hover handler
+        div.addEventListener('mouseenter', () => {
+            setFocusedItem(index);
+        });
+
+        return div;
+    }
+
+    // Handle keyboard navigation
+    function handleKeyDown(e) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+
+        if (items.length === 0) return;
+
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                currentFocusIndex = Math.min(currentFocusIndex + 1, items.length - 1);
+                setFocusedItem(currentFocusIndex);
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                currentFocusIndex = Math.max(currentFocusIndex - 1, 0);
+                setFocusedItem(currentFocusIndex);
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                if (currentFocusIndex >= 0 && currentResults[currentFocusIndex]) {
+                    selectAirport(currentResults[currentFocusIndex].item);
+                    searchForm.requestSubmit();
+                } else if (currentResults.length > 0) {
+                    // If no item is focused but there are results, select the first one
+                    selectAirport(currentResults[0].item);
+                    searchForm.requestSubmit();
+                }
+                break;
+
+            case 'Escape':
+                hideDropdown();
+                searchInput.blur();
+                break;
+        }
+    }
+
+    // Set focused item in dropdown
+    function setFocusedItem(index) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        items.forEach(item => item.classList.remove('selected'));
+
+        if (items[index]) {
+            items[index].classList.add('selected');
+            items[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+
+        currentFocusIndex = index;
+    }
+
+    // Select an airport
+    function selectAirport(airport) {
+        selectedAirport = airport;
+
+        // Update input
+        const displayText = `${airport.iata || airport.icao} - ${airport.name}`;
+        searchInput.value = displayText;
+
+        hideDropdown();
+    }
+
+    // Handle blur event
+    function handleBlur() {
+        // Delay to allow click events to fire
+        setTimeout(() => {
+            hideDropdown();
+        }, 200);
+    }
+
+    // Show/hide dropdown
+    function showDropdown() {
+        dropdown.classList.remove('hidden');
+    }
+
+    function hideDropdown() {
+        dropdown.classList.add('hidden');
+        currentFocusIndex = -1;
+    }
+
+    // Handle form submission
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        if (!selectedAirport) {
+            showError('Please select an airport from the list');
+            return;
+        }
+
+        const month = monthSelect.value;
+        const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // Show loading state
+        hideError();
+        resultDisplay.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+
+        // Simulate API call (replace with actual backend call)
+        setTimeout(() => {
+            loadingState.classList.add('hidden');
+
+            // Update result title
+            resultTitle.textContent = `${selectedAirport.name} - ${monthNames[month]}`;
+
+            // Show result (placeholder)
+            const resultImage = document.getElementById('resultImage');
+            resultImage.innerHTML = `
+                <div class="text-center p-12">
+                    <p class="text-gray-600 mb-2">Weather visualization for:</p>
+                    <p class="text-xl font-semibold text-gray-800">${selectedAirport.icao} (${selectedAirport.iata})</p>
+                    <p class="text-lg text-gray-700">${selectedAirport.name}</p>
+                    <p class="text-gray-600">${monthNames[month]} data</p>
+                    <p class="text-sm text-gray-500 mt-4">Backend integration coming soon...</p>
+                </div>
+            `;
+
+            resultDisplay.classList.remove('hidden');
+
+            // Scroll to results
+            resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 1000);
+    }
+
+    // Show error message
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorState.classList.remove('hidden');
+        setTimeout(() => {
+            errorState.classList.add('hidden');
+        }, 5000);
+    }
+
+    // Hide error message
+    function hideError() {
+        errorState.classList.add('hidden');
+    }
+
+    // Utility: Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();

@@ -1,0 +1,21 @@
+---
+layout: default
+title: Home
+permalink: /index.html
+---
+
+<script>
+window.location.href = "{{ site.baseurl }}/metars/";
+</script>
+
+<noscript>
+    <meta http-equiv="refresh" content="0; url={{ site.baseurl }}/metars/">
+</noscript>
+
+<section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg text-gray-600">
+            Redirecting to <a href="{{ site.baseurl }}/metars/" class="text-blue-600 hover:underline">METAR Predictor</a>...
+        </p>
+    </div>
+</section>

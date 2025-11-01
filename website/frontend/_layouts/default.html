@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+    <link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/favicon.svg">
+
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/tailwind-3.4.18.css">
+
+    <style>
+        body {
+            background: linear-gradient(180deg, #60a5fa 0%, #93c5fd 25%, #bfdbfe 50%, #dbeafe 75%, #f0f9ff 100%);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(ellipse 120px 75px at 8% 8%, rgba(255, 255, 255, 0.95) 0%, transparent 50%),
+                radial-gradient(ellipse 150px 90px at 10% 8%, rgba(255, 255, 255, 0.85) 0%, transparent 50%),
+                radial-gradient(ellipse 130px 80px at 6% 9%, rgba(255, 255, 255, 0.9) 0%, transparent 50%),
+
+                radial-gradient(ellipse 160px 95px at 82% 6%, rgba(255, 255, 255, 0.9) 0%, transparent 50%),
+                radial-gradient(ellipse 180px 105px at 84% 6%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
+                radial-gradient(ellipse 150px 90px at 80% 7%, rgba(255, 255, 255, 0.85) 0%, transparent 50%),
+
+                radial-gradient(ellipse 100px 65px at 28% 5%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
+                radial-gradient(ellipse 120px 75px at 30% 5%, rgba(255, 255, 255, 0.7) 0%, transparent 50%),
+                radial-gradient(ellipse 110px 70px at 26% 6%, rgba(255, 255, 255, 0.75) 0%, transparent 50%),
+
+                radial-gradient(ellipse 130px 80px at 92% 48%, rgba(255, 255, 255, 0.7) 0%, transparent 50%),
+                radial-gradient(ellipse 150px 90px at 94% 48%, rgba(255, 255, 255, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse 120px 75px at 90% 49%, rgba(255, 255, 255, 0.65) 0%, transparent 50%),
+
+                radial-gradient(ellipse 95px 60px at 12% 58%, rgba(255, 255, 255, 0.65) 0%, transparent 50%),
+                radial-gradient(ellipse 115px 70px at 14% 58%, rgba(255, 255, 255, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse 100px 65px at 10% 59%, rgba(255, 255, 255, 0.62) 0%, transparent 50%),
+
+                radial-gradient(ellipse 140px 85px at 64% 52%, rgba(255, 255, 255, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse 160px 95px at 66% 52%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 150px 90px at 62% 53%, rgba(255, 255, 255, 0.55) 0%, transparent 50%),
+
+                radial-gradient(ellipse 110px 70px at 38% 68%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 130px 80px at 40% 68%, rgba(255, 255, 255, 0.45) 0%, transparent 50%),
+                radial-gradient(ellipse 115px 72px at 36% 69%, rgba(255, 255, 255, 0.48) 0%, transparent 50%),
+
+                radial-gradient(ellipse 145px 88px at 5% 44%, rgba(255, 255, 255, 0.55) 0%, transparent 50%),
+                radial-gradient(ellipse 165px 100px at 7% 44%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 150px 90px at 3% 45%, rgba(255, 255, 255, 0.52) 0%, transparent 50%),
+
+                radial-gradient(ellipse 90px 58px at 58% 10%, rgba(255, 255, 255, 0.7) 0%, transparent 50%),
+                radial-gradient(ellipse 110px 68px at 60% 10%, rgba(255, 255, 255, 0.65) 0%, transparent 50%),
+                radial-gradient(ellipse 95px 60px at 56% 11%, rgba(255, 255, 255, 0.68) 0%, transparent 50%);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .autocomplete-dropdown {
+            animation: slideDown 0.2s ease-out;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .autocomplete-item.selected {
+            background-color: #e5e7eb;
+        }
+
+        .card-enhanced {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .backdrop-blur-card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .page-content {
+            color: #374151;
+            font-size: 1.125rem;
+            line-height: 1.75;
+        }
+
+        .page-content p {
+            margin-bottom: 1.25rem;
+        }
+
+        .page-content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-content ul, .page-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .page-content ul {
+            list-style-type: disc;
+        }
+
+        .page-content ol {
+            list-style-type: decimal;
+        }
+
+        .page-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .page-content strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .page-content a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .page-content a:hover {
+            text-decoration: underline;
+        }
+
+        .page-content code {
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            font-family: ui-monospace, monospace;
+        }
+
+        .page-content table {
+            margin: 1.5rem auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-content table th,
+        .page-content table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+
+        .page-content table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .page-content table tbody tr:nth-child(1) td:nth-child(1) {
+            background-color: #22c55e;
+            color: white;
+            font-weight: 600;
+        }
+
+        .page-content table tbody tr:nth-child(2) td:nth-child(1) {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .page-content table tbody tr:nth-child(3) td:nth-child(1) {
+            background-color: #ef4444;
+            color: white;
+            font-weight: 600;
+        }
+
+        .page-content table tbody tr:nth-child(4) td:nth-child(1) {
+            background-color: #d946ef;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+    <header class="bg-white/90 backdrop-blur-md shadow-md border-b border-white/20 relative z-10">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-center">
+                <div class="space-x-6">
+                    <a href="{{ site.baseurl }}/metars/" class="text-gray-600 hover:text-blue-600 transition">Home</a>
+                    <a href="{{ site.baseurl }}/about" class="text-gray-600 hover:text-blue-600 transition">About</a>
+                    <a href="{{ site.baseurl }}/contact" class="text-gray-600 hover:text-blue-600 transition">Contact</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow relative z-10">
+        {{ content }}
+    </main>
+</body>
+</html>

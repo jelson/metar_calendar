@@ -1,7 +1,7 @@
 ---
 layout: infopage
-title: About This Tool
-permalink: /about.html
+title: About the Metar Predictor
+permalink: /about/
 ---
 
 <style>

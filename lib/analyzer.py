@@ -21,7 +21,7 @@ class FlightCondition(IntEnum):
 
 class MetarArchive:
     CACHE_DIR = appdirs.user_cache_dir("metar_calendar")
-    NUM_MONTHS = 24
+    NUM_MONTHS = 37
 
     def __init__(self, airport_code):
         self.code = airport_code.upper().strip()

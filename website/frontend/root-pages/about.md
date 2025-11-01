@@ -11,7 +11,7 @@ permalink: /about.html
 .lifr { color: #a855f7; font-weight: 600; }
 </style>
 
-Have you ever planned a flight into a coastal airport and wondered, "What time wil this marine layer burn off if I fly in next week?" TAFs only go out a day or two in advance. If you're planning an itinerary for next week or next month, it's hard to know what to expect.
+Have you ever planned a flight into a coastal airport and wondered, "What time will this marine layer burn off if I fly in next week?" TAFs only go out a day or two in advance. If you're planning an itinerary for next week or next month, it's hard to know what to expect.
 
 This predictor is my attempt to solve that problem. Given an airport of interest, it downloads historical METAR data and counts how often the airport was VFR, MVFR, IFR, or LIFR at each hour of the day. Because weather depends on the season, if you're interested in October, the prediction is based on the last several Octobers of data. The output is a stacked bar chart showing all 24 hours of the day, color-coded to show how often each flight condition occurred during that hour.
 

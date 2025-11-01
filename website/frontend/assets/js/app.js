@@ -257,8 +257,8 @@
     function selectAirport(airport) {
         selectedAirport = airport;
 
-        // Update input
-        const displayText = `${airport.iata || airport.icao} - ${airport.name}`;
+        // Update input with ICAO code (preferred) or IATA
+        const displayText = `${airport.icao || airport.iata} - ${airport.name}`;
         searchInput.value = displayText;
 
         hideDropdown();
@@ -325,8 +325,9 @@
             // Hide loading state
             loadingState.classList.add('hidden');
 
-            // Update result title
-            resultTitle.textContent = `${selectedAirport.name} - ${monthNames[month]}`;
+            // Update result title with airport code (ICAO preferred, or IATA)
+            const displayCode = selectedAirport.icao || selectedAirport.iata;
+            resultTitle.textContent = `${monthNames[month]} at ${displayCode} (${selectedAirport.name})`;
 
             // Show result display first
             resultDisplay.classList.remove('hidden');

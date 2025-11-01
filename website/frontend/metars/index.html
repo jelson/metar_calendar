@@ -88,5 +88,14 @@ title: Home
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script>
+// API endpoint configuration - switches between dev and production
+{% if site.dev_mode == 1 %}
+const API_BASE_URL = "http://localhost:5000/api/";
+{% else %}
+const API_BASE_URL = "https://metars.api.avmapper.com/api/";
+{% endif %}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+<script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
 <script src="{{ site.baseurl }}/assets/js/app.js"></script>

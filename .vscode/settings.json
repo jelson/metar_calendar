@@ -8,5 +8,8 @@
         "METAR",
         "mvfr",
         "Nuys"
+    ],
+    "python.linting.flake8Args": [
+        "--max-line-length=100"
     ]
 }

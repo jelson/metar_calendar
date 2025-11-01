@@ -1,0 +1,8 @@
+cherrypy>=18.0.0
+pandas
+requests
+python-dateutil
+pytz
+appdirs
+plotly
+kaleido

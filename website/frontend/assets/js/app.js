@@ -274,7 +274,7 @@
     }
 
     // Handle form submission
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         if (!selectedAirport) {
@@ -291,30 +291,133 @@
         resultDisplay.classList.add('hidden');
         loadingState.classList.remove('hidden');
 
-        // Simulate API call (replace with actual backend call)
-        setTimeout(() => {
+        try {
+            // Call the API
+            const airportCode = selectedAirport.icao || selectedAirport.iata;
+            const url = `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(airportCode)}&month=${month}`;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`API returned ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // Hide loading state
             loadingState.classList.add('hidden');
 
             // Update result title
             resultTitle.textContent = `${selectedAirport.name} - ${monthNames[month]}`;
 
-            // Show result (placeholder)
-            const resultImage = document.getElementById('resultImage');
-            resultImage.innerHTML = `
-                <div class="text-center p-12">
-                    <p class="text-gray-600 mb-2">Weather visualization for:</p>
-                    <p class="text-xl font-semibold text-gray-800">${selectedAirport.icao} (${selectedAirport.iata})</p>
-                    <p class="text-lg text-gray-700">${selectedAirport.name}</p>
-                    <p class="text-gray-600">${monthNames[month]} data</p>
-                    <p class="text-sm text-gray-500 mt-4">Backend integration coming soon...</p>
-                </div>
-            `;
-
+            // Show result display first
             resultDisplay.classList.remove('hidden');
 
             // Scroll to results
             resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 1000);
+
+            // Display the chart after container is visible and sized
+            setTimeout(() => {
+                displayWeatherChart(data, selectedAirport, monthNames[month]);
+            }, 0);
+        } catch (error) {
+            loadingState.classList.add('hidden');
+            console.error('API error:', error);
+            showError(`Failed to load weather data: ${error.message}`);
+        }
+    }
+
+    // Display weather data as interactive Plotly chart
+    function displayWeatherChart(data, airport, monthName) {
+        const resultImage = document.getElementById('resultImage');
+        resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 500px;"></div>';
+
+        // Extract hours and data for each flight condition
+        const hours = [];
+        const vfrData = [];
+        const mvfrData = [];
+        const ifrData = [];
+        const lifrData = [];
+
+        for (let hour = 0; hour < 24; hour++) {
+            hours.push(hour);
+            const stats = data.hourly_stats[hour];
+            if (stats) {
+                vfrData.push(stats.VFR);
+                mvfrData.push(stats.MVFR);
+                ifrData.push(stats.IFR);
+                lifrData.push(stats.LIFR);
+            } else {
+                vfrData.push(0);
+                mvfrData.push(0);
+                ifrData.push(0);
+                lifrData.push(0);
+            }
+        }
+
+        // Create traces for each flight condition (VFR first for bottom stacking)
+        const traces = [
+            {
+                x: hours,
+                y: vfrData,
+                name: 'VFR',
+                type: 'bar',
+                marker: { color: 'green' },
+                hovertemplate: 'Hour %{x}:00<br>VFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: mvfrData,
+                name: 'MVFR',
+                type: 'bar',
+                marker: { color: 'blue' },
+                hovertemplate: 'Hour %{x}:00<br>MVFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: ifrData,
+                name: 'IFR',
+                type: 'bar',
+                marker: { color: 'red' },
+                hovertemplate: 'Hour %{x}:00<br>IFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: lifrData,
+                name: 'LIFR',
+                type: 'bar',
+                marker: { color: 'magenta' },
+                hovertemplate: 'Hour %{x}:00<br>LIFR: %{y:.1%}<extra></extra>'
+            }
+        ];
+
+        // Layout configuration
+        const layout = {
+            barmode: 'stack',
+            xaxis: {
+                title: 'UTC hour',
+                dtick: 1,
+                range: [-0.5, 23.5]
+            },
+            yaxis: {
+                title: 'Fraction of Days',
+                tickformat: '.0%'
+            },
+            legend: {
+                traceorder: 'reversed'
+            },
+            hovermode: 'closest',
+            margin: { l: 60, r: 10, t: 20, b: 60 }
+        };
+
+        // Render the chart with full width
+        Plotly.newPlot('plotlyChart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
     }
 
     // Show error message

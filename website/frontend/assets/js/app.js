@@ -303,6 +303,9 @@
         resultDisplay.classList.add('hidden');
         loadingState.classList.remove('hidden');
 
+        // Blur search input to prevent mobile keyboard from appearing when touching chart
+        searchInput.blur();
+
         try {
             // Call the API
             const airportCode = selectedAirport.icao || selectedAirport.iata;

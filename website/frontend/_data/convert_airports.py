@@ -6,7 +6,8 @@ Filters airports to only include those with METAR data available from IEM.
 Cross-references OurAirports data with IEM station list.
 
 Output fields: icao, iata, name, city, country, query
-- query: the identifier to use when querying IEM API (ICAO or IATA)
+- query: the identifier to use when querying IEM API (ICAO, IATA, or local_code)
+- Matching priority: 1) ICAO code, 2) IATA code, 3) local_code
 """
 
 import pandas as pd
@@ -54,7 +55,7 @@ def convert_airports():
 
     from io import StringIO
     df = pd.read_csv(StringIO(response.text), usecols=[
-        'icao_code', 'iata_code', 'name', 'municipality', 'iso_country'
+        'icao_code', 'iata_code', 'local_code', 'name', 'municipality', 'iso_country'
     ])
 
     print(f"Total airports in OurAirports database: {len(df)}")
@@ -63,6 +64,7 @@ def convert_airports():
     df = df.rename(columns={
         'icao_code': 'icao',
         'iata_code': 'iata',
+        'local_code': 'local_code',
         'municipality': 'city',
         'iso_country': 'country'
     })
@@ -74,26 +76,35 @@ def convert_airports():
     df = df.replace('', None)
 
     # Cross-reference with IEM stations
-    # Keep airports where ICAO OR IATA matches an IEM station ID
-    # Also track which identifier to use for queries
+    # Keep airports where ICAO, IATA, or local_code matches an IEM station ID
+    # Priority order: 1) ICAO, 2) IATA, 3) local_code
     df['icao_upper'] = df['icao'].str.upper()
     df['iata_upper'] = df['iata'].str.upper()
+    df['local_upper'] = df['local_code'].str.upper()
 
-    # Determine which identifier matches IEM (prefer ICAO)
+    # Determine which identifier matches IEM
     df['icao_in_iem'] = df['icao_upper'].isin(iem_stations)
     df['iata_in_iem'] = df['iata_upper'].isin(iem_stations)
+    df['local_in_iem'] = df['local_upper'].isin(iem_stations)
 
     # Filter: keep only airports with at least one match
-    df = df[df['icao_in_iem'] | df['iata_in_iem']]
+    df = df[df['icao_in_iem'] | df['iata_in_iem'] | df['local_in_iem']]
 
-    # Set 'query' field: use ICAO if it's in IEM, otherwise use IATA
-    df['query'] = df.apply(
-        lambda row: row['icao'] if row['icao_in_iem'] else row['iata'],
-        axis=1
-    )
+    # Set 'query' field using priority order: ICAO > IATA > local_code
+    def determine_query(row):
+        if row['icao_in_iem']:
+            return row['icao']
+        elif row['iata_in_iem']:
+            return row['iata']
+        elif row['local_in_iem']:
+            return row['local_code']
+        return None
 
-    # Drop temporary columns
-    df = df.drop(columns=['icao_upper', 'iata_upper', 'icao_in_iem', 'iata_in_iem'])
+    df['query'] = df.apply(determine_query, axis=1)
+
+    # Drop temporary columns and local_code (not needed in output)
+    df = df.drop(columns=['icao_upper', 'iata_upper', 'local_upper',
+                          'icao_in_iem', 'iata_in_iem', 'local_in_iem', 'local_code'])
 
     print(f"Airports with IEM METAR data: {len(df)}")
 

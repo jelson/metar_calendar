@@ -32,6 +32,22 @@
     "query":"ANYN"
   },
   {
+    "name":"Ama Airport",
+    "country":"PG",
+    "city":null,
+    "icao":"AYAA",
+    "iata":"AMF",
+    "query":"AMA"
+  },
+  {
+    "name":"Agaun Airport",
+    "country":"PG",
+    "city":"Agaun",
+    "icao":"AYAG",
+    "iata":"AUP",
+    "query":"AUN"
+  },
+  {
     "name":"Aitape Airport",
     "country":"PG",
     "city":"Aitape",
@@ -56,6 +72,30 @@
     "query":"ADC"
   },
   {
+    "name":"Aiome Airport",
+    "country":"PG",
+    "city":"Aiome",
+    "icao":"AYAO",
+    "iata":"AIE",
+    "query":"AIO"
+  },
+  {
+    "name":"Aseki Airport",
+    "country":"PG",
+    "city":"Aseki",
+    "icao":"AYAX",
+    "iata":"AEK",
+    "query":"ASE"
+  },
+  {
+    "name":"Bambu Airport",
+    "country":"PG",
+    "city":"Bambu",
+    "icao":"AYBC",
+    "iata":"BCP",
+    "query":"BAM"
+  },
+  {
     "name":"Bewani Airport",
     "country":"PG",
     "city":"Bewani",
@@ -64,12 +104,44 @@
     "query":"BWP"
   },
   {
+    "name":"Balimo Airport",
+    "country":"PG",
+    "city":"Balimo",
+    "icao":"AYBM",
+    "iata":"OPU",
+    "query":"BLI"
+  },
+  {
+    "name":"Baina Airstrip",
+    "country":"PG",
+    "city":"Baina",
+    "icao":"AYBN",
+    "iata":null,
+    "query":"BNA"
+  },
+  {
     "name":"Biangabip Airport",
     "country":"PG",
     "city":"Biangabip",
     "icao":"AYBQ",
     "iata":"BPK",
     "query":"BPK"
+  },
+  {
+    "name":"Batri Airstrip",
+    "country":"PG",
+    "city":"Batri",
+    "icao":"AYBT",
+    "iata":null,
+    "query":"BTR"
+  },
+  {
+    "name":"Bulolo Airport",
+    "country":"PG",
+    "city":"Bulolo",
+    "icao":"AYBU",
+    "iata":"BUL",
+    "query":"BUO"
   },
   {
     "name":"Chungribu Airport",
@@ -88,6 +160,46 @@
     "query":"CGC"
   },
   {
+    "name":"China Strait Airstrip",
+    "country":"PG",
+    "city":"Samarai Island",
+    "icao":"AYCS",
+    "iata":"SQT",
+    "query":"CHS"
+  },
+  {
+    "name":"Edwaki Airport",
+    "country":"PG",
+    "city":"Yellow River Mission",
+    "icao":"AYED",
+    "iata":"XYR",
+    "query":"EWK"
+  },
+  {
+    "name":"Eliptamin Airport",
+    "country":"PG",
+    "city":"Eliptamin",
+    "icao":"AYEL",
+    "iata":"EPT",
+    "query":"ELP"
+  },
+  {
+    "name":"Engati Airstrip",
+    "country":"PG",
+    "city":"Engati",
+    "icao":"AYEN",
+    "iata":"EGA",
+    "query":"EGT"
+  },
+  {
+    "name":"Erave Airport",
+    "country":"PG",
+    "city":"Erave",
+    "icao":"AYEV",
+    "iata":"ERE",
+    "query":"ERV"
+  },
+  {
     "name":"Finschhafen Airport",
     "country":"PG",
     "city":"Buki",
@@ -96,12 +208,84 @@
     "query":"FIN"
   },
   {
+    "name":"Frieda River Airport",
+    "country":"PG",
+    "city":"Frieda River",
+    "icao":"AYFR",
+    "iata":"FAQ",
+    "query":"FRR"
+  },
+  {
+    "name":"Guari Airport",
+    "country":"PG",
+    "city":"Guari",
+    "icao":"AYGF",
+    "iata":"GUG",
+    "query":"GAI"
+  },
+  {
+    "name":"Garaina Airport",
+    "country":"PG",
+    "city":"Garaina",
+    "icao":"AYGI",
+    "iata":"GAR",
+    "query":"GNA"
+  },
+  {
+    "name":"Gonaili Airport",
+    "country":"PG",
+    "city":"Gonaili",
+    "icao":"AYGL",
+    "iata":"GOE",
+    "query":"GON"
+  },
+  {
     "name":"Gurney Airport",
     "country":"PG",
     "city":"Gurney",
     "icao":"AYGN",
     "iata":"GUR",
     "query":"GUR"
+  },
+  {
+    "name":"Gusap Airport",
+    "country":"PG",
+    "city":"Gusap",
+    "icao":"AYGP",
+    "iata":"GAP",
+    "query":"GSP"
+  },
+  {
+    "name":"Green River Airport",
+    "country":"PG",
+    "city":"Green River",
+    "icao":"AYGV",
+    "iata":"GVI",
+    "query":"GRN"
+  },
+  {
+    "name":"Hayfields Airport",
+    "country":"PG",
+    "city":"Bainyik",
+    "icao":"AYHF",
+    "iata":"HYF",
+    "query":"HFD"
+  },
+  {
+    "name":"Honinabi Airport",
+    "country":"PG",
+    "city":"Honinabi",
+    "icao":"AYHH",
+    "iata":"HNN",
+    "query":"HBI"
+  },
+  {
+    "name":"Haivaro Airport",
+    "country":"PG",
+    "city":"Haivaro",
+    "icao":"AYHO",
+    "iata":"HIT",
+    "query":"HWO"
   },
   {
     "name":"Hawabango Airport",
@@ -120,6 +304,14 @@
     "query":"MPX"
   },
   {
+    "name":"Josephstaal Airport",
+    "country":"PG",
+    "city":"Josephstaal",
+    "icao":"AYJS",
+    "iata":"JOP",
+    "query":"JSL"
+  },
+  {
     "name":"Lengbati Airport",
     "country":"PG",
     "city":null,
@@ -136,12 +328,36 @@
     "query":"AYMH"
   },
   {
+    "name":"Malalaua Airport",
+    "country":"PG",
+    "city":"Malalaua",
+    "icao":"AYMP",
+    "iata":"MLQ",
+    "query":"MLU"
+  },
+  {
     "name":"Malekolon Airport",
     "country":"PG",
     "city":"Babase Island",
     "icao":"AYMV",
     "iata":"MKN",
     "query":"MKN"
+  },
+  {
+    "name":"Marawaka Airport",
+    "country":"PG",
+    "city":"Marawaka",
+    "icao":"AYMW",
+    "iata":"MWG",
+    "query":"MWK"
+  },
+  {
+    "name":"Kasonombe Airport",
+    "country":"PG",
+    "city":"Kasonombe",
+    "icao":"AYNM",
+    "iata":"KSB",
+    "query":"KNB"
   },
   {
     "name":"Nadzab Airport",
@@ -160,12 +376,52 @@
     "query":"OKV"
   },
   {
+    "name":"Omora Airport",
+    "country":"PG",
+    "city":"Omora",
+    "icao":"AYOM",
+    "iata":"OSE",
+    "query":"OOA"
+  },
+  {
+    "name":"Olsobip Airport",
+    "country":"PG",
+    "city":"Olsobip",
+    "icao":"AYOV",
+    "iata":"OLQ",
+    "query":"OLS"
+  },
+  {
+    "name":"Pangoa Airport",
+    "country":"PG",
+    "city":"Pangoa",
+    "icao":"AYPC",
+    "iata":"PGB",
+    "query":"PGA"
+  },
+  {
+    "name":"Pangia Airport",
+    "country":"PG",
+    "city":"Pangia",
+    "icao":"AYPG",
+    "iata":"PGN",
+    "query":"PNA"
+  },
+  {
     "name":"Pimaga Airport",
     "country":"PG",
     "city":"Pimaga",
     "icao":"AYPJ",
     "iata":"PMP",
     "query":"PMP"
+  },
+  {
+    "name":"Mapoda Airport",
+    "country":"PG",
+    "city":"Mapoda",
+    "icao":"AYPO",
+    "iata":"MPF",
+    "query":"MPO"
   },
   {
     "name":"Port Moresby Jacksons International Airport",
@@ -192,6 +448,38 @@
     "query":"MWI"
   },
   {
+    "name":"Suabi Airport",
+    "country":"PG",
+    "city":null,
+    "icao":"AYSA",
+    "iata":"SBE",
+    "query":"SUA"
+  },
+  {
+    "name":"Saidor Airport",
+    "country":"PG",
+    "city":"Saidor",
+    "icao":"AYSD",
+    "iata":"SDI",
+    "query":"SDA"
+  },
+  {
+    "name":"Tetebedi Airport",
+    "country":"PG",
+    "city":"Tetebedi",
+    "icao":"AYTF",
+    "iata":"TDB",
+    "query":"TEB"
+  },
+  {
+    "name":"Gulgubip Airport",
+    "country":"PG",
+    "city":"Gulgubip",
+    "icao":"AYUP",
+    "iata":"GLP",
+    "query":"GUP"
+  },
+  {
     "name":"Wapolu Airport",
     "country":"PG",
     "city":"Wapolu",
@@ -208,12 +496,52 @@
     "query":"AYWK"
   },
   {
+    "name":"Tol Airport",
+    "country":"PG",
+    "city":"Tol",
+    "icao":"AYXO",
+    "iata":"TLO",
+    "query":"TOL"
+  },
+  {
+    "name":"Tinboli Airport",
+    "country":"PG",
+    "city":"Tinboli",
+    "icao":"AYYL",
+    "iata":"TCK",
+    "query":"TOI"
+  },
+  {
+    "name":"Munbil Airport",
+    "country":"PG",
+    "city":null,
+    "icao":"AYYM",
+    "iata":"LNF",
+    "query":"MBL"
+  },
+  {
     "name":"Oram Airport",
     "country":"PG",
     "city":null,
     "icao":"AYYO",
     "iata":"RAX",
     "query":"RAX"
+  },
+  {
+    "name":"Silur Airport",
+    "country":"PG",
+    "city":"Silur Mission",
+    "icao":"AYZI",
+    "iata":"SWR",
+    "query":"SLR"
+  },
+  {
+    "name":"Ossima Airport",
+    "country":"PG",
+    "city":"Ossima",
+    "icao":"AYZS",
+    "iata":"OSG",
+    "query":"OSA"
   },
   {
     "name":"Narsarsuaq Airport",
@@ -254,6 +582,14 @@
     "icao":"BGSF",
     "iata":"SFJ",
     "query":"BGSF"
+  },
+  {
+    "name":"Saattut Heliport",
+    "country":"GL",
+    "city":"Saattut",
+    "icao":"BGST",
+    "iata":"SAE",
+    "query":"SAA"
   },
   {
     "name":"Savissivik Heliport",
@@ -8280,6 +8616,14 @@
     "query":"AFF"
   },
   {
+    "name":"Washington County Airport",
+    "country":"US",
+    "city":"Washington",
+    "icao":"KAFJ",
+    "iata":"WSG",
+    "query":"AFJ"
+  },
+  {
     "name":"Jaffrey Airfield Silver Ranch Airport",
     "country":"US",
     "city":"Jaffrey",
@@ -8496,6 +8840,14 @@
     "query":"AND"
   },
   {
+    "name":"Salida Airport - Harriet Alexander Field",
+    "country":"US",
+    "city":"Salida",
+    "icao":"KANK",
+    "iata":"SLT",
+    "query":"ANK"
+  },
+  {
     "name":"Tri State Steuben County Airport",
     "country":"US",
     "city":"Angola",
@@ -8600,6 +8952,14 @@
     "query":"ARG"
   },
   {
+    "name":"Wharton Regional Airport",
+    "country":"US",
+    "city":"Wharton",
+    "icao":"KARM",
+    "iata":"WHT",
+    "query":"ARM"
+  },
+  {
     "name":"Aurora Municipal Airport",
     "country":"US",
     "city":"Chicago\/Aurora",
@@ -8624,12 +8984,28 @@
     "query":"ARV"
   },
   {
+    "name":"Beaufort Executive Airport",
+    "country":"US",
+    "city":"Beaufort",
+    "icao":"KARW",
+    "iata":"BFT",
+    "query":"ARW"
+  },
+  {
     "name":"Aspen-Pitkin County Airport (Sardy Field)",
     "country":"US",
     "city":"Aspen",
     "icao":"KASE",
     "iata":"ASE",
     "query":"KASE"
+  },
+  {
+    "name":"Springdale Municipal Airport",
+    "country":"US",
+    "city":"Springdale",
+    "icao":"KASG",
+    "iata":"SPZ",
+    "query":"ASG"
   },
   {
     "name":"Nashua Airport \/ Boire Field",
@@ -8768,6 +9144,14 @@
     "query":"KAVP"
   },
   {
+    "name":"Marana Regional Airport",
+    "country":"US",
+    "city":"Marana",
+    "icao":"KAVQ",
+    "iata":"AVW",
+    "query":"AVQ"
+  },
+  {
     "name":"Catalina Airport",
     "country":"US",
     "city":"Avalon",
@@ -8782,6 +9166,14 @@
     "icao":"KAWM",
     "iata":"AWM",
     "query":"AWM"
+  },
+  {
+    "name":"Algona Municipal Airport",
+    "country":"US",
+    "city":"Algona",
+    "icao":"KAXA",
+    "iata":"AXG",
+    "query":"AXA"
   },
   {
     "name":"Chandler Field",
@@ -8856,12 +9248,28 @@
     "query":"BAF"
   },
   {
+    "name":"Columbus Municipal Airport",
+    "country":"US",
+    "city":"Columbus",
+    "icao":"KBAK",
+    "iata":"CLU",
+    "query":"BAK"
+  },
+  {
     "name":"Battle Mountain Airport",
     "country":"US",
     "city":"Battle Mountain",
     "icao":"KBAM",
     "iata":"BAM",
     "query":"BAM"
+  },
+  {
+    "name":"New Braunfels Municipal Airport",
+    "country":"US",
+    "city":"New Braunfels",
+    "icao":"KBAZ",
+    "iata":null,
+    "query":"BAZ"
   },
   {
     "name":"Benson Municipal Airport",
@@ -8878,6 +9286,14 @@
     "icao":"KBBD",
     "iata":"BBD",
     "query":"BBD"
+  },
+  {
+    "name":"Branson Airport",
+    "country":"US",
+    "city":"Branson",
+    "icao":"KBBG",
+    "iata":"BKG",
+    "query":"BBG"
   },
   {
     "name":"Marlboro County Jetport - H E Avent Field Airport",
@@ -8934,6 +9350,14 @@
     "icao":"KBDG",
     "iata":"BDG",
     "query":"BDG"
+  },
+  {
+    "name":"Willmar Municipal Airport John L Rice Field (2006)",
+    "country":"US",
+    "city":"Willmar",
+    "icao":"KBDH",
+    "iata":"ILL",
+    "query":"BDH"
   },
   {
     "name":"Bradley International Airport",
@@ -9030,6 +9454,14 @@
     "icao":"KBFR",
     "iata":"BFR",
     "query":"BFR"
+  },
+  {
+    "name":"Albertville Regional Airport\/Thomas J Brumlik Field",
+    "country":"US",
+    "city":"Albertville",
+    "icao":"KBFZ",
+    "iata":null,
+    "query":"BFZ"
   },
   {
     "name":"Hutchinson County Airport",
@@ -9176,12 +9608,28 @@
     "query":"KBKE"
   },
   {
+    "name":"Buckley Space Force Base",
+    "country":"US",
+    "city":"Aurora",
+    "icao":"KBKF",
+    "iata":"BFK",
+    "query":"BKF"
+  },
+  {
     "name":"Burke Lakefront Airport",
     "country":"US",
     "city":"Cleveland",
     "icao":"KBKL",
     "iata":"BKL",
     "query":"BKL"
+  },
+  {
+    "name":"Blackwell Tonkawa Municipal Airport",
+    "country":"US",
+    "city":"Blackwell",
+    "icao":"KBKN",
+    "iata":null,
+    "query":"BKN"
   },
   {
     "name":"Allen C Perkinson Blackstone Army Air Field",
@@ -9360,12 +9808,28 @@
     "query":"BOW"
   },
   {
+    "name":"Big Spring Mc Mahon-Wrinkle Airport",
+    "country":"US",
+    "city":"Big Spring",
+    "icao":"KBPG",
+    "iata":"HCA",
+    "query":"BPG"
+  },
+  {
     "name":"Miley Memorial Field",
     "country":"US",
     "city":"Big Piney",
     "icao":"KBPI",
     "iata":"BPI",
     "query":"KBPI"
+  },
+  {
+    "name":"Ozark Regional Airport",
+    "country":"US",
+    "city":"Mountain Home",
+    "icao":"KBPK",
+    "iata":"WMH",
+    "query":"BPK"
   },
   {
     "name":"Jack Brooks Regional Airport",
@@ -9432,6 +9896,14 @@
     "query":"KBTM"
   },
   {
+    "name":"Britton Municipal Airport",
+    "country":"US",
+    "city":"Britton",
+    "icao":"KBTN",
+    "iata":"TTO",
+    "query":"BTN"
+  },
+  {
     "name":"Pittsburgh\/Butler Regional Airport",
     "country":"US",
     "city":"Butler",
@@ -9472,12 +9944,28 @@
     "query":"KBUR"
   },
   {
+    "name":"Beaver County Airport",
+    "country":"US",
+    "city":"Beaver Falls",
+    "icao":"KBVI",
+    "iata":"BFP",
+    "query":"BVI"
+  },
+  {
     "name":"Bartlesville Municipal Airport",
     "country":"US",
     "city":"Bartlesville",
     "icao":"KBVO",
     "iata":"BVO",
     "query":"BVO"
+  },
+  {
+    "name":"Skagit Regional Airport",
+    "country":"US",
+    "city":"Burlington",
+    "icao":"KBVS",
+    "iata":"MVW",
+    "query":"BVS"
   },
   {
     "name":"Batesville Regional Airport",
@@ -9520,6 +10008,14 @@
     "query":"KBWI"
   },
   {
+    "name":"Harry Stern Airport",
+    "country":"US",
+    "city":"Wahpeton",
+    "icao":"KBWP",
+    "iata":"WAH",
+    "query":"BWP"
+  },
+  {
     "name":"George R Carr Memorial Air Field",
     "country":"US",
     "city":"Bogalusa",
@@ -9534,6 +10030,14 @@
     "icao":"KBXK",
     "iata":"BXK",
     "query":"BXK"
+  },
+  {
+    "name":"Brunswick Executive Airport",
+    "country":"US",
+    "city":"Brunswick",
+    "icao":"KBXM",
+    "iata":"NHZ",
+    "query":"BXM"
   },
   {
     "name":"Johnson County Airport",
@@ -9566,6 +10070,14 @@
     "icao":"KBYS",
     "iata":"BYS",
     "query":"BYS"
+  },
+  {
+    "name":"Bay City Regional Airport",
+    "country":"US",
+    "city":"Bay City",
+    "icao":"KBYY",
+    "iata":"BBC",
+    "query":"BYY"
   },
   {
     "name":"Bozeman Yellowstone International Airport",
@@ -9680,6 +10192,14 @@
     "query":"CCY"
   },
   {
+    "name":"Caledonia County Airport",
+    "country":"US",
+    "city":"Lyndonville",
+    "icao":"KCDA",
+    "iata":"LLX",
+    "query":"CDA"
+  },
+  {
     "name":"Cedar City Regional Airport",
     "country":"US",
     "city":"Cedar City",
@@ -9774,6 +10294,14 @@
     "icao":"KCFD",
     "iata":"CFD",
     "query":"CFD"
+  },
+  {
+    "name":"Tuscola Area Airport",
+    "country":"US",
+    "city":"Caro",
+    "icao":"KCFS",
+    "iata":"TZC",
+    "query":"CFS"
   },
   {
     "name":"Coffeyville Municipal Airport",
@@ -9902,6 +10430,14 @@
     "icao":"KCKB",
     "iata":"CKB",
     "query":"KCKB"
+  },
+  {
+    "name":"Grand Marais Cook County Airport",
+    "country":"US",
+    "city":"Grand Marais",
+    "icao":"KCKC",
+    "iata":"GRM",
+    "query":"CKC"
   },
   {
     "name":"Fletcher Field",
@@ -10160,6 +10696,14 @@
     "query":"CPS"
   },
   {
+    "name":"Cheraw Municipal Airport\/Lynch Bellinger Field",
+    "country":"US",
+    "city":"Cheraw",
+    "icao":"KCQW",
+    "iata":"HCW",
+    "query":"CQW"
+  },
+  {
     "name":"Grand Strand Airport",
     "country":"US",
     "city":"North Myrtle Beach",
@@ -10296,6 +10840,14 @@
     "query":"KCVG"
   },
   {
+    "name":"Hollister Municipal Airport",
+    "country":"US",
+    "city":"Hollister",
+    "icao":"KCVH",
+    "iata":"HLI",
+    "query":"CVH"
+  },
+  {
     "name":"Clovis Municipal Airport",
     "country":"US",
     "city":"Clovis",
@@ -10328,6 +10880,14 @@
     "query":"CWA"
   },
   {
+    "name":"Kickapoo Downtown Airport",
+    "country":"US",
+    "city":"Wichita Falls",
+    "icao":"KCWC",
+    "iata":"KIP",
+    "query":"CWC"
+  },
+  {
     "name":"Chennault International Airport",
     "country":"US",
     "city":"Lake Charles",
@@ -10350,6 +10910,22 @@
     "icao":"KCXO",
     "iata":"CXO",
     "query":"CXO"
+  },
+  {
+    "name":"Carson Airport",
+    "country":"US",
+    "city":"Carson City",
+    "icao":"KCXP",
+    "iata":"CSN",
+    "query":"CXP"
+  },
+  {
+    "name":"Capital City Airport",
+    "country":"US",
+    "city":"Harrisburg",
+    "icao":"KCXY",
+    "iata":"HAR",
+    "query":"CXY"
   },
   {
     "name":"Cheyenne Regional Jerry Olson Field",
@@ -10672,6 +11248,14 @@
     "query":"DRI"
   },
   {
+    "name":"Drummond Island Airport",
+    "country":"US",
+    "city":"Drummond Island",
+    "icao":"KDRM",
+    "iata":"DRE",
+    "query":"DRM"
+  },
+  {
     "name":"Durango La Plata County Airport",
     "country":"US",
     "city":"Durango",
@@ -10728,6 +11312,14 @@
     "query":"DTN"
   },
   {
+    "name":"Destin Executive Airport",
+    "country":"US",
+    "city":"Destin",
+    "icao":"KDTS",
+    "iata":"DSI",
+    "query":"DTS"
+  },
+  {
     "name":"Detroit Metropolitan Wayne County Airport",
     "country":"US",
     "city":"Detroit",
@@ -10782,6 +11374,22 @@
     "icao":"KDVN",
     "iata":"DVN",
     "query":"KDVN"
+  },
+  {
+    "name":"Marin County Airport - Gnoss Field",
+    "country":"US",
+    "city":"Novato",
+    "icao":"KDVO",
+    "iata":"NOT",
+    "query":"DVO"
+  },
+  {
+    "name":"Slayton Municipal Airport",
+    "country":"US",
+    "city":"Slayton",
+    "icao":"KDVP",
+    "iata":"NSL",
+    "query":"DVP"
   },
   {
     "name":"Phoenix Deer Valley Airport",
@@ -10896,6 +11504,14 @@
     "query":"EDE"
   },
   {
+    "name":"Enterprise Municipal Airport",
+    "country":"US",
+    "city":"Enterprise",
+    "icao":"KEDN",
+    "iata":"ETS",
+    "query":"EDN"
+  },
+  {
     "name":"Edwards Air Force Base",
     "country":"US",
     "city":"Edwards",
@@ -10968,6 +11584,14 @@
     "query":"KEKA"
   },
   {
+    "name":"Elkhart Municipal Airport",
+    "country":"US",
+    "city":"Elkhart",
+    "icao":"KEKM",
+    "iata":"EKI",
+    "query":"EKM"
+  },
+  {
     "name":"Elkins-Randolph County Regional Airport",
     "country":"US",
     "city":"Elkins",
@@ -11030,6 +11654,14 @@
     "icao":"KELN",
     "iata":"ELN",
     "query":"KELN"
+  },
+  {
+    "name":"Ely Municipal Airport",
+    "country":"US",
+    "city":"Ely",
+    "icao":"KELO",
+    "iata":"LYU",
+    "query":"ELO"
   },
   {
     "name":"El Paso International Airport",
@@ -11126,6 +11758,14 @@
     "icao":"KEPH",
     "iata":"EPH",
     "query":"KEPH"
+  },
+  {
+    "name":"Captain Jack Thomas El Dorado Airport",
+    "country":"US",
+    "city":"El Dorado",
+    "icao":"KEQA",
+    "iata":"EDK",
+    "query":"EQA"
   },
   {
     "name":"Erie International Tom Ridge Field",
@@ -11344,6 +11984,14 @@
     "query":"FCH"
   },
   {
+    "name":"Richmond Executive-Chesterfield County Airport",
+    "country":"US",
+    "city":"North Chesterfield",
+    "icao":"KFCI",
+    "iata":null,
+    "query":"FCI"
+  },
+  {
     "name":"Flying Cloud Airport",
     "country":"US",
     "city":"Minneapolis",
@@ -11446,6 +12094,14 @@
     "icao":"KFFZ",
     "iata":"MSC",
     "query":"MSC"
+  },
+  {
+    "name":"Friday Harbor Airport",
+    "country":"US",
+    "city":"Friday Harbor",
+    "icao":"KFHR",
+    "iata":"FRD",
+    "query":"FHR"
   },
   {
     "name":"Sierra Vista Municipal Airport \/ Libby Army Air Field",
@@ -11584,6 +12240,14 @@
     "query":"FOK"
   },
   {
+    "name":"Fillmore Municipal Airport",
+    "country":"US",
+    "city":"Fillmore",
+    "icao":"KFOM",
+    "iata":"FIL",
+    "query":"FOM"
+  },
+  {
     "name":"St Lucie County International Airport",
     "country":"US",
     "city":"Fort Pierce",
@@ -11670,6 +12334,14 @@
     "icao":"KFST",
     "iata":"FST",
     "query":"FST"
+  },
+  {
+    "name":"Fort Madison Municipal Airport",
+    "country":"US",
+    "city":"Fort Madison",
+    "icao":"KFSW",
+    "iata":"FMS",
+    "query":"FSW"
   },
   {
     "name":"Godman Army Air Field",
@@ -11800,6 +12472,14 @@
     "query":"KGCC"
   },
   {
+    "name":"Grant County Regional Airport \/ Ogilvie Field",
+    "country":"US",
+    "city":"John Day",
+    "icao":"KGCD",
+    "iata":"JDA",
+    "query":"GCD"
+  },
+  {
     "name":"Garden City Regional Airport",
     "country":"US",
     "city":"Garden City",
@@ -11896,6 +12576,14 @@
     "query":"KGGW"
   },
   {
+    "name":"Idaho County Airport",
+    "country":"US",
+    "city":"Grangeville",
+    "icao":"KGIC",
+    "iata":"IDH",
+    "query":"GIC"
+  },
+  {
     "name":"Winter Haven Regional Airport - Gilbert Field",
     "country":"US",
     "city":"Winter Haven",
@@ -11910,6 +12598,14 @@
     "icao":"KGJT",
     "iata":"GJT",
     "query":"KGJT"
+  },
+  {
+    "name":"Port Meadville Airport",
+    "country":"US",
+    "city":"Meadville",
+    "icao":"KGKJ",
+    "iata":"MEJ",
+    "query":"GKJ"
   },
   {
     "name":"Gatlinburg-Pigeon Forge Airport",
@@ -12208,6 +12904,22 @@
     "query":"KGXY"
   },
   {
+    "name":"Donaldson Field Airport",
+    "country":"US",
+    "city":"Greenville",
+    "icao":"KGYH",
+    "iata":"GDC",
+    "query":"GYH"
+  },
+  {
+    "name":"North Texas Regional Airport Perrin Field",
+    "country":"US",
+    "city":"Denison",
+    "icao":"KGYI",
+    "iata":"PNX",
+    "query":"GYI"
+  },
+  {
     "name":"Phoenix Goodyear Airport",
     "country":"US",
     "city":"Goodyear",
@@ -12318,6 +13030,14 @@
     "icao":"KHHR",
     "iata":"HHR",
     "query":"HHR"
+  },
+  {
+    "name":"Stan Stamper Municipal Airport",
+    "country":"US",
+    "city":"Hugo",
+    "icao":"KHHW",
+    "iata":"HUJ",
+    "query":"HHW"
   },
   {
     "name":"Range Regional Airport",
@@ -12446,6 +13166,14 @@
     "icao":"KHNB",
     "iata":"HNB",
     "query":"HNB"
+  },
+  {
+    "name":"Henderson Executive Airport",
+    "country":"US",
+    "city":"Las Vegas",
+    "icao":"KHND",
+    "iata":"HSH",
+    "query":"HND"
   },
   {
     "name":"Lea County Regional Airport",
@@ -12688,6 +13416,22 @@
     "query":"HWO"
   },
   {
+    "name":"Brookhaven Calabro Airport",
+    "country":"US",
+    "city":"Shirley",
+    "icao":"KHWV",
+    "iata":"WSH",
+    "query":"HWV"
+  },
+  {
+    "name":"Hilton Head Airport",
+    "country":"US",
+    "city":"Hilton Head Island",
+    "icao":"KHXD",
+    "iata":"HHH",
+    "query":"HXD"
+  },
+  {
     "name":"Cape Cod Gateway Airport",
     "country":"US",
     "city":"Hyannis",
@@ -12718,6 +13462,14 @@
     "icao":"KHZL",
     "iata":"HZL",
     "query":"HZL"
+  },
+  {
+    "name":"Northeast Ohio Regional Airport",
+    "country":"US",
+    "city":"Ashtabula",
+    "icao":"KHZY",
+    "iata":"JFN",
+    "query":"HZY"
   },
   {
     "name":"McConnell Air Force Base",
@@ -12888,6 +13640,14 @@
     "query":"IMM"
   },
   {
+    "name":"Madison Municipal Airport",
+    "country":"US",
+    "city":"Madison",
+    "icao":"KIMS",
+    "iata":"MDN",
+    "query":"IMS"
+  },
+  {
     "name":"Ford Airport",
     "country":"US",
     "city":"Kingsford",
@@ -13032,12 +13792,52 @@
     "query":"ITH"
   },
   {
+    "name":"Mesa Gateway Airport",
+    "country":"US",
+    "city":"Mesa",
+    "icao":"KIWA",
+    "iata":"AZA",
+    "query":"IWA"
+  },
+  {
     "name":"Gogebic Iron County Airport",
     "country":"US",
     "city":"Ironwood",
     "icao":"KIWD",
     "iata":"IWD",
     "query":"IWD"
+  },
+  {
+    "name":"Wiscasset Airport",
+    "country":"US",
+    "city":"Wiscasset",
+    "icao":"KIWI",
+    "iata":"ISS",
+    "query":"IWI"
+  },
+  {
+    "name":"New Century AirCenter Airport",
+    "country":"US",
+    "city":"New Century",
+    "icao":"KIXD",
+    "iata":"JCI",
+    "query":"IXD"
+  },
+  {
+    "name":"Santa Ynez Airport",
+    "country":"US",
+    "city":"Santa Ynez",
+    "icao":"KIZA",
+    "iata":"SQA",
+    "query":"IZA"
+  },
+  {
+    "name":"Eastern Slopes Regional Airport",
+    "country":"US",
+    "city":"Fryeburg",
+    "icao":"KIZG",
+    "iata":"FRY",
+    "query":"IZG"
   },
   {
     "name":"Jackson Hole Airport",
@@ -13120,6 +13920,14 @@
     "query":"JHW"
   },
   {
+    "name":"Jack Edwards National Airport",
+    "country":"US",
+    "city":"Gulf Shores",
+    "icao":"KJKA",
+    "iata":"GUF",
+    "query":"JKA"
+  },
+  {
     "name":"Joplin Regional Airport",
     "country":"US",
     "city":"Joplin",
@@ -13142,6 +13950,30 @@
     "icao":"KJOT",
     "iata":"JOT",
     "query":"JOT"
+  },
+  {
+    "name":"Town of East Hampton Airport",
+    "country":"US",
+    "city":"East Hampton",
+    "icao":"KJPX",
+    "iata":"HTO",
+    "query":"JPX"
+  },
+  {
+    "name":"Concord-Padgett Regional Airport",
+    "country":"US",
+    "city":"Concord",
+    "icao":"KJQF",
+    "iata":"USA",
+    "query":"JQF"
+  },
+  {
+    "name":"Cherokee County Airport",
+    "country":"US",
+    "city":"Jacksonville",
+    "icao":"KJSO",
+    "iata":"JKV",
+    "query":"JSO"
   },
   {
     "name":"John Murtha Johnstown Cambria County Airport",
@@ -13296,6 +14128,14 @@
     "query":"KLBT"
   },
   {
+    "name":"Texas Gulf Coast Regional Airport",
+    "country":"US",
+    "city":"Angleton",
+    "icao":"KLBX",
+    "iata":"LJN",
+    "query":"LBX"
+  },
+  {
     "name":"Lake Charles Regional Airport",
     "country":"US",
     "city":"Lake Charles",
@@ -13448,6 +14288,22 @@
     "query":"LGU"
   },
   {
+    "name":"MidCoast Regional Airport at Wright Army Airfield",
+    "country":"US",
+    "city":"Hinesville",
+    "icao":"KLHW",
+    "iata":"LIY",
+    "query":"LHW"
+  },
+  {
+    "name":"Triangle North Executive Airport",
+    "country":"US",
+    "city":"Louisburg",
+    "icao":"KLHZ",
+    "iata":"LFN",
+    "query":"LHZ"
+  },
+  {
     "name":"Limon Municipal Airport",
     "country":"US",
     "city":"Limon",
@@ -13470,6 +14326,14 @@
     "icao":"KLKP",
     "iata":"LKP",
     "query":"LKP"
+  },
+  {
+    "name":"Louisa County Airport \/ Freeman Field",
+    "country":"US",
+    "city":"Louisa",
+    "icao":"KLKU",
+    "iata":"LOW",
+    "query":"LKU"
   },
   {
     "name":"Lake County Airport",
@@ -13872,6 +14736,14 @@
     "query":"MBL"
   },
   {
+    "name":"Bruce Campbell Field",
+    "country":"US",
+    "city":"Madison",
+    "icao":"KMBO",
+    "iata":"DXE",
+    "query":"MBO"
+  },
+  {
     "name":"MBS International Airport",
     "country":"US",
     "city":"Freeland",
@@ -13984,6 +14856,14 @@
     "query":"KMDH"
   },
   {
+    "name":"Madison Municipal Airport",
+    "country":"US",
+    "city":"Madison",
+    "icao":"KMDS",
+    "iata":"XMD",
+    "query":"MDS"
+  },
+  {
     "name":"Harrisburg International Airport",
     "country":"US",
     "city":"Harrisburg",
@@ -13998,6 +14878,22 @@
     "icao":"KMDW",
     "iata":"MDW",
     "query":"KMDW"
+  },
+  {
+    "name":"Taylor County Airport",
+    "country":"US",
+    "city":"Medford",
+    "icao":"KMDZ",
+    "iata":"MDF",
+    "query":"MDZ"
+  },
+  {
+    "name":"Laurinburg Maxton Airport",
+    "country":"US",
+    "city":"Maxton",
+    "icao":"KMEB",
+    "iata":"MXE",
+    "query":"MEB"
   },
   {
     "name":"Key Field \/ Meridian Regional Airport",
@@ -14296,6 +15192,14 @@
     "query":"MKT"
   },
   {
+    "name":"Marco Island Executive Airport",
+    "country":"US",
+    "city":"Marco Island",
+    "icao":"KMKY",
+    "iata":"MRK",
+    "query":"MKY"
+  },
+  {
     "name":"Melbourne Orlando International Airport",
     "country":"US",
     "city":"Melbourne",
@@ -14310,6 +15214,14 @@
     "icao":"KMLC",
     "iata":"MLC",
     "query":"MLC"
+  },
+  {
+    "name":"Millard Airport",
+    "country":"US",
+    "city":"Omaha",
+    "icao":"KMLE",
+    "iata":"MIQ",
+    "query":"MLE"
   },
   {
     "name":"Milford Municipal-Ben and Judy Briscoe Field",
@@ -14510,6 +15422,22 @@
     "icao":"KMQB",
     "iata":"MQB",
     "query":"MQB"
+  },
+  {
+    "name":"Dare County Regional Airport",
+    "country":"US",
+    "city":"Manteo",
+    "icao":"KMQI",
+    "iata":"MEO",
+    "query":"MQI"
+  },
+  {
+    "name":"Chester County G O Carlson Airport",
+    "country":"US",
+    "city":"Coatesville",
+    "icao":"KMQS",
+    "iata":"CTH",
+    "query":"MQS"
   },
   {
     "name":"Telfair Wheeler Airport",
@@ -14888,6 +15816,14 @@
     "query":"NFL"
   },
   {
+    "name":"NAS Fort Worth JRB \/ Carswell Field",
+    "country":"US",
+    "city":"Fort Worth",
+    "icao":"KNFW",
+    "iata":"FWH",
+    "query":"NFW"
+  },
+  {
     "name":"Naval Air Station Corpus Christi Truax Field",
     "country":"US",
     "city":"Corpus Christi",
@@ -15216,6 +16152,14 @@
     "query":"OKM"
   },
   {
+    "name":"Winchester Regional Airport",
+    "country":"US",
+    "city":"Winchester",
+    "icao":"KOKV",
+    "iata":"WGO",
+    "query":"OKV"
+  },
+  {
     "name":"Cattaraugus County-Olean Airport",
     "country":"US",
     "city":"Olean",
@@ -15360,6 +16304,14 @@
     "query":"OPL"
   },
   {
+    "name":"Quonset State Airport",
+    "country":"US",
+    "city":"North Kingstown",
+    "icao":"KOQU",
+    "iata":"NCO",
+    "query":"OQU"
+  },
+  {
     "name":"Chicago O'Hare International Airport",
     "country":"US",
     "city":"Chicago",
@@ -15390,6 +16342,22 @@
     "icao":"KORL",
     "iata":"ORL",
     "query":"ORL"
+  },
+  {
+    "name":"Orcas Island Airport",
+    "country":"US",
+    "city":"Eastsound",
+    "icao":"KORS",
+    "iata":"ESD",
+    "query":"ORS"
+  },
+  {
+    "name":"Mount Pleasant Regional Airport",
+    "country":"US",
+    "city":"Mount Pleasant",
+    "icao":"KOSA",
+    "iata":"MPS",
+    "query":"OSA"
   },
   {
     "name":"Oscoda Wurtsmith Airport",
@@ -15480,6 +16448,14 @@
     "query":"OWD"
   },
   {
+    "name":"Ocean City Municipal Airport",
+    "country":"US",
+    "city":"Ocean City",
+    "icao":"KOXB",
+    "iata":"OCE",
+    "query":"OXB"
+  },
+  {
     "name":"Waterbury Oxford Airport",
     "country":"US",
     "city":"Oxford",
@@ -15502,6 +16478,14 @@
     "icao":"KOXR",
     "iata":"OXR",
     "query":"OXR"
+  },
+  {
+    "name":"St Marys Municipal Airport",
+    "country":"US",
+    "city":"St Marys",
+    "icao":"KOYM",
+    "iata":"STQ",
+    "query":"OYM"
   },
   {
     "name":"Ozona Municipal Airport",
@@ -15544,6 +16528,14 @@
     "query":"PAM"
   },
   {
+    "name":"Payson Airport",
+    "country":"US",
+    "city":"Payson",
+    "icao":"KPAN",
+    "iata":"PJB",
+    "query":"PAN"
+  },
+  {
     "name":"Palo Alto Airport",
     "country":"US",
     "city":"Palo Alto",
@@ -15574,6 +16566,14 @@
     "icao":"KPBI",
     "iata":"PBI",
     "query":"KPBI"
+  },
+  {
+    "name":"Pike County Airport Hatcher Field",
+    "country":"US",
+    "city":"Pikeville",
+    "icao":"KPBX",
+    "iata":"PVL",
+    "query":"PBX"
   },
   {
     "name":"Prairie Du Chien Municipal Airport",
@@ -15800,6 +16800,22 @@
     "query":"PMH"
   },
   {
+    "name":"Pompano Beach Airpark",
+    "country":"US",
+    "city":"Pompano Beach",
+    "icao":"KPMP",
+    "iata":"PPM",
+    "query":"PMP"
+  },
+  {
+    "name":"Ralph Wenz Field",
+    "country":"US",
+    "city":"Pinedale",
+    "icao":"KPNA",
+    "iata":"PWY",
+    "query":"PNA"
+  },
+  {
     "name":"Ponca City Regional Airport",
     "country":"US",
     "city":"Ponca City",
@@ -15888,12 +16904,28 @@
     "query":"PPF"
   },
   {
+    "name":"La Porte Municipal Airport",
+    "country":"US",
+    "city":"La Porte",
+    "icao":"KPPO",
+    "iata":"LPO",
+    "query":"PPO"
+  },
+  {
     "name":"Presque Isle International Airport",
     "country":"US",
     "city":"Presque Isle",
     "icao":"KPQI",
     "iata":"PQI",
     "query":"PQI"
+  },
+  {
+    "name":"Trent Lott International Airport",
+    "country":"US",
+    "city":"Pascagoula",
+    "icao":"KPQL",
+    "iata":"PGL",
+    "query":"PQL"
   },
   {
     "name":"Paso Robles Municipal Airport",
@@ -15966,6 +16998,14 @@
     "icao":"KPSN",
     "iata":"PSN",
     "query":"PSN"
+  },
+  {
+    "name":"Stevens Field",
+    "country":"US",
+    "city":"Pagosa Springs",
+    "icao":"KPSO",
+    "iata":"PGO",
+    "query":"PSO"
   },
   {
     "name":"Palm Springs International Airport",
@@ -16086,6 +17126,14 @@
     "icao":"KPVF",
     "iata":"PVF",
     "query":"PVF"
+  },
+  {
+    "name":"Hampton Roads Executive Airport",
+    "country":"US",
+    "city":"Chesapeake",
+    "icao":"KPVG",
+    "iata":null,
+    "query":"PVG"
   },
   {
     "name":"Provo-Utah Lake International Airport",
@@ -16392,6 +17440,14 @@
     "query":"KRMG"
   },
   {
+    "name":"Stafford Regional Airport",
+    "country":"US",
+    "city":"Fredericksburg",
+    "icao":"KRMN",
+    "iata":null,
+    "query":"RMN"
+  },
+  {
     "name":"Warren County Memorial Airport",
     "country":"US",
     "city":"Mc Minnville",
@@ -16472,12 +17528,28 @@
     "query":"ROX"
   },
   {
+    "name":"Rice Lake Regional Airport - Carl's Field",
+    "country":"US",
+    "city":"Rice Lake",
+    "icao":"KRPD",
+    "iata":"RIE",
+    "query":"RPD"
+  },
+  {
     "name":"Roundup Airport",
     "country":"US",
     "city":"Roundup",
     "icao":"KRPX",
     "iata":"RPX",
     "query":"RPX"
+  },
+  {
+    "name":"Roben Hood Airport",
+    "country":"US",
+    "city":"Big Rapids",
+    "icao":"KRQB",
+    "iata":"WBR",
+    "query":"RQB"
   },
   {
     "name":"Merrill Municipal Airport",
@@ -16536,12 +17608,28 @@
     "query":"RTN"
   },
   {
+    "name":"Mid-Carolina Regional Airport",
+    "country":"US",
+    "city":"Salisbury",
+    "icao":"KRUQ",
+    "iata":"SRW",
+    "query":"RUQ"
+  },
+  {
     "name":"Rutland - Southern Vermont Regional Airport",
     "country":"US",
     "city":"Rutland",
     "icao":"KRUT",
     "iata":"RUT",
     "query":"KRUT"
+  },
+  {
+    "name":"Mifflin County Airport",
+    "country":"US",
+    "city":"Reedsville",
+    "icao":"KRVL",
+    "iata":"RED",
+    "query":"RVL"
   },
   {
     "name":"Tulsa Riverside Airport",
@@ -16582,6 +17670,14 @@
     "icao":"KRXE",
     "iata":"RXE",
     "query":"KRXE"
+  },
+  {
+    "name":"Jasper County Airport",
+    "country":"US",
+    "city":"Rensselaer",
+    "icao":"KRZL",
+    "iata":"RNZ",
+    "query":"RZL"
   },
   {
     "name":"Shively Field",
@@ -16744,6 +17840,14 @@
     "query":"KSDF"
   },
   {
+    "name":"Scottsdale Airport",
+    "country":"US",
+    "city":"Scottsdale",
+    "icao":"KSDL",
+    "iata":"SCF",
+    "query":"SDL"
+  },
+  {
     "name":"Brown Field Municipal Airport",
     "country":"US",
     "city":"San Diego",
@@ -16808,6 +17912,14 @@
     "query":"SEP"
   },
   {
+    "name":"Sedona Airport",
+    "country":"US",
+    "city":"Sedona",
+    "icao":"KSEZ",
+    "iata":"SDX",
+    "query":"SEZ"
+  },
+  {
     "name":"Orlando Sanford International Airport",
     "country":"US",
     "city":"Orlando",
@@ -16862,6 +17974,14 @@
     "icao":"KSGH",
     "iata":"SGH",
     "query":"SGH"
+  },
+  {
+    "name":"Northeast Florida Regional Airport",
+    "country":"US",
+    "city":"St Augustine",
+    "icao":"KSGJ",
+    "iata":"UST",
+    "query":"SGJ"
   },
   {
     "name":"Sugar Land Regional Airport",
@@ -16976,6 +18096,14 @@
     "query":"SKF"
   },
   {
+    "name":"Taos Regional Airport",
+    "country":"US",
+    "city":"Taos",
+    "icao":"KSKX",
+    "iata":"TSM",
+    "query":"SKX"
+  },
+  {
     "name":"Storm Lake Municipal Airport",
     "country":"US",
     "city":"Storm Lake",
@@ -17078,6 +18206,14 @@
     "icao":"KSMO",
     "iata":"SMO",
     "query":"SMO"
+  },
+  {
+    "name":"Sumter Airport",
+    "country":"US",
+    "city":"Sumter",
+    "icao":"KSMS",
+    "iata":"SUM",
+    "query":"SMS"
   },
   {
     "name":"Santa Maria Public Airport Captain G Allan Hancock Field",
@@ -17222,6 +18358,14 @@
     "icao":"KSRQ",
     "iata":"SRQ",
     "query":"KSRQ"
+  },
+  {
+    "name":"Sierra Blanca Regional Airport",
+    "country":"US",
+    "city":"Alto",
+    "icao":"KSRR",
+    "iata":"RUI",
+    "query":"SRR"
   },
   {
     "name":"Shaw Air Force Base",
@@ -17390,6 +18534,14 @@
     "icao":"KSVN",
     "iata":"SVN",
     "query":"SVN"
+  },
+  {
+    "name":"South Valley Regional Airport",
+    "country":"US",
+    "city":"Salt Lake City",
+    "icao":"KSVR",
+    "iata":null,
+    "query":"SVR"
   },
   {
     "name":"New York Stewart International Airport",
@@ -17576,6 +18728,14 @@
     "query":"TIX"
   },
   {
+    "name":"Kennett Memorial Airport",
+    "country":"US",
+    "city":"Kennett",
+    "icao":"KTKX",
+    "iata":"KNT",
+    "query":"TKX"
+  },
+  {
     "name":"Tallahassee Regional Airport",
     "country":"US",
     "city":"Tallahassee",
@@ -17598,6 +18758,14 @@
     "icao":"KTMB",
     "iata":"TMB",
     "query":"TMB"
+  },
+  {
+    "name":"Tillamook Airport",
+    "country":"US",
+    "city":"Tillamook",
+    "icao":"KTMK",
+    "iata":"OTK",
+    "query":"TMK"
   },
   {
     "name":"Newton Municipal Airport",
@@ -17694,6 +18862,14 @@
     "icao":"KTRI",
     "iata":"TRI",
     "query":"KTRI"
+  },
+  {
+    "name":"Truckee Tahoe Airport",
+    "country":"US",
+    "city":"Truckee",
+    "icao":"KTRK",
+    "iata":"TKF",
+    "query":"TRK"
   },
   {
     "name":"Terrell Municipal Airport",
@@ -17808,6 +18984,14 @@
     "query":"KTXK"
   },
   {
+    "name":"Taylor Airport",
+    "country":"US",
+    "city":"Taylor",
+    "icao":"KTYL",
+    "iata":"TYZ",
+    "query":"TYL"
+  },
+  {
     "name":"Tyler Pounds Regional Airport",
     "country":"US",
     "city":"Tyler",
@@ -17864,6 +19048,14 @@
     "query":"KUIN"
   },
   {
+    "name":"Wilkes County Airport",
+    "country":"US",
+    "city":"North Wilkesboro",
+    "icao":"KUKF",
+    "iata":"IKB",
+    "query":"UKF"
+  },
+  {
     "name":"Ukiah Municipal Airport",
     "country":"US",
     "city":"Ukiah",
@@ -17888,12 +19080,28 @@
     "query":"ULM"
   },
   {
+    "name":"Ohio University Airport",
+    "country":"US",
+    "city":"Albany",
+    "icao":"KUNI",
+    "iata":"ATO",
+    "query":"UNI"
+  },
+  {
     "name":"Dodge County Airport",
     "country":"US",
     "city":"Juneau",
     "icao":"KUNU",
     "iata":"UNU",
     "query":"UNU"
+  },
+  {
+    "name":"State College Regional Airport",
+    "country":"US",
+    "city":"State College",
+    "icao":"KUNV",
+    "iata":"SCE",
+    "query":"UNV"
   },
   {
     "name":"University Oxford Airport",
@@ -17904,12 +19112,44 @@
     "query":"UOX"
   },
   {
+    "name":"Tunica Municipal Airport",
+    "country":"US",
+    "city":"Tunica",
+    "icao":"KUTA",
+    "iata":"UTM",
+    "query":"UTA"
+  },
+  {
+    "name":"Huntsville Regional Airport",
+    "country":"US",
+    "city":"Huntsville",
+    "icao":"KUTS",
+    "iata":"HTV",
+    "query":"UTS"
+  },
+  {
+    "name":"Newport State Airport",
+    "country":"US",
+    "city":"Newport",
+    "icao":"KUUU",
+    "iata":"NPT",
+    "query":"UUU"
+  },
+  {
     "name":"Garner Field",
     "country":"US",
     "city":"Uvalde",
     "icao":"KUVA",
     "iata":"UVA",
     "query":"UVA"
+  },
+  {
+    "name":"Rock Hill - York County Airport",
+    "country":"US",
+    "city":"Rock Hill",
+    "icao":"KUZA",
+    "iata":"RKH",
+    "query":"UZA"
   },
   {
     "name":"Moody Air Force Base",
@@ -17920,12 +19160,28 @@
     "query":"VAD"
   },
   {
+    "name":"South Jersey Regional Airport",
+    "country":"US",
+    "city":"Lumberton",
+    "icao":"KVAY",
+    "iata":"LLY",
+    "query":"VAY"
+  },
+  {
     "name":"Vandenberg Space Force Base",
     "country":"US",
     "city":"Lompoc",
     "icao":"KVBG",
     "iata":"VBG",
     "query":"KVBG"
+  },
+  {
+    "name":"Bentonville Municipal-Louise M Thaden Field",
+    "country":"US",
+    "city":"Bentonville",
+    "icao":"KVBT",
+    "iata":null,
+    "query":"VBT"
   },
   {
     "name":"Victoria Regional Airport",
@@ -20080,6 +21336,22 @@
     "query":"LIEO"
   },
   {
+    "name":"Oristano-Fenosu Airport",
+    "country":"IT",
+    "city":"Oristano",
+    "icao":"LIER",
+    "iata":"FNU",
+    "query":"OR01"
+  },
+  {
+    "name":"Varese-Venegono Airport",
+    "country":"IT",
+    "city":"Venegono Superiore (VA)",
+    "icao":"LILN",
+    "iata":null,
+    "query":"VA02"
+  },
+  {
     "name":"Milan Malpensa International Airport",
     "country":"IT",
     "city":"Ferno (VA)",
@@ -22054,6 +23326,14 @@
     "icao":"MMGM",
     "iata":"GYM",
     "query":"MMGM"
+  },
+  {
+    "name":"Guerrero Negro Airport",
+    "country":"MX",
+    "city":"San Quintín",
+    "icao":"MMGR",
+    "iata":"GUB",
+    "query":"GRN"
   },
   {
     "name":"General Ignacio P. Garcia International Airport",
@@ -27048,6 +28328,14 @@
     "query":"SARP"
   },
   {
+    "name":"Termal Airport",
+    "country":"AR",
+    "city":"Presidencia Roque Sáenz Peña",
+    "icao":"SARS",
+    "iata":"PRQ",
+    "query":"PSP"
+  },
+  {
     "name":"Martin Miguel De Guemes International Airport",
     "country":"AR",
     "city":"Salta",
@@ -27062,6 +28350,14 @@
     "icao":"SASJ",
     "iata":"JUJ",
     "query":"SASJ"
+  },
+  {
+    "name":"General Enrique Mosconi Airport",
+    "country":"AR",
+    "city":"Tartagal",
+    "icao":"SAST",
+    "iata":"TTG",
+    "query":"TAR"
   },
   {
     "name":"Aeródromo de Clorinda",
@@ -27080,12 +28376,28 @@
     "query":"ELO"
   },
   {
+    "name":"Mercedes Airport",
+    "country":"AR",
+    "city":"Mercedes",
+    "icao":"SATM",
+    "iata":"MDX",
+    "query":"RCE"
+  },
+  {
     "name":"Reconquista Airport",
     "country":"AR",
     "city":"Reconquista",
     "icao":"SATR",
     "iata":"RCQ",
     "query":"SATR"
+  },
+  {
+    "name":"Curuzu Cuatia Airport",
+    "country":"AR",
+    "city":"Curuzu Cuatia",
+    "icao":"SATU",
+    "iata":"UZU",
+    "query":"CCA"
   },
   {
     "name":"General E. Mosconi Airport",
@@ -27112,12 +28424,28 @@
     "query":"SAVE"
   },
   {
+    "name":"Antoine de Saint Exupéry Airport",
+    "country":"AR",
+    "city":"San Antonio Oeste",
+    "icao":"SAVN",
+    "iata":"OES",
+    "query":"SAN"
+  },
+  {
     "name":"D. Casimiro Szlapelis Airport",
     "country":"AR",
     "city":"Alto Rio Senguerr",
     "icao":"SAVR",
     "iata":"ARR",
     "query":"ARR"
+  },
+  {
+    "name":"Sierra Grande Airport",
+    "country":"AR",
+    "city":"Sierra Grande",
+    "icao":"SAVS",
+    "iata":"SGV",
+    "query":"SGR"
   },
   {
     "name":"Almirante Marco Andres Zar Airport",
@@ -27168,6 +28496,22 @@
     "query":"SAWH"
   },
   {
+    "name":"Capitan D Daniel Vazquez Airport",
+    "country":"AR",
+    "city":"San Julian",
+    "icao":"SAWJ",
+    "iata":"ULA",
+    "query":"SJU"
+  },
+  {
+    "name":"Rio Mayo Airport",
+    "country":"AR",
+    "city":"Rio Mayo",
+    "icao":"SAWM",
+    "iata":"ROY",
+    "query":"RMY"
+  },
+  {
     "name":"Comandante Espora Airport",
     "country":"AR",
     "city":"Bahía Blanca",
@@ -27176,12 +28520,28 @@
     "query":"SAZB"
   },
   {
+    "name":"Brigadier D.H.E. Ruiz Airport",
+    "country":"AR",
+    "city":"Coronel Suarez",
+    "icao":"SAZC",
+    "iata":"CSZ",
+    "query":"SUZ"
+  },
+  {
     "name":"General Pico Airport",
     "country":"AR",
     "city":"General Pico",
     "icao":"SAZG",
     "iata":"GPO",
     "query":"SAZG"
+  },
+  {
+    "name":"Santa Teresita Airport",
+    "country":"AR",
+    "city":"Santa Teresita",
+    "icao":"SAZL",
+    "iata":"SST",
+    "query":"STR"
   },
   {
     "name":"Ástor Piazzola International Airport",
@@ -28576,6 +29936,14 @@
     "query":"JUA"
   },
   {
+    "name":"Gomez Nino Apiay Air Base",
+    "country":"CO",
+    "city":"Apiay",
+    "icao":"SKAP",
+    "iata":"API",
+    "query":"APY"
+  },
+  {
     "name":"El Eden Airport",
     "country":"CO",
     "city":"Armenia",
@@ -28734,6 +30102,14 @@
     "icao":"SKIB",
     "iata":"IBE",
     "query":"SKIB"
+  },
+  {
+    "name":"La Primavera Airport",
+    "country":"CO",
+    "city":"La Primavera",
+    "icao":"SKIM",
+    "iata":"LPE",
+    "query":"PIM"
   },
   {
     "name":"San Luis Airport",
@@ -30606,6 +31982,14 @@
     "icao":"UIUU",
     "iata":"UUD",
     "query":"UIUU"
+  },
+  {
+    "name":"Simferopol International Airport",
+    "country":"UA",
+    "city":"Simferopol",
+    "icao":"UKFF",
+    "iata":"SIP",
+    "query":"URFF"
   },
   {
     "name":"Cherkasy International Airport",
@@ -33272,6 +34656,14 @@
     "query":"WIMN"
   },
   {
+    "name":"Lasondre Airport",
+    "country":"ID",
+    "city":"Pulau-Pulau Batu",
+    "icao":"WIMO",
+    "iata":null,
+    "query":"LSE"
+  },
+  {
     "name":"Supadio Airport",
     "country":"ID",
     "city":"Pontianak",
@@ -34696,11 +36088,11 @@
     "query":"ZYTX"
   },
   {
-    "name":"Dunsmuir Muni-Mott Airport",
+    "name":"Saguache Municipal Airport",
     "country":"US",
-    "city":"Dunsmuir",
+    "city":"Saguache",
     "icao":null,
-    "iata":"MHS",
-    "query":"MHS"
+    "iata":null,
+    "query":"04V"
   }
 ]

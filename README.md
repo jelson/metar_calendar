@@ -13,10 +13,11 @@ It generate a stacked bar chart, one bar for each hour of the day, color-coded b
 
 ### Example: Santa Monica vs Van Nuys in June
 
-![KSMO June weather prediction](website/frontend/assets/images/KSMO-06.png)
-
 I learned to fly in Santa Monica, which is near the coast and frequently subject to
 marine layers. The analyzer shows this:
+
+![KSMO June weather prediction](website/frontend/assets/images/KSMO-06.png)
+
 - At hour 0 UTC (5 PM local), VFR extends from 0 to 0.70, meaning 70% of days had VFR conditions
 - By hour 8 UTC (1 AM local), VFR drops to just 27%, with a 73% chance of marine layer
 - Worst hours are 13-14 UTC (6-7 AM local): only 22-27% VFR, with 73-78% marine layer

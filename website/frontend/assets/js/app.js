@@ -44,7 +44,13 @@
 
             setupEventListeners();
             setDefaultMonth();
-            searchInput.focus();
+
+            // Check for URL hash and load if present
+            if (window.location.hash) {
+                loadFromHash();
+            } else {
+                searchInput.focus();
+            }
         } catch (error) {
             console.error('Initialization error:', error);
             showError('Failed to load airport database. Please refresh the page.');
@@ -55,6 +61,40 @@
     function setDefaultMonth() {
         const currentMonth = new Date().getMonth() + 1;
         monthSelect.value = currentMonth;
+    }
+
+    // Load airport/month from URL hash (#KSMO/6)
+    function loadFromHash() {
+        const hash = window.location.hash.slice(1); // Remove #
+        const parts = hash.split('/');
+
+        if (parts.length !== 2) return;
+
+        const airportCode = parts[0].toUpperCase();
+        const month = parseInt(parts[1]);
+
+        if (!month || month < 1 || month > 12) return;
+
+        // Find airport by ICAO or IATA code
+        const airport = airports.find(a =>
+            a.icao === airportCode || a.iata === airportCode
+        );
+
+        if (!airport) return;
+
+        // Set month and airport
+        monthSelect.value = month;
+        selectedAirport = airport;
+        const displayText = `${airport.icao || airport.iata} - ${airport.name}`;
+        searchInput.value = displayText;
+
+        // Trigger search
+        searchForm.requestSubmit();
+    }
+
+    // Update URL hash when search is performed
+    function updateHash(airportCode, month) {
+        window.location.hash = `${airportCode}/${month}`;
     }
 
     // Setup event listeners
@@ -302,6 +342,10 @@
         const month = monthSelect.value;
         const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June',
                            'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // Update URL hash for shareability
+        const airportCode = selectedAirport.icao || selectedAirport.iata;
+        updateHash(airportCode, month);
 
         // Show loading state
         hideError();

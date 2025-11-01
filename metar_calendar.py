@@ -55,7 +55,7 @@ class OgimetFetcher:
         metars = []
         for line in resp.iter_lines():
             line = line.decode('utf8', errors='ignore')
-            mo = re.search('^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d) (METAR|SPECI)(.*)(=)$', line)
+            mo = re.search(r'^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d) (METAR|SPECI)(.*)(=)$', line)
             if mo:
                 dates.append(datetime.datetime(
                     year=int(mo.group(1)),
@@ -194,12 +194,34 @@ def get_hourly_for_month(df, month):
     hourly.index = hourly.index.rename('UTC hour')
     hourly = hourly.rename({r.value: r.name for r in FlightCondition}, axis=1)
 
+    # Reverse column order so VFR is on bottom (plotly stacks left to right)
+    hourly = hourly[['VFR', 'MVFR', 'IFR', 'LIFR']]
+
     return hourly
+
+def print_hourly_table(hourly, airport, monthname):
+    """Print the hourly data as a text table"""
+    print(f"\n{airport}, {monthname}")
+    print("=" * 80)
+    print(f"{'Hour':>4} {'VFR':>6} {'MVFR':>6} {'IFR':>6} {'LIFR':>6}")
+    print("-" * 80)
+    for hour in range(24):
+        vfr = hourly.loc[hour, 'VFR'] if hour in hourly.index else 0
+        mvfr = hourly.loc[hour, 'MVFR'] if hour in hourly.index else 0
+        ifr = hourly.loc[hour, 'IFR'] if hour in hourly.index else 0
+        lifr = hourly.loc[hour, 'LIFR'] if hour in hourly.index else 0
+        print(f"{hour:4d} {vfr:6.2%} {mvfr:6.2%} {ifr:6.2%} {lifr:6.2%}")
+    print("=" * 80)
 
 def draw_graph(args, hourly):
     airport = args.airport.upper()
     monthname = calendar.month_name[args.month]
     say(f'Plotting {airport} for {monthname}')
+
+    # Print text table if requested
+    if args.print_table:
+        print_hourly_table(hourly, airport, monthname)
+
     fig = px.bar(
         hourly,
         width=800,
@@ -236,6 +258,11 @@ def get_args():
         '-o', '--output',
         help='Output filename; default is <airport>-<month>.png',
         type=str,
+    )
+    parser.add_argument(
+        '--print-table',
+        help='Print hourly statistics table to stdout',
+        action='store_true',
     )
     return parser.parse_args()
     

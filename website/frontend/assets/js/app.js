@@ -61,7 +61,11 @@
     function setupEventListeners() {
         // Search input
         searchInput.addEventListener('input', handleInput);
-        searchInput.addEventListener('focus', handleInput);
+        searchInput.addEventListener('click', (e) => {
+            e.target.value = '';
+            selectedAirport = null;
+            hideDropdown();
+        });
         searchInput.addEventListener('blur', handleBlur);
         searchInput.addEventListener('keydown', handleKeyDown);
 
@@ -159,6 +163,11 @@
         });
 
         showDropdown();
+
+        // Set first item as focused
+        if (results.length > 0) {
+            setFocusedItem(0);
+        }
     }
 
     // Create result item element
@@ -253,6 +262,9 @@
         searchInput.value = displayText;
 
         hideDropdown();
+
+        // Auto-submit the form
+        searchForm.requestSubmit();
     }
 
     // Handle blur event
@@ -333,7 +345,7 @@
     // Display weather data as interactive Plotly chart
     function displayWeatherChart(data, airport, monthName) {
         const resultImage = document.getElementById('resultImage');
-        resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 500px;"></div>';
+        resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
 
         // Extract hours and data for each flight condition
         const hours = [];
@@ -394,23 +406,40 @@
             }
         ];
 
+        // Detect mobile viewport
+        const isMobile = window.innerWidth < 768;
+
         // Layout configuration
         const layout = {
             barmode: 'stack',
+            height: isMobile ? 300 : 400,
             xaxis: {
-                title: 'UTC hour',
+                title: {
+                    text: 'UTC hour',
+                    standoff: 10
+                },
                 dtick: 1,
-                range: [-0.5, 23.5]
+                range: [-0.5, 23.5],
+                fixedrange: true
             },
             yaxis: {
-                title: 'Fraction of Days',
-                tickformat: '.0%'
+                title: isMobile ? '' : {
+                    text: 'Fraction of Days',
+                    standoff: 10
+                },
+                tickformat: '.0%',
+                fixedrange: true
             },
             legend: {
-                traceorder: 'reversed'
+                traceorder: 'reversed',
+                orientation: 'h',
+                x: 0.5,
+                xanchor: 'center',
+                y: 1.02,
+                yanchor: 'bottom'
             },
             hovermode: 'closest',
-            margin: { l: 60, r: 10, t: 20, b: 60 }
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 40, b: 70 }
         };
 
         // Render the chart with full width

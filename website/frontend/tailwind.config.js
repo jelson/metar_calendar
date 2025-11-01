@@ -5,6 +5,8 @@ module.exports = {
     './_includes/**/*.html',
     './*.html',
     './*.md',
+    './root-pages/**/*.{html,md}',
+    './metars/**/*.html',
     './assets/**/*.js'
   ],
   theme: {

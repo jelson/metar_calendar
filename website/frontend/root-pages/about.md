@@ -27,7 +27,7 @@ Van Nuys Airport (KVNY) was often our planned alternate. Even though it's just 1
 
 ![KVNY June weather prediction](/assets/images/KVNY-06.png)
 
-**KVNY in June** shows substantially better conditions. The best chance at <span class="vfr">VFR</span> is from 19 UTC through 6 UTC (noon through 11 PM local) at 79-93%. The marine layer affects KVNY from 7-16 UTC (midnight-9 AM local), but is noticeably lighter than KSMO. At the worst hours (13-14 UTC / 6-7 AM local), <span class="vfr">VFR</span> is still 38-39% likely with a 61-62% marine layer (29-30% <span class="mvfr">MVFR</span>, 22% <span class="ifr">IFR</span>, and 10% <span class="lifr">LIFR</span>)—significantly better than KSMO's 22-27% <span class="vfr">VFR</span> and 73-78% marine layer at the same hours. This validates what we knew from experience: when KSMO was socked in, KVNY was usually a safe bet.
+**KVNY in June** shows substantially better conditions. The best chance at <span class="vfr">VFR</span> is from 19 UTC through 6 UTC (noon through 11 PM local) at 79-93%. The marine layer affects KVNY from 7-16 UTC (midnight-9 AM local), but is noticeably lighter than KSMO. At the worst hours (13-14 UTC / 6-7 AM local), <span class="vfr">VFR</span> is still about 40% likely—significantly better than KSMO's ~25% chance at <span class="vfr">VFR</span> at the same hours. This validates the local wisdom that when KSMO is socked in, KVNY is usually a safe bet.
 
 Of course, the best way to escape June Gloom at Santa Monica is not to divert to Van Nuys, but to wait until August:
 

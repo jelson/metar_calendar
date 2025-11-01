@@ -59,6 +59,18 @@ def create_app(dev_mode=False):
     return api, conf
 
 
+# "application" is the magic function called by uwsgi
+def application(environ, start_response):
+    api, conf = create_app(dev_mode=False)
+    cherrypy.tree.mount(api, '/', conf)
+    cherrypy.config.update({
+        'log.screen': True,
+        'environment': 'production',
+        'tools.proxy.on': True,
+    })
+    return cherrypy.tree(environ, start_response)
+
+
 if __name__ == '__main__':
     # Running directly - use development mode
     api, conf = create_app(dev_mode=True)

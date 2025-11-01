@@ -307,8 +307,8 @@
         searchInput.blur();
 
         try {
-            // Call the API
-            const airportCode = selectedAirport.icao || selectedAirport.iata;
+            // Call the API using the 'query' field (which contains the correct identifier for IEM)
+            const airportCode = selectedAirport.query || selectedAirport.icao || selectedAirport.iata;
             const url = `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(airportCode)}&month=${month}`;
 
             const response = await fetch(url);

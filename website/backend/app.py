@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from lib.analyzer import METARAnalyzer  # noqa: E402
 from lib.visualizer import METARVisualizer  # noqa: E402
+from lib.utils import say  # noqa: E402
 
 # Host configuration
 PRODUCTION_FRONTEND = 'https://www.avmapper.com'
@@ -29,8 +30,10 @@ class MetarAPI:
 
             analyzer = METARAnalyzer(airport_code)
             hourly = analyzer.get_hourly_statistics(month)
+
             return METARVisualizer.to_dict(hourly)
         except Exception as e:
+            say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
             cherrypy.response.status = 400
             return {'error': str(e)}
 
@@ -81,10 +84,7 @@ if __name__ == '__main__':
         'server.socket_port': 5000,
     })
 
-    print(f"Starting METAR API server in DEVELOPMENT mode")
-    print(f"  Backend: http://localhost:5000")
-    print(f"  CORS allowed origin: {api.frontend_origin}")
-    print(f"  Example: curl 'http://localhost:5000/api/statistics?airport_code=KSMO&month=6'")
+    say("Starting METAR API server in DEVELOPMENT mode")
 
     cherrypy.engine.start()
     cherrypy.engine.block()

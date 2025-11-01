@@ -1,7 +1,6 @@
 import datetime
 import io
 import os
-import sys
 
 import appdirs
 import pandas as pd
@@ -10,11 +9,7 @@ import requests
 from dateutil.relativedelta import relativedelta
 from enum import IntEnum
 
-
-def say(s):
-    d = datetime.datetime.now().replace(microsecond=0)
-    sys.stderr.write(f'{d}: {str(s)}\n')
-    sys.stderr.flush()
+from lib.utils import say
 
 
 class FlightCondition(IntEnum):
@@ -44,7 +39,7 @@ class MetarArchive:
         say(f'Fetching data for {self.code}')
 
         url = 'https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py'
-        resp = requests.get(url, params={
+        params = {
             'station': self.code,
             'data': 'all',
             'year1': start_date.year,
@@ -61,15 +56,19 @@ class MetarArchive:
             'trace': 'T',
             'direct': 'no',
             'report_type': [3, 4],
-        })
+        }
 
+        resp = requests.get(url, params=params)
         resp.raise_for_status()
 
         df = pd.read_csv(io.StringIO(resp.content.decode('utf8', errors='ignore')))
+
         df = df.rename({'valid': 'date'}, axis=1)
         df = df.sort_values('date').reset_index(drop=True)
         df['date'] = df['date'].apply(lambda d: datetime.datetime.strptime(
             d, "%Y-%m-%d %H:%M").replace(tzinfo=pytz.UTC))
+
+        say(f'Fetched {len(df)} rows from {df["date"].min()} to {df["date"].max()}')
         return df
 
     def get_dataframe(self, force=False):
@@ -137,6 +136,11 @@ class METARAnalyzer:
         # Rename the axes
         hourly.index = hourly.index.rename('UTC hour')
         hourly = hourly.rename({r.value: r.name for r in FlightCondition}, axis=1)
+
+        # Ensure all flight condition columns exist (add missing ones with zeros)
+        for condition in ['VFR', 'MVFR', 'IFR', 'LIFR']:
+            if condition not in hourly.columns:
+                hourly[condition] = 0.0
 
         # Reverse column order so VFR is on bottom (plotly stacks left to right)
         hourly = hourly[['VFR', 'MVFR', 'IFR', 'LIFR']]

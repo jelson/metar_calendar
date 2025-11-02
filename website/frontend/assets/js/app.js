@@ -295,11 +295,9 @@
                 e.preventDefault();
                 if (currentFocusIndex >= 0 && currentResults[currentFocusIndex]) {
                     selectAirport(currentResults[currentFocusIndex].item);
-                    searchForm.requestSubmit();
                 } else if (currentResults.length > 0) {
                     // If no item is focused but there are results, select the first one
                     selectAirport(currentResults[0].item);
-                    searchForm.requestSubmit();
                 }
                 break;
 

@@ -397,23 +397,25 @@
                 throw new Error(data.error);
             }
 
-            // Hide loading state
-            loadingState.classList.add('hidden');
-
             // Update result title with airport code (ICAO preferred, or IATA)
             const displayCode = selectedAirport.icao || selectedAirport.iata;
             resultTitle.textContent = `${monthNames[month]} at ${displayCode} (${selectedAirport.name})`;
 
-            // Show result display first
+            // Clear old chart immediately to prevent flash
+            const resultImage = document.getElementById('resultImage');
+            resultImage.innerHTML = '';
+
+            // Hide loading state and show result display
+            loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
 
             // Scroll to results
             resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-            // Display the chart after container is visible and sized
-            setTimeout(() => {
+            // Render chart after container is visible and sized (using requestAnimationFrame instead of setTimeout)
+            requestAnimationFrame(() => {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
-            }, 0);
+            });
         } catch (error) {
             loadingState.classList.add('hidden');
             console.error('API error:', error);
@@ -424,6 +426,8 @@
     // Display weather data as interactive Plotly chart
     function displayWeatherChart(data, airport, monthName) {
         const resultImage = document.getElementById('resultImage');
+
+        // Create chart container
         resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
 
         // Extract hours and data for each flight condition

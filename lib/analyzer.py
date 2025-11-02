@@ -34,7 +34,7 @@ class MetarArchive:
         return fn
 
     def _fetch(self):
-        end_date = datetime.datetime.utcnow()
+        end_date = datetime.datetime.now(datetime.UTC)
         start_date = end_date - relativedelta(months=self.NUM_MONTHS)
         say(f'Fetching data for {self.code}')
 

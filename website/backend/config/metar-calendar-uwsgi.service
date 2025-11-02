@@ -1,0 +1,13 @@
+[Unit]
+Description=METAR Calendar API
+StartLimitIntervalSec=0
+
+[Service]
+Restart=always
+RestartSec=30
+WorkingDirectory=/home/jelson/projects/metar_calendar/website/backend/config
+ExecStart=/home/jelson/miniforge3/envs/avmapper/bin/uwsgi --ini ./uwsgi.conf
+User=jelson
+
+[Install]
+WantedBy=multi-user.target

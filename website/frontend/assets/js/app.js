@@ -87,17 +87,9 @@
 
         if (!airport) return;
 
-        // Set month and airport
+        // Set month and select the airport (which will trigger the search)
         monthSelect.value = month;
-        selectedAirport = airport;
-        const displayText = `${airport.icao || airport.iata} - ${airport.name}`;
-        searchInput.value = displayText;
-
-        // Show mobile month navigation
-        mobileMonthNav.classList.remove('hidden');
-
-        // Trigger search
-        searchForm.requestSubmit();
+        selectAirport(airport);
     }
 
     // Update URL hash when search is performed

@@ -52,21 +52,3 @@ class METARVisualizer:
 
         lines.append("=" * 80)
         return '\n'.join(lines)
-
-    @staticmethod
-    def to_dict(hourly_df: pd.DataFrame) -> dict:
-        airport = hourly_df.attrs.get('airport')
-        month = hourly_df.attrs.get('month')
-        return {
-            'airport': airport,
-            'month': month,
-            'hourly_stats': {
-                int(hour): {
-                    'VFR': float(row['VFR']),
-                    'MVFR': float(row['MVFR']),
-                    'IFR': float(row['IFR']),
-                    'LIFR': float(row['LIFR']),
-                }
-                for hour, row in hourly_df.iterrows()
-            }
-        }

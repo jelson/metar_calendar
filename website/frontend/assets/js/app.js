@@ -97,7 +97,6 @@
         window.location.hash = `${airportCode}/${month}`;
     }
 
-    // Setup event listeners
     function setupEventListeners() {
         // Search input
         searchInput.addEventListener('input', handleInput);
@@ -415,7 +414,7 @@
             loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
 
-            // Render chart after container is visible and sized (using requestAnimationFrame instead of setTimeout)
+            // Render chart after container is visible and sized
             requestAnimationFrame(() => {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
                 // Scroll to results after chart is rendered to ensure whole chart is visible

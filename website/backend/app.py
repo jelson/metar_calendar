@@ -7,7 +7,6 @@ import cherrypy
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from lib.analyzer import METARAnalyzer  # noqa: E402
-from lib.visualizer import METARVisualizer  # noqa: E402
 from lib.utils import say  # noqa: E402
 
 # Host configuration
@@ -32,7 +31,20 @@ class MetarAPI:
             analyzer = METARAnalyzer(airport_code)
             hourly = analyzer.get_hourly_statistics(month)
 
-            return METARVisualizer.to_dict(hourly)
+            # Convert DataFrame to JSON-serializable dict
+            return {
+                'airport': hourly.attrs.get('airport'),
+                'month': hourly.attrs.get('month'),
+                'hourly_stats': {
+                    int(hour): {
+                        'VFR': float(row['VFR']),
+                        'MVFR': float(row['MVFR']),
+                        'IFR': float(row['IFR']),
+                        'LIFR': float(row['LIFR']),
+                    }
+                    for hour, row in hourly.iterrows()
+                }
+            }
         except Exception as e:
             say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
             traceback.print_exc()

@@ -63,10 +63,27 @@ class MetarArchive:
 
         df = pd.read_csv(io.StringIO(resp.content.decode('utf8', errors='ignore')))
 
+        # Rename and parse date column
         df = df.rename({'valid': 'date'}, axis=1)
         df = df.sort_values('date').reset_index(drop=True)
         df['date'] = df['date'].apply(lambda d: datetime.datetime.strptime(
             d, "%Y-%m-%d %H:%M").replace(tzinfo=pytz.UTC))
+
+        # Keep only columns we need for flight rule classification
+        needed_cols = ['date', 'vsby', 'skyc1', 'skyc2', 'skyc3', 'skyc4',
+                      'skyl1', 'skyl2', 'skyl3', 'skyl4']
+        existing_cols = [col for col in needed_cols if col in df.columns]
+        df = df[existing_cols]
+
+        # Convert visibility and sky levels to numeric (coerce errors to NaN)
+        for col in ['vsby', 'skyl1', 'skyl2', 'skyl3', 'skyl4']:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        # Convert sky condition codes to strings to avoid any mixed type issues
+        for col in ['skyc1', 'skyc2', 'skyc3', 'skyc4']:
+            if col in df.columns:
+                df[col] = df[col].astype(str)
 
         say(f'Fetched {len(df)} rows from {df["date"].min()} to {df["date"].max()}')
         return df

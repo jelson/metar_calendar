@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 
 import cherrypy
 
@@ -34,6 +35,7 @@ class MetarAPI:
             return METARVisualizer.to_dict(hourly)
         except Exception as e:
             say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
+            traceback.print_exc()
             cherrypy.response.status = 400
             return {'error': str(e)}
 

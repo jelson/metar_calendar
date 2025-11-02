@@ -409,12 +409,13 @@
             loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
 
-            // Scroll to results
-            resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
             // Render chart after container is visible and sized (using requestAnimationFrame instead of setTimeout)
             requestAnimationFrame(() => {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
+                // Scroll to results after chart is rendered to ensure whole chart is visible
+                requestAnimationFrame(() => {
+                    resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
             });
         } catch (error) {
             loadingState.classList.add('hidden');

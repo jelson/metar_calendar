@@ -132,7 +132,10 @@ class METARAnalyzer:
 
     def _get_hourly_for_month(self, df, month):
         # Find just observations from the requested month
-        df = df.loc[df['date'].dt.month == month]
+        df = df.loc[df['date'].dt.month == month].copy()
+
+        # Annotate each observation with its flight rule
+        self._annotate_with_flightrule(df)
 
         # Move all timestamps forward by 10 minutes, so that an observation at 17:53
         # counts as the weather for 18:00.
@@ -166,7 +169,6 @@ class METARAnalyzer:
 
     def get_hourly_statistics(self, month: int, force_refresh: bool = False) -> pd.DataFrame:
         df = self._archive.get_dataframe(force=force_refresh)
-        self._annotate_with_flightrule(df)
         hourly = self._get_hourly_for_month(df, month)
 
         hourly.attrs['airport'] = self.airport_code

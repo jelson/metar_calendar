@@ -375,6 +375,11 @@
 
         // Show loading state
         hideError();
+        // Preserve height to prevent page jump when switching to loading state
+        const currentHeight = resultDisplay.offsetHeight;
+        if (currentHeight > 0) {
+            loadingState.style.minHeight = `${currentHeight}px`;
+        }
         resultDisplay.classList.add('hidden');
         loadingState.classList.remove('hidden');
 
@@ -406,6 +411,7 @@
             resultImage.innerHTML = '';
 
             // Hide loading state and show result display
+            loadingState.style.minHeight = '';
             loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
 

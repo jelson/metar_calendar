@@ -2,11 +2,13 @@ import os
 import sys
 import traceback
 
+import appdirs
 import cherrypy
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from lib.analyzer import METARAnalyzer  # noqa: E402
+from lib.storage import LocalFileStorage  # noqa: E402
 from lib.utils import say  # noqa: E402
 
 # Host configuration
@@ -19,6 +21,10 @@ class MetarAPI:
         self.dev_mode = dev_mode
         self.frontend_origin = DEV_FRONTEND if dev_mode else PRODUCTION_FRONTEND
 
+        # Create storage with local file storage
+        cache_dir = appdirs.user_cache_dir("metar_calendar")
+        self.storage = LocalFileStorage(cache_dir)
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def statistics(self, airport_code, month):
@@ -28,7 +34,7 @@ class MetarAPI:
             if not (1 <= month <= 12):
                 raise ValueError("Month must be between 1 and 12")
 
-            analyzer = METARAnalyzer(airport_code)
+            analyzer = METARAnalyzer(airport_code, self.storage)
             hourly = analyzer.get_hourly_statistics(month)
 
             # Convert DataFrame to JSON-serializable dict

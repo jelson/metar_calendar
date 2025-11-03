@@ -112,7 +112,7 @@ class MetarSummarizer:
             DataFrame indexed by day and hour with columns: vsby, ceiling
         """
         airport = airport.upper().strip()
-        cache_key = f"{airport}_summarized.parquet"
+        cache_key = f"{airport}.summarized.parquet"
 
         def compute_and_serialize() -> bytes:
             """Compute the summary and serialize to parquet bytes."""

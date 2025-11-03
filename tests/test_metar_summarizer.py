@@ -93,8 +93,8 @@ class TestMetarSummarizer:
         assert mock_requests.call_count == 2
 
         # Verify separate cache files exist
-        assert cache.storage.get("KPAO_summarized.parquet") is not None
-        assert cache.storage.get("KMSN_summarized.parquet") is not None
+        assert cache.storage.get("KPAO.summarized.parquet") is not None
+        assert cache.storage.get("KMSN.summarized.parquet") is not None
 
         # Fetch again - should hit cache
         df1_cached = summarizer.get("KPAO")
@@ -118,7 +118,7 @@ class TestMetarSummarizer:
         df1 = summarizer.get("  kpao  ")
 
         # Verify cache key was normalized
-        assert cache.storage.get("KPAO_summarized.parquet") is not None
+        assert cache.storage.get("KPAO.summarized.parquet") is not None
 
         # Fetch with normalized code should hit same cache
         df2 = summarizer.get("KPAO")

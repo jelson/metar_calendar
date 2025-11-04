@@ -13,7 +13,7 @@ title: Home
         </p>
     </div>
 
-    <div class="max-w-3xl mx-auto backdrop-blur-card rounded-xl card-enhanced p-6 md:p-8 relative z-50">
+    <div id="searchCard" class="hidden max-w-3xl mx-auto backdrop-blur-card rounded-xl card-enhanced p-6 md:p-8 relative z-50">
         <form id="searchForm" class="space-y-4 md:space-y-6">
             <div class="flex flex-col md:flex-row gap-4 md:items-end">
                 <div class="w-full md:w-52">
@@ -84,7 +84,7 @@ title: Home
 
 <section class="container mx-auto px-4 py-1 md:py-1 pb-8">
     <div class="max-w-4xl mx-auto">
-        <div id="loadingState" class="hidden text-center py-12">
+        <div id="loadingState" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             <p class="mt-4 text-gray-600">Loading...</p>
         </div>

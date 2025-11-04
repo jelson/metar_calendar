@@ -13,6 +13,7 @@
     const searchInput = document.getElementById('airportSearch');
     const dropdown = document.getElementById('autocompleteDropdown');
     const monthSelect = document.getElementById('monthSelect');
+    const searchCard = document.getElementById('searchCard');
     const searchForm = document.getElementById('searchForm');
     const loadingState = document.getElementById('loadingState');
     const resultDisplay = document.getElementById('resultDisplay');
@@ -49,6 +50,10 @@
             setupEventListeners();
             setDefaultMonth();
 
+            // Hide loading state and show search card now that we're ready
+            loadingState.classList.add('hidden');
+            searchCard.classList.remove('hidden');
+
             // Check for URL hash and load if present
             if (window.location.hash) {
                 loadFromHash();
@@ -57,6 +62,8 @@
             }
         } catch (error) {
             console.error('Initialization error:', error);
+            loadingState.classList.add('hidden');
+            searchCard.classList.remove('hidden');
             showError('Failed to load airport database. Please refresh the page.');
         }
     }

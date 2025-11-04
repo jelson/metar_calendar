@@ -29,7 +29,7 @@
     async function init() {
         try {
             // Load airport data
-            const response = await fetch('/assets/data/airports_v2.json');
+            const response = await fetch('/assets/data/airports_v3.json');
             if (!response.ok) throw new Error('Failed to load airport data');
             airports = await response.json();
 
@@ -38,7 +38,7 @@
                 keys: [
                     { name: 'codes', weight: 0.4 },
                     { name: 'name', weight: 0.3 },
-                    { name: 'city', weight: 0.3 }
+                    { name: 'location', weight: 0.3 }
                 ],
                 threshold: 0.4,
                 includeScore: true,
@@ -94,14 +94,18 @@
         history.replaceState(null, '', `#${display}/${month}`);
     }
 
+    // Clear search input and reset state
+    function clearSearchInput() {
+        searchInput.value = '';
+        selectedAirport = null;
+        hideDropdown();
+        searchInput.focus();
+    }
+
     function setupEventListeners() {
         // Search input
         searchInput.addEventListener('input', handleInput);
-        searchInput.addEventListener('click', (e) => {
-            e.target.value = '';
-            selectedAirport = null;
-            hideDropdown();
-        });
+        searchInput.addEventListener('click', clearSearchInput);
         searchInput.addEventListener('blur', handleBlur);
         searchInput.addEventListener('keydown', handleKeyDown);
 
@@ -120,6 +124,14 @@
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                 hideDropdown();
+            }
+        });
+
+        // Global slash key to clear and focus search input
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                clearSearchInput();
             }
         });
     }
@@ -144,6 +156,9 @@
     // Handle input changes
     function handleInput(e) {
         const query = e.target.value.trim();
+
+        // Reset focus index whenever user types
+        currentFocusIndex = -1;
 
         if (query.length === 0) {
             hideDropdown();
@@ -192,12 +207,12 @@
             else if (airport.name?.toLowerCase().includes(query.toLowerCase())) {
                 customScore = 0.3;
             }
-            // City starts with query
-            else if (airport.city?.toLowerCase().startsWith(query.toLowerCase())) {
+            // Location starts with query
+            else if (airport.location?.toLowerCase().startsWith(query.toLowerCase())) {
                 customScore = 0.4;
             }
-            // Substring match in city
-            else if (airport.city?.toLowerCase().includes(query.toLowerCase())) {
+            // Substring match in location
+            else if (airport.location?.toLowerCase().includes(query.toLowerCase())) {
                 customScore = 0.5;
             }
             // Fuzzy match (fallback) - add offset to ensure it's lower priority than all exact matches
@@ -251,11 +266,7 @@
         div.dataset.index = index;
 
         const codes = airport.codes ? airport.codes.join(' / ') : '';
-
-        // Format location: "City, Country" or just "Country" if no city
-        const location = airport.city
-            ? `${escapeHtml(airport.city)}, ${escapeHtml(airport.country)}`
-            : escapeHtml(airport.country);
+        const location = airport.location ? escapeHtml(airport.location) : '';
 
         div.innerHTML = `
             <div class="flex justify-between items-center gap-4">

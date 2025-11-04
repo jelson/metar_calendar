@@ -5,10 +5,11 @@ Convert OurAirports CSV data to simplified JSON format for web autocomplete.
 Filters airports to only include those with METAR data available from IEM.
 Cross-references OurAirports data with IEM station list using lat/lon proximity (0.1 degrees).
 
-Output fields: display, codes, name, city, country, query
+Output fields: display, codes, name, location, query
 - display: the airport's ident field (unique identifier for display/URLs)
 - query: the IEM station identifier to use when querying IEM API (closest match by distance)
 - codes: array of all unique codes (ident, icao_code, iata_code, local_code, gps_code)
+- location: formatted string "Municipality, Region, Country Code" (parts omitted if not available)
 """
 
 import pandas as pd
@@ -21,7 +22,7 @@ OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.cs
 IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network=_ALL_&format=csv&nohtml=on'
 
 # Output path
-OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v2.json'
+OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v3.json'
 
 
 def fetch_iem_stations():
@@ -67,16 +68,10 @@ def convert_airports():
 
     df = pd.read_csv(StringIO(response.text), usecols=[
         'ident', 'icao_code', 'iata_code', 'local_code', 'gps_code',
-        'name', 'municipality', 'iso_country', 'latitude_deg', 'longitude_deg'
+        'name', 'municipality', 'iso_region', 'iso_country', 'latitude_deg', 'longitude_deg'
     ])
 
     print(f"Total airports in OurAirports database: {len(df)}")
-
-    # Rename columns to match output format
-    df = df.rename(columns={
-        'municipality': 'city',
-        'iso_country': 'country'
-    })
 
     # Strip whitespace
     df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
@@ -162,21 +157,43 @@ def convert_airports():
     # Add 'display' field using ident (uppercase)
     df['display'] = df['ident'].str.strip().str.upper()
 
+    # Create 'location' field: "Municipality, Region, Country Code"
+    def create_location(row):
+        parts = []
+
+        # Add municipality if available
+        if pd.notna(row['municipality']) and row['municipality']:
+            parts.append(row['municipality'])
+
+        # Parse iso_region to get region (after the dash)
+        if pd.notna(row['iso_region']) and row['iso_region']:
+            region_parts = row['iso_region'].split('-', 1)
+            if len(region_parts) == 2 and region_parts[1]:
+                parts.append(region_parts[1])
+
+        # Add country code
+        if pd.notna(row['iso_country']) and row['iso_country']:
+            parts.append(row['iso_country'])
+
+        return ', '.join(parts) if parts else ''
+
+    df['location'] = df.apply(create_location, axis=1)
+
     # Keep only the columns we need for output
-    df = df[['display', 'codes', 'name', 'city', 'country', 'query']]
+    df = df[['display', 'codes', 'name', 'location', 'query']]
 
     print(f"Airports with IEM METAR data: {len(df)}")
 
     # Check for duplicate display codes - this should never happen
     if df['display'].duplicated().any():
-        duplicates = df[df['display'].duplicated(keep=False)][['display', 'name', 'city', 'country']]
+        duplicates = df[df['display'].duplicated(keep=False)][['display', 'name', 'location']]
         print("\nERROR: Multiple airports have the same ident!")
         print(duplicates.to_string())
         raise ValueError(f"Found {df['display'].duplicated().sum()} duplicate display codes - data integrity failure")
 
     # Check for duplicate query codes - this should never happen
     if df['query'].duplicated().any():
-        duplicates = df[df['query'].duplicated(keep=False)][['query', 'name', 'city', 'country']]
+        duplicates = df[df['query'].duplicated(keep=False)][['query', 'name', 'location']]
         print("\nERROR: Multiple airports matched to the same IEM station!")
         print(duplicates.to_string())
         raise ValueError(f"Found {df['query'].duplicated().sum()} duplicate query codes - data integrity failure")

@@ -3,18 +3,18 @@
 Convert OurAirports CSV data to simplified JSON format for web autocomplete.
 
 Filters airports to only include those with METAR data available from IEM.
-Cross-references OurAirports data with IEM station list.
+Cross-references OurAirports data with IEM station list using lat/lon proximity (0.1 degrees).
 
 Output fields: display, codes, name, city, country, query
 - display: the airport's ident field (unique identifier for display/URLs)
-- query: the identifier to use when querying IEM API
+- query: the IEM station identifier to use when querying IEM API (closest match by distance)
 - codes: array of all unique codes (ident, icao_code, iata_code, local_code, gps_code)
-- Matching priority for query: 1) ident, 2) icao_code, 3) iata_code, 4) local_code, 5) gps_code
 """
 
 import pandas as pd
 from pathlib import Path
 import requests
+from io import StringIO
 
 # URLs
 OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.csv'
@@ -31,7 +31,6 @@ def fetch_iem_stations():
     response.raise_for_status()
 
     # Parse CSV from response
-    from io import StringIO
     iem_df = pd.read_csv(StringIO(response.text))
 
     print(f"Found {len(iem_df)} IEM stations")
@@ -66,7 +65,6 @@ def convert_airports():
     response = requests.get(OURAIRPORTS_URL, timeout=30)
     response.raise_for_status()
 
-    from io import StringIO
     df = pd.read_csv(StringIO(response.text), usecols=[
         'ident', 'icao_code', 'iata_code', 'local_code', 'gps_code',
         'name', 'municipality', 'iso_country', 'latitude_deg', 'longitude_deg'
@@ -76,8 +74,6 @@ def convert_airports():
 
     # Rename columns to match output format
     df = df.rename(columns={
-        'icao_code': 'icao',
-        'iata_code': 'iata',
         'municipality': 'city',
         'iso_country': 'country'
     })
@@ -89,12 +85,11 @@ def convert_airports():
     df = df.replace('', None)
 
     # Cross-reference with IEM stations using lat/lon proximity (within 0.1 degrees)
-    # Priority order: 1) ident, 2) icao, 3) iata, 4) local_code, 5) gps_code
     print("Matching airports to IEM stations with location check...")
 
     df['ident_upper'] = df['ident'].str.upper()
-    df['icao_upper'] = df['icao'].str.upper()
-    df['iata_upper'] = df['iata'].str.upper()
+    df['icao_upper'] = df['icao_code'].str.upper()
+    df['iata_upper'] = df['iata_code'].str.upper()
     df['local_upper'] = df['local_code'].str.upper()
     df['gps_upper'] = df['gps_code'].str.upper()
 
@@ -153,7 +148,7 @@ def convert_airports():
     # Create 'codes' array with all unique codes for each airport
     def create_codes_array(row):
         codes = []
-        for col in ['ident', 'icao', 'iata', 'local_code', 'gps_code']:
+        for col in ['ident', 'icao_code', 'iata_code', 'local_code', 'gps_code']:
             if pd.notna(row[col]) and row[col]:
                 code = row[col].strip().upper()
                 if code and code not in codes:

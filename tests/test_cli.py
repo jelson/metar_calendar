@@ -3,7 +3,12 @@ import sys
 import tempfile
 import pytest
 from unittest.mock import patch
-from .test_utils import get_test_airports, mock_requests_get
+from .test_utils import (
+    FLIGHT_CONDITIONS,
+    assert_valid_png,
+    get_test_airports,
+    mock_requests_get,
+)
 
 # Import the CLI module
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -29,10 +34,7 @@ class TestCLI:
             # Verify file was written with standard naming
             expected_file = os.path.join(tmpdir, f'{airport}-06.png')
             assert os.path.exists(expected_file)
-            with open(expected_file, 'rb') as f:
-                png_data = f.read()
-                # PNG files start with these magic bytes
-                assert png_data[:8] == b'\x89PNG\r\n\x1a\n'
+            assert_valid_png(expected_file)
 
     @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
@@ -55,10 +57,11 @@ class TestCLI:
             # Should be the formatted table (string with multiple lines)
             table_output = mock_print.call_args_list[0][0][0]
             assert isinstance(table_output, str)
-            assert 'VFR' in table_output
-            assert 'MVFR' in table_output
-            assert 'IFR' in table_output
-            assert 'LIFR' in table_output
+
+            # Verify all flight conditions are present
+            for condition in FLIGHT_CONDITIONS:
+                assert condition in table_output
+
             assert airport in table_output
             assert 'January' in table_output
 
@@ -66,8 +69,6 @@ class TestCLI:
             lines = table_output.split('\n')
             hour_lines = [line for line in lines if line.strip() and line.strip()[0].isdigit()]
             assert len(hour_lines) == 24, f"Expected 24 hour lines, got {len(hour_lines)}"
-
-            # Check hours are in order from 0 to 23
             for i, line in enumerate(hour_lines):
                 hour_str = line.split()[0]
                 assert int(hour_str) == i, f"Expected hour {i}, got {hour_str}"
@@ -93,10 +94,7 @@ class TestCLI:
                 # Verify default filename in current directory
                 expected_file = 'KPAO-06.png'
                 assert os.path.exists(expected_file)
-
-                # Verify it's a valid PNG
-                with open(expected_file, 'rb') as f:
-                    assert f.read()[:8] == b'\x89PNG\r\n\x1a\n'
+                assert_valid_png(expected_file)
             finally:
                 os.chdir(original_cwd)
 

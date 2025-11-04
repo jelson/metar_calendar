@@ -4,6 +4,10 @@ import gzip
 import os
 from unittest.mock import Mock
 
+# Constants used across tests
+PNG_MAGIC_BYTES = b'\x89PNG\r\n\x1a\n'
+FLIGHT_CONDITIONS = ['VFR', 'MVFR', 'IFR', 'LIFR']
+
 
 def get_test_airports() -> list[str]:
     """Get list of all airports for which we have test data."""
@@ -30,3 +34,9 @@ def mock_requests_get(*args, **kwargs):
     mock_response.content = load_test_data(station)
     mock_response.raise_for_status = Mock()
     return mock_response
+
+
+def assert_valid_png(file_path: str) -> None:
+    """Assert that a file is a valid PNG by checking magic bytes."""
+    with open(file_path, 'rb') as f:
+        assert f.read(8) == PNG_MAGIC_BYTES, f"{file_path} is not a valid PNG"

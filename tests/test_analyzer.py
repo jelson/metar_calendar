@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from lib.analyzer import METARAnalyzer, FlightCondition
 from lib.storage import LocalFileStorage
-from .test_utils import get_test_airports, mock_requests_get
+from .test_utils import FLIGHT_CONDITIONS, get_test_airports, mock_requests_get
 
 
 class TestFlightCondition:
@@ -59,7 +59,7 @@ class TestMETARAnalyzer:
             assert len(result) <= 24  # At most 24 hours
 
             # All four columns should exist even if some are 0
-            assert all(col in result.columns for col in ['VFR', 'MVFR', 'IFR', 'LIFR'])
+            assert all(col in result.columns for col in FLIGHT_CONDITIONS)
 
             # Check attributes are set
             assert result.attrs.get('airport') == airport
@@ -118,7 +118,7 @@ class TestMETARAnalyzer:
 
         # Each row should sum to 1.0 (100%)
         for hour, row in result.iterrows():
-            total = row['VFR'] + row['MVFR'] + row['IFR'] + row['LIFR']
+            total = sum(row[condition] for condition in FLIGHT_CONDITIONS)
             assert abs(total - 1.0) < 0.001, f"Hour {hour} sums to {total}, not 1.0"
 
     @patch('lib.raw_metar_retriever.requests.get')

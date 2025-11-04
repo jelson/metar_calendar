@@ -3,7 +3,7 @@ import sys
 import tempfile
 import pytest
 from unittest.mock import patch
-from .test_utils import mock_requests_get
+from .test_utils import get_test_airports, mock_requests_get
 
 # Import the CLI module
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -11,7 +11,7 @@ from cli.metar_analyzer import main  # noqa: E402
 
 
 class TestCLI:
-    @pytest.mark.parametrize("airport", ['KPAO', 'KCOE', 'KMSN', 'KRNT', 'KVNY'])
+    @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
     @patch('appdirs.user_cache_dir')
     def test_chart_generation(self, mock_cache_dir, mock_requests, airport):
@@ -34,7 +34,7 @@ class TestCLI:
                 # PNG files start with these magic bytes
                 assert png_data[:8] == b'\x89PNG\r\n\x1a\n'
 
-    @pytest.mark.parametrize("airport", ['KPAO', 'KCOE', 'KMSN', 'KRNT', 'KVNY'])
+    @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
     @patch('appdirs.user_cache_dir')
     @patch('builtins.print')

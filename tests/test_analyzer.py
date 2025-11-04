@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from lib.analyzer import METARAnalyzer, FlightCondition
 from lib.storage import LocalFileStorage
-from .test_utils import mock_requests_get
+from .test_utils import get_test_airports, mock_requests_get
 
 
 class TestFlightCondition:
@@ -42,7 +42,7 @@ class TestMETARAnalyzer:
         assert isinstance(analyzer.hourly_summary, pd.DataFrame)
         assert len(analyzer.hourly_summary) > 0
 
-    @pytest.mark.parametrize("airport", ['KPAO', 'KCOE', 'KMSN', 'KRNT'])
+    @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
     def test_hourly_stats_structure(self, mock_requests, storage, airport):
         """Test that get_hourly_statistics returns proper DataFrame structure."""

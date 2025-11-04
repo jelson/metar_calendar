@@ -29,17 +29,16 @@
     async function init() {
         try {
             // Load airport data
-            const response = await fetch('/assets/data/airports.json');
+            const response = await fetch('/assets/data/airports_v2.json');
             if (!response.ok) throw new Error('Failed to load airport data');
             airports = await response.json();
 
             // Initialize Fuse.js with custom options
             fuse = new Fuse(airports, {
                 keys: [
-                    { name: 'icao', weight: 0.3 },
-                    { name: 'iata', weight: 0.3 },
-                    { name: 'name', weight: 0.2 },
-                    { name: 'city', weight: 0.2 }
+                    { name: 'codes', weight: 0.4 },
+                    { name: 'name', weight: 0.3 },
+                    { name: 'city', weight: 0.3 }
                 ],
                 threshold: 0.4,
                 includeScore: true,
@@ -80,10 +79,8 @@
 
         if (!month || month < 1 || month > 12) return;
 
-        // Find airport by ICAO or IATA code
-        const airport = airports.find(a =>
-            a.icao === airportCode || a.iata === airportCode
-        );
+        // Find airport by display code
+        const airport = airports.find(a => a.display === airportCode);
 
         if (!airport) return;
 
@@ -93,8 +90,8 @@
     }
 
     // Update URL hash when search is performed
-    function updateHash(airportCode, month) {
-        history.replaceState(null, '', `#${airportCode}/${month}`);
+    function updateHash(display, month) {
+        history.replaceState(null, '', `#${display}/${month}`);
     }
 
     function setupEventListeners() {
@@ -168,18 +165,23 @@
 
         results = results.map(result => {
             const airport = result.item;
-            let customScore = result.score;
+            let customScore;
+
+            // Check for matches in codes array
+            const hasExactCode = airport.codes?.some(code => code === queryUpper);
+            const hasStartingCode = airport.codes?.some(code => code.startsWith(queryUpper));
+            const hasSubstringCode = airport.codes?.some(code => code.includes(queryUpper));
 
             // Exact code match (highest priority)
-            if (airport.icao === queryUpper || airport.iata === queryUpper) {
+            if (hasExactCode) {
                 customScore = 0;
             }
             // Code starts with query
-            else if (airport.icao?.startsWith(queryUpper) || airport.iata?.startsWith(queryUpper)) {
+            else if (hasStartingCode) {
                 customScore = 0.1;
             }
             // Substring match in codes
-            else if (airport.icao?.includes(queryUpper) || airport.iata?.includes(queryUpper)) {
+            else if (hasSubstringCode) {
                 customScore = 0.2;
             }
             // Name starts with query (case insensitive)
@@ -192,7 +194,15 @@
             }
             // City starts with query
             else if (airport.city?.toLowerCase().startsWith(query.toLowerCase())) {
-                customScore = 0.35;
+                customScore = 0.4;
+            }
+            // Substring match in city
+            else if (airport.city?.toLowerCase().includes(query.toLowerCase())) {
+                customScore = 0.5;
+            }
+            // Fuzzy match (fallback) - add offset to ensure it's lower priority than all exact matches
+            else {
+                customScore = 0.6 + result.score;
             }
 
             return {
@@ -240,7 +250,7 @@
         div.className = 'autocomplete-item px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition';
         div.dataset.index = index;
 
-        const codes = [airport.iata, airport.icao].filter(Boolean).join(' / ');
+        const codes = airport.codes ? airport.codes.join(' / ') : '';
 
         // Format location: "City, Country" or just "Country" if no city
         const location = airport.city
@@ -324,8 +334,8 @@
     function selectAirport(airport) {
         selectedAirport = airport;
 
-        // Update input with ICAO code (preferred) or IATA
-        const displayText = `${airport.icao || airport.iata} - ${airport.name}`;
+        // Update input with display code and airport name
+        const displayText = `${airport.display} - ${airport.name}`;
         searchInput.value = displayText;
 
         hideDropdown();
@@ -369,8 +379,7 @@
                            'July', 'August', 'September', 'October', 'November', 'December'];
 
         // Update URL hash for shareability
-        const airportCode = selectedAirport.icao || selectedAirport.iata;
-        updateHash(airportCode, month);
+        updateHash(selectedAirport.display, month);
 
         // Show loading state
         hideError();
@@ -387,8 +396,7 @@
 
         try {
             // Call the API using the 'query' field (which contains the correct identifier for IEM)
-            const airportCode = selectedAirport.query || selectedAirport.icao || selectedAirport.iata;
-            const url = `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(airportCode)}&month=${month}`;
+            const url = `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(selectedAirport.query)}&month=${month}`;
 
             const response = await fetch(url);
             if (!response.ok) {
@@ -401,9 +409,8 @@
                 throw new Error(data.error);
             }
 
-            // Update result title with airport code (ICAO preferred, or IATA)
-            const displayCode = selectedAirport.icao || selectedAirport.iata;
-            resultTitle.textContent = `${monthNames[month]} at ${displayCode} (${selectedAirport.name})`;
+            // Update result title with display code
+            resultTitle.textContent = `${monthNames[month]} at ${selectedAirport.display} (${selectedAirport.name})`;
 
             // Clear old chart immediately to prevent flash
             const resultImage = document.getElementById('resultImage');

@@ -5,10 +5,11 @@ Convert OurAirports CSV data to simplified JSON format for web autocomplete.
 Filters airports to only include those with METAR data available from IEM.
 Cross-references OurAirports data with IEM station list.
 
-Output fields: icao, iata, name, city, country, query
+Output fields: display, codes, name, city, country, query
+- display: the airport's ident field (unique identifier for display/URLs)
 - query: the identifier to use when querying IEM API
-- Matching priority: 1) ident, 2) icao_code, 3) iata_code, 4) local_code, 5) gps_code
-- If no icao_code or iata_code, the matched identifier is used as the display code
+- codes: array of all unique codes (ident, icao_code, iata_code, local_code, gps_code)
+- Matching priority for query: 1) ident, 2) icao_code, 3) iata_code, 4) local_code, 5) gps_code
 """
 
 import pandas as pd
@@ -20,11 +21,11 @@ OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.cs
 IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network=_ALL_&format=csv&nohtml=on'
 
 # Output path
-OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports.json'
+OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v2.json'
 
 
 def fetch_iem_stations():
-    """Download list of all IEM weather stations."""
+    """Download list of all IEM weather stations with lat/lon."""
     print(f"Fetching IEM station list from {IEM_STATIONS_URL}...")
     response = requests.get(IEM_STATIONS_URL, timeout=30)
     response.raise_for_status()
@@ -35,12 +36,23 @@ def fetch_iem_stations():
 
     print(f"Found {len(iem_df)} IEM stations")
 
-    # Extract station IDs (they use 'stid' column for station identifier)
-    # These are typically ICAO codes
-    station_ids = set(iem_df['stid'].dropna().str.strip().str.upper())
+    # Keep station ID, lat, lon and normalize to uppercase
+    iem_df = iem_df[['stid', 'lat', 'lon']].copy()
+    iem_df['stid'] = iem_df['stid'].str.strip().str.upper()
 
-    print(f"Extracted {len(station_ids)} unique station IDs")
-    return station_ids
+    # Check for duplicates before setting index
+    if iem_df['stid'].duplicated().any():
+        duplicates = iem_df[iem_df['stid'].duplicated(keep=False)]['stid'].unique()
+        print(f"WARNING: Found {len(duplicates)} duplicate station IDs: {list(duplicates)[:10]}")
+        # Keep first occurrence of each duplicate
+        iem_df = iem_df.drop_duplicates(subset='stid', keep='first')
+        print(f"Kept first occurrence, reduced to {len(iem_df)} unique stations")
+
+    # Set stid as index for fast lookups
+    iem_df = iem_df.set_index('stid')
+
+    print(f"Extracted {len(iem_df)} IEM stations with coordinates (indexed by stid)")
+    return iem_df
 
 
 def convert_airports():
@@ -57,7 +69,7 @@ def convert_airports():
     from io import StringIO
     df = pd.read_csv(StringIO(response.text), usecols=[
         'ident', 'icao_code', 'iata_code', 'local_code', 'gps_code',
-        'name', 'municipality', 'iso_country'
+        'name', 'municipality', 'iso_country', 'latitude_deg', 'longitude_deg'
     ])
 
     print(f"Total airports in OurAirports database: {len(df)}")
@@ -76,55 +88,103 @@ def convert_airports():
     # Replace empty strings with None
     df = df.replace('', None)
 
-    # Cross-reference with IEM stations
+    # Cross-reference with IEM stations using lat/lon proximity (within 0.1 degrees)
     # Priority order: 1) ident, 2) icao, 3) iata, 4) local_code, 5) gps_code
+    print("Matching airports to IEM stations with location check...")
+
     df['ident_upper'] = df['ident'].str.upper()
     df['icao_upper'] = df['icao'].str.upper()
     df['iata_upper'] = df['iata'].str.upper()
     df['local_upper'] = df['local_code'].str.upper()
     df['gps_upper'] = df['gps_code'].str.upper()
 
-    # Determine which identifier matches IEM
-    df['ident_in_iem'] = df['ident_upper'].isin(iem_stations)
-    df['icao_in_iem'] = df['icao_upper'].isin(iem_stations)
-    df['iata_in_iem'] = df['iata_upper'].isin(iem_stations)
-    df['local_in_iem'] = df['local_upper'].isin(iem_stations)
-    df['gps_in_iem'] = df['gps_upper'].isin(iem_stations)
+    # Step 1: Check which codes exist in IEM index
+    df['ident_in_iem'] = df['ident_upper'].isin(iem_stations.index)
+    df['icao_in_iem'] = df['icao_upper'].isin(iem_stations.index)
+    df['iata_in_iem'] = df['iata_upper'].isin(iem_stations.index)
+    df['local_in_iem'] = df['local_upper'].isin(iem_stations.index)
+    df['gps_in_iem'] = df['gps_upper'].isin(iem_stations.index)
 
-    # Filter: keep only airports with at least one match
-    df = df[df['ident_in_iem'] | df['icao_in_iem'] | df['iata_in_iem'] |
-            df['local_in_iem'] | df['gps_in_iem']]
+    # Step 2: For airports with at least one code match, find closest match within 0.1 degrees
+    has_code_match = df['ident_in_iem'] | df['icao_in_iem'] | df['iata_in_iem'] | df['local_in_iem'] | df['gps_in_iem']
+    df_matches = df[has_code_match].copy()
 
-    # Set 'query' field using priority order: ident > icao > iata > local_code > gps_code
-    def determine_query(row):
-        if row['ident_in_iem']:
-            return row['ident']
-        elif row['icao_in_iem']:
-            return row['icao']
-        elif row['iata_in_iem']:
-            return row['iata']
-        elif row['local_in_iem']:
-            return row['local_code']
-        elif row['gps_in_iem']:
-            return row['gps_code']
-        return None
+    def find_closest_match(row):
+        """Find the closest IEM station match within 0.1 degrees, returns the IEM code or None"""
+        lat = row['latitude_deg']
+        lon = row['longitude_deg']
+        if pd.isna(lat) or pd.isna(lon):
+            return None
 
-    df['query'] = df.apply(determine_query, axis=1)
+        # Priority order for checking codes (only need the uppercase IEM version)
+        codes = [
+            (row['ident_upper'], row['ident_in_iem']),
+            (row['icao_upper'], row['icao_in_iem']),
+            (row['iata_upper'], row['iata_in_iem']),
+            (row['local_upper'], row['local_in_iem']),
+            (row['gps_upper'], row['gps_in_iem'])
+        ]
 
-    # If no icao or iata, use the query field as icao for display
-    missing_both = df['icao'].isna() & df['iata'].isna()
-    df.loc[missing_both, 'icao'] = df.loc[missing_both, 'query']
+        best_match = None
+        best_distance = float('inf')
+
+        for code_upper, matched in codes:
+            if matched and pd.notna(code_upper):
+                station = iem_stations.loc[code_upper]
+                # Calculate distance (simple Euclidean in degrees)
+                lat_diff = abs(station['lat'] - lat)
+                lon_diff = abs(station['lon'] - lon)
+                distance = (lat_diff ** 2 + lon_diff ** 2) ** 0.5
+
+                # Check if within 0.1 degrees threshold in both dimensions
+                if lat_diff < 0.1 and lon_diff < 0.1:
+                    if distance < best_distance:
+                        best_distance = distance
+                        best_match = code_upper  # Use the IEM code
+
+        return best_match
+
+    # Find the best matching code for each airport
+    df.loc[has_code_match, 'query'] = df_matches.apply(find_closest_match, axis=1)
+
+    # Filter: keep only airports that have a valid match
+    df = df[df['query'].notna()]
+
+    # Create 'codes' array with all unique codes for each airport
+    def create_codes_array(row):
+        codes = []
+        for col in ['ident', 'icao', 'iata', 'local_code', 'gps_code']:
+            if pd.notna(row[col]) and row[col]:
+                code = row[col].strip().upper()
+                if code and code not in codes:
+                    codes.append(code)
+        # Sort by length (longest first), then alphabetically
+        codes.sort(key=lambda x: (-len(x), x))
+        return codes
+
+    df['codes'] = df.apply(create_codes_array, axis=1)
+
+    # Add 'display' field using ident (uppercase)
+    df['display'] = df['ident'].str.strip().str.upper()
 
     # Keep only the columns we need for output
-    df = df[['icao', 'iata', 'name', 'city', 'country', 'query']]
+    df = df[['display', 'codes', 'name', 'city', 'country', 'query']]
 
     print(f"Airports with IEM METAR data: {len(df)}")
 
-    # Remove duplicates by query (the IEM station identifier - keep first)
-    original_count = len(df)
-    df = df.drop_duplicates(subset='query', keep='first')
-    if len(df) < original_count:
-        print(f"Removed {original_count - len(df)} duplicates")
+    # Check for duplicate display codes - this should never happen
+    if df['display'].duplicated().any():
+        duplicates = df[df['display'].duplicated(keep=False)][['display', 'name', 'city', 'country']]
+        print("\nERROR: Multiple airports have the same ident!")
+        print(duplicates.to_string())
+        raise ValueError(f"Found {df['display'].duplicated().sum()} duplicate display codes - data integrity failure")
+
+    # Check for duplicate query codes - this should never happen
+    if df['query'].duplicated().any():
+        duplicates = df[df['query'].duplicated(keep=False)][['query', 'name', 'city', 'country']]
+        print("\nERROR: Multiple airports matched to the same IEM station!")
+        print(duplicates.to_string())
+        raise ValueError(f"Found {df['query'].duplicated().sum()} duplicate query codes - data integrity failure")
 
     # Sort by query code
     df = df.sort_values('query')

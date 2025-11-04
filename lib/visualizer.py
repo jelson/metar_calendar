@@ -33,22 +33,22 @@ class METARVisualizer:
 
     @staticmethod
     def format_table(hourly_df: pd.DataFrame) -> str:
-        airport = hourly_df.attrs.get('airport', 'Unknown')
-        month = hourly_df.attrs.get('month')
-        month_name = calendar.month_name[month] if month else 'Unknown'
+        airport = hourly_df.attrs['airport']
+        month = hourly_df.attrs['month']
+        month_name = calendar.month_name[month]
 
         lines = []
         lines.append(f"\n{airport}, {month_name}")
-        lines.append("=" * 80)
-        lines.append(f"{'Hour':>4} {'VFR':>6} {'MVFR':>6} {'IFR':>6} {'LIFR':>6}")
-        lines.append("-" * 80)
+        lines.append(f"{'Hour':>4} {'VFR':>5} {'MVFR':>5} {'IFR':>5} {'LIFR':>5}")
+        lines.append("-" * 30)
 
         for hour in range(24):
-            vfr = hourly_df.loc[hour, 'VFR'] if hour in hourly_df.index else 0
-            mvfr = hourly_df.loc[hour, 'MVFR'] if hour in hourly_df.index else 0
-            ifr = hourly_df.loc[hour, 'IFR'] if hour in hourly_df.index else 0
-            lifr = hourly_df.loc[hour, 'LIFR'] if hour in hourly_df.index else 0
-            lines.append(f"{hour:4d} {vfr:6.2%} {mvfr:6.2%} {ifr:6.2%} {lifr:6.2%}")
-
-        lines.append("=" * 80)
+            if hour in hourly_df.index:
+                vfr = hourly_df.loc[hour, 'VFR']
+                mvfr = hourly_df.loc[hour, 'MVFR']
+                ifr = hourly_df.loc[hour, 'IFR']
+                lifr = hourly_df.loc[hour, 'LIFR']
+                lines.append(f"{hour:4d} {vfr:5.0%} {mvfr:5.0%} {ifr:5.0%} {lifr:5.0%}")
+            else:
+                lines.append(f"{hour:4d} {'--':>5} {'--':>5} {'--':>5} {'--':>5}")
         return '\n'.join(lines)

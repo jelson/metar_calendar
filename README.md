@@ -50,24 +50,30 @@ in two ways: as both a web application and a command-line tool.
 
 ### Command-Line Tool
 
-Generate a weather prediction chart for an airport as PNG, with optional text output:
+Generate weather predictions for an airport as a PNG chart and/or text table:
 
 ```bash
-# Basic usage - generates KSMO-06.png
-./cli/metar_analyzer.py --airport KSMO --month 6
+# Generate PNG chart only (saves to KSMO-06.png in current directory)
+./cli/metar_analyzer.py --airport KSMO --month 6 --chart
 
-# Specify custom output filename
-./cli/metar_analyzer.py --airport KVNY --month 8 --output van_nuys_august.png
+# Generate chart in a specific directory
+./cli/metar_analyzer.py --airport KVNY --month 8 --chart --directory ~/weather_charts
 
-# Print statistics table to stdout (in addition to generating PNG)
-./cli/metar_analyzer.py --airport KPAO --month 8 --print-table
+# Print statistics table to stdout only (no chart)
+./cli/metar_analyzer.py --airport KPAO --month 8 --table
+
+# Generate both chart and table
+./cli/metar_analyzer.py --airport KPAO --month 8 --chart --table
 ```
 
 **Options:**
-- `-a, --airport` - Airport ICAO code (e.g., KSMO, KPAO)
-- `-m, --month` - Month number (1-12)
-- `-o, --output` - Output filename (default: `<AIRPORT>-<MONTH>.png`)
-- `--print-table` - Print hourly statistics table to stdout
+- `-a, --airport` - Airport ICAO code (e.g., KSMO, KPAO) [required]
+- `-m, --month` - Month number (1-12) [required]
+- `-c, --chart` - Generate PNG chart (saves to `<AIRPORT>-<MONTH>.png`)
+- `-d, --directory` - Directory for output files (default: current directory)
+- `-t, --table` - Print hourly statistics table to stdout
+
+At least one output option (`-c/--chart` or `-t/--table`) is required.
 
 ### Web Application
 

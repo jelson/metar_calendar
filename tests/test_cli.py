@@ -11,56 +11,71 @@ from cli.metar_analyzer import main  # noqa: E402
 
 
 class TestCLI:
+    @pytest.mark.parametrize("airport", ['KPAO', 'KCOE', 'KMSN', 'KRNT', 'KVNY'])
     @patch('lib.raw_metar_retriever.requests.get')
     @patch('appdirs.user_cache_dir')
-    def test_basic_execution(self, mock_cache_dir, mock_requests):
-        """Test basic CLI execution with real data."""
+    def test_chart_generation(self, mock_cache_dir, mock_requests, airport):
+        """Test chart generation with all test datasets."""
         mock_requests.side_effect = mock_requests_get
 
         with tempfile.TemporaryDirectory() as tmpdir:
             mock_cache_dir.return_value = tmpdir
-            output_file = os.path.join(tmpdir, 'test.png')
 
-            # Simulate command line arguments
-            test_args = ['prog', '-a', 'KPAO', '-m', '6', '-o', output_file]
+            # Simulate command line arguments with chart generation
+            test_args = ['prog', '-a', airport, '-m', '6', '-c', '-d', tmpdir]
             with patch('sys.argv', test_args):
                 main()
 
-            # Verify file was written and is a valid PNG
-            assert os.path.exists(output_file)
-            with open(output_file, 'rb') as f:
+            # Verify file was written with standard naming
+            expected_file = os.path.join(tmpdir, f'{airport}-06.png')
+            assert os.path.exists(expected_file)
+            with open(expected_file, 'rb') as f:
                 png_data = f.read()
                 # PNG files start with these magic bytes
                 assert png_data[:8] == b'\x89PNG\r\n\x1a\n'
 
+    @pytest.mark.parametrize("airport", ['KPAO', 'KCOE', 'KMSN', 'KRNT', 'KVNY'])
     @patch('lib.raw_metar_retriever.requests.get')
     @patch('appdirs.user_cache_dir')
     @patch('builtins.print')
-    def test_print_table_option(self, mock_print, mock_cache_dir, mock_requests):
-        """Test --print-table option with real data."""
+    def test_table_option(self, mock_print, mock_cache_dir, mock_requests, airport):
+        """Test -t/--table option with real data for all test datasets."""
         mock_requests.side_effect = mock_requests_get
 
         with tempfile.TemporaryDirectory() as tmpdir:
             mock_cache_dir.return_value = tmpdir
-            output_file = os.path.join(tmpdir, 'test.png')
 
-            # Simulate command line arguments with --print-table
-            test_args = ['prog', '-a', 'KPAO', '-m', '1', '-o', output_file, '--print-table']
+            # Simulate command line arguments with --table (no chart)
+            test_args = ['prog', '-a', airport, '-m', '1', '--table']
             with patch('sys.argv', test_args):
                 main()
 
-            # CLI prints the hourly DataFrame first, then the formatted table
-            assert mock_print.call_count == 2
-            # Second call should be the formatted table (string with multiple lines)
-            table_output = mock_print.call_args_list[1][0][0]
+            # CLI should print the formatted table once
+            assert mock_print.call_count == 1
+            # Should be the formatted table (string with multiple lines)
+            table_output = mock_print.call_args_list[0][0][0]
             assert isinstance(table_output, str)
             assert 'VFR' in table_output
             assert 'MVFR' in table_output
+            assert 'IFR' in table_output
+            assert 'LIFR' in table_output
+            assert airport in table_output
+            assert 'January' in table_output
+
+            # Verify all 24 hours are present and in order
+            lines = table_output.split('\n')
+            hour_lines = [line for line in lines if line.strip() and line.strip()[0].isdigit()]
+            assert len(hour_lines) == 24, f"Expected 24 hour lines, got {len(hour_lines)}"
+
+            # Check hours are in order from 0 to 23
+            for i, line in enumerate(hour_lines):
+                hour_str = line.split()[0]
+                assert int(hour_str) == i, f"Expected hour {i}, got {hour_str}"
 
     @patch('lib.raw_metar_retriever.requests.get')
     @patch('appdirs.user_cache_dir')
-    def test_default_output_filename(self, mock_cache_dir, mock_requests):
-        """Test default output filename generation."""
+    def test_chart_without_directory(self, mock_cache_dir, mock_requests):
+        """Test chart generation uses current directory by default."""
         mock_requests.side_effect = mock_requests_get
 
         # Change to temp directory to avoid polluting project
@@ -70,12 +85,12 @@ class TestCLI:
             try:
                 os.chdir(tmpdir)
 
-                # Simulate command line arguments without -o
-                test_args = ['prog', '-a', 'KPAO', '-m', '6']
+                # Simulate command line arguments with -c but no -d
+                test_args = ['prog', '-a', 'KPAO', '-m', '6', '-c']
                 with patch('sys.argv', test_args):
                     main()
 
-                # Verify default filename was used
+                # Verify default filename in current directory
                 expected_file = 'KPAO-06.png'
                 assert os.path.exists(expected_file)
 
@@ -84,6 +99,13 @@ class TestCLI:
                     assert f.read()[:8] == b'\x89PNG\r\n\x1a\n'
             finally:
                 os.chdir(original_cwd)
+
+    def test_no_output_options_error(self):
+        """Test that CLI errors when no output options are specified."""
+        test_args = ['prog', '-a', 'KPAO', '-m', '6']
+        with patch('sys.argv', test_args):
+            with pytest.raises(SystemExit):
+                main()
 
     def test_invalid_month(self):
         # Test that invalid month raises error

@@ -134,11 +134,26 @@
             }
         });
 
-        // Global slash key to clear and focus search input
+        // Global keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Slash key to clear and focus search input
             if (e.key === '/' && document.activeElement !== searchInput) {
                 e.preventDefault();
                 clearSearchInput();
+            }
+
+            // Left/Right arrow keys to navigate months (only when not in an input field)
+            if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
+                document.activeElement !== searchInput &&
+                document.activeElement.tagName !== 'SELECT') {
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    changeMonth(-1);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    changeMonth(1);
+                }
             }
         });
     }

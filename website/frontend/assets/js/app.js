@@ -94,7 +94,7 @@
 
     // Update URL hash when search is performed
     function updateHash(airportCode, month) {
-        window.location.hash = `${airportCode}/${month}`;
+        history.replaceState(null, '', `#${airportCode}/${month}`);
     }
 
     function setupEventListeners() {

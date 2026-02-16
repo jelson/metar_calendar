@@ -12,6 +12,7 @@ Output fields: display, codes, name, location, query
 - location: formatted string "Municipality, Region, Country Code" (parts omitted if not available)
 """
 
+import airportsdata
 import pandas as pd
 from pathlib import Path
 import requests
@@ -21,8 +22,9 @@ from io import StringIO
 OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.csv'
 IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network=_ALL_&format=csv&nohtml=on'
 
-# Output path
+# Output paths
 OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v3.json'
+OUTPUT_METADATA = Path(__file__).parent / '../../backend/data/airport_metadata.parquet'
 
 
 def fetch_iem_stations():
@@ -179,7 +181,22 @@ def convert_airports():
 
     df['location'] = df.apply(create_location, axis=1)
 
-    # Keep only the columns we need for output
+    # Look up timezone for each airport using airportsdata (keyed by ICAO)
+    tz_db = airportsdata.load()
+    df['tz'] = df['display'].map(lambda code: tz_db.get(code, {}).get('tz'))
+    tz_found = df['tz'].notna().sum()
+    print(f"Timezone lookup: {tz_found}/{len(df)} airports matched in airportsdata")
+
+    # Generate backend metadata parquet (airport_code -> tz, extensible later)
+    # Done before column trimming so 'tz' is still available
+    metadata = df[['query', 'tz']].copy()
+    metadata = metadata.rename(columns={'query': 'airport_code'})
+    metadata = metadata.set_index('airport_code')
+    OUTPUT_METADATA.parent.mkdir(parents=True, exist_ok=True)
+    metadata.to_parquet(OUTPUT_METADATA)
+    print(f"Generated {OUTPUT_METADATA} ({len(metadata)} airports, {OUTPUT_METADATA.stat().st_size / 1024:.0f} KB)")
+
+    # Keep only the columns we need for frontend JSON output
     df = df[['display', 'codes', 'name', 'location', 'query']]
 
     print(f"Airports with IEM METAR data: {len(df)}")

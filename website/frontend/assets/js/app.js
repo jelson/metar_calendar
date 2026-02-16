@@ -469,6 +469,24 @@
         }
     }
 
+    // Convert a UTC hour + offset to compact AM/PM format
+    // e.g., formatLocalHour(0, -7) => "5p", formatLocalHour(13, 5.5) => "6:30p"
+    function formatLocalHour(utcHour, offsetHours) {
+        let localHour = (utcHour + offsetHours) % 24;
+        if (localHour < 0) localHour += 24;
+
+        const hourInt = Math.floor(localHour);
+        const minutes = Math.round((localHour - hourInt) * 60);
+
+        const period = hourInt >= 12 ? 'p' : 'a';
+        const displayHour = hourInt === 0 ? 12 : hourInt > 12 ? hourInt - 12 : hourInt;
+
+        if (minutes > 0) {
+            return `${displayHour}:${String(minutes).padStart(2, '0')}${period}`;
+        }
+        return `${displayHour}${period}`;
+    }
+
     // Display weather data as interactive Plotly chart
     function displayWeatherChart(data, airport, monthName) {
         const resultImage = document.getElementById('resultImage');
@@ -548,12 +566,21 @@
         // Detect mobile viewport
         const isMobile = window.innerWidth < 768;
 
+        // Timezone offsets from backend
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+
+        // Extra bottom margin per local time row
+        const extraRowHeight = isMobile ? 12 : 16;
+        const bottomMargin = 70 + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+        const leftMargin = isMobile ? 40 : 70;
+
         // Layout configuration
         const layout = {
             barmode: 'stack',
             height: isMobile ? 300 : 400,
             xaxis: {
-                title: {
+                title: hasTimezone ? '' : {
                     text: 'UTC hour',
                     standoff: 10
                 },
@@ -578,8 +605,38 @@
                 yanchor: 'bottom'
             },
             hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 40, b: 70 }
+            margin: { l: leftMargin, r: isMobile ? 5 : 10, t: 40, b: bottomMargin }
         };
+
+        // Build multi-line x-axis tick labels with local time rows
+        if (hasTimezone) {
+            const tickvals = [];
+            const ticktext = [];
+            const fontSize = isMobile ? 8 : 10;
+
+            for (let hour = 0; hour < 24; hour++) {
+                tickvals.push(hour);
+                const lines = [`${hour}`];
+                for (const offset of utcOffsets) {
+                    lines.push(formatLocalHour(hour, offset.utc_offset_hours));
+                }
+                ticktext.push(lines.join('<br>'));
+            }
+
+            // Label column on the left, perfectly aligned with data rows
+            const labelLines = ['<b>UTC</b>'];
+            for (const offset of utcOffsets) {
+                labelLines.push(`<b>${offset.abbr}</b>`);
+            }
+            tickvals.unshift(-1);
+            ticktext.unshift(labelLines.join('<br>'));
+
+            layout.xaxis.tickvals = tickvals;
+            layout.xaxis.ticktext = ticktext;
+            layout.xaxis.tickfont = { size: fontSize };
+            layout.xaxis.tickangle = 0;
+            layout.xaxis.range = [-1.5, 23.5];
+        }
 
         // Render the chart with full width
         Plotly.newPlot('plotlyChart', traces, layout, {

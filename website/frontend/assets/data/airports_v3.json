@@ -11,6 +11,16 @@
     "query":"00U"
   },
   {
+    "display":"K01M",
+    "codes":[
+      "K01M",
+      "01M"
+    ],
+    "name":"Tishomingo County Airport",
+    "location":"Belmont, MS, US",
+    "query":"01M"
+  },
+  {
     "display":"04V",
     "codes":[
       "K04V",
@@ -765,16 +775,6 @@
     "query":"36K"
   },
   {
-    "display":"K38S",
-    "codes":[
-      "K38S",
-      "38S"
-    ],
-    "name":"Deer Lodge City County Airport",
-    "location":"Deer Lodge, MT, US",
-    "query":"38S"
-  },
-  {
     "display":"K3AU",
     "codes":[
       "K3AU",
@@ -1106,16 +1106,6 @@
     "name":"Ken Jernstedt Airfield",
     "location":"Hood River, OR, US",
     "query":"4S2"
-  },
-  {
-    "display":"K4U6",
-    "codes":[
-      "K4U6",
-      "4U6"
-    ],
-    "name":"Circle Town County Airport",
-    "location":"Circle, MT, US",
-    "query":"4U6"
   },
   {
     "display":"K4V0",
@@ -1646,16 +1636,6 @@
     "name":"Scobey Airport",
     "location":"Scobey, MT, US",
     "query":"9S2"
-  },
-  {
-    "display":"K9S5",
-    "codes":[
-      "K9S5",
-      "9S5"
-    ],
-    "name":"Three Forks Airport",
-    "location":"Three Forks, MT, US",
-    "query":"9S5"
   },
   {
     "display":"K9S9",
@@ -2357,7 +2337,7 @@
       "INU"
     ],
     "name":"Nauru International Airport",
-    "location":"Yaren District, 14, NR",
+    "location":"Yaren, 14, NR",
     "query":"ANYN"
   },
   {
@@ -2772,7 +2752,7 @@
       "AYNZ",
       "LAE"
     ],
-    "name":"Nadzab Airport",
+    "name":"Nadzab Tomodachi International Airport",
     "location":"Lae, MPL, PG",
     "query":"AYNZ"
   },
@@ -2904,7 +2884,7 @@
       "KBAZ",
       "BAZ"
     ],
-    "name":"New Braunfels Municipal Airport",
+    "name":"New Braunfels National Airport",
     "location":"New Braunfels, TX, US",
     "query":"BAZ"
   },
@@ -3119,7 +3099,7 @@
       "KBFI",
       "BFI"
     ],
-    "name":"Boeing Field King County International Airport",
+    "name":"King County International Airport - Boeing Field",
     "location":"Seattle, WA, US",
     "query":"BFI"
   },
@@ -3160,7 +3140,7 @@
       "BGBW",
       "UAK"
     ],
-    "name":"Narsarsuaq Airport",
+    "name":"Narsarsuaq International Airport",
     "location":"Narsarsuaq, KU, GL",
     "query":"BGBW"
   },
@@ -3190,7 +3170,7 @@
       "BGGH",
       "GOH"
     ],
-    "name":"Nuuk Airport",
+    "name":"Nuuk International Airport",
     "location":"Nuuk, SE, GL",
     "query":"BGGH"
   },
@@ -3220,7 +3200,7 @@
       "BGSF",
       "SFJ"
     ],
-    "name":"Kangerlussuaq Airport",
+    "name":"Kangerlussuaq International Airport",
     "location":"Kangerlussuaq, QA, GL",
     "query":"BGSF"
   },
@@ -3260,7 +3240,7 @@
       "BIAR",
       "AEY"
     ],
-    "name":"Akureyri Airport",
+    "name":"Akureyri International Airport",
     "location":"Akureyri, 6, IS",
     "query":"BIAR"
   },
@@ -3341,7 +3321,7 @@
       "GRY"
     ],
     "name":"Grímsey Airport",
-    "location":"Grímsey, 6, IS",
+    "location":"Grímsey\/Sandvík, 6, IS",
     "query":"BIGR"
   },
   {
@@ -3805,8 +3785,8 @@
       "KBTV",
       "BTV"
     ],
-    "name":"Burlington International Airport",
-    "location":"South Burlington, VT, US",
+    "name":"Patrick Leahy Burlington International Airport",
+    "location":"Burlington, VT, US",
     "query":"BTV"
   },
   {
@@ -4463,6 +4443,16 @@
     "query":"CHO"
   },
   {
+    "display":"KCHS",
+    "codes":[
+      "KCHS",
+      "CHS"
+    ],
+    "name":"Charleston International Airport",
+    "location":"Charleston, SC, US",
+    "query":"CHS"
+  },
+  {
     "display":"KCIC",
     "codes":[
       "KCIC",
@@ -4471,16 +4461,6 @@
     "name":"Chico Regional Airport",
     "location":"Chico, CA, US",
     "query":"CIC"
-  },
-  {
-    "display":"KCII",
-    "codes":[
-      "KCII",
-      "CII"
-    ],
-    "name":"Choteau Airport",
-    "location":"Choteau, MT, US",
-    "query":"CII"
   },
   {
     "display":"KCIN",
@@ -5028,16 +5008,6 @@
     "query":"CUH"
   },
   {
-    "display":"KCUL",
-    "codes":[
-      "KCUL",
-      "CUL"
-    ],
-    "name":"Carmi Municipal Airport",
-    "location":"Carmi, IL, US",
-    "query":"CUL"
-  },
-  {
     "display":"KCVB",
     "codes":[
       "KCVB",
@@ -5347,8 +5317,8 @@
       "CYBG",
       "YBG"
     ],
-    "name":"CFB Bagotville \/ Saguenay-Bagotville Airport",
-    "location":"La Baie, QC, CA",
+    "name":"Saguenay-Bagotville Airport",
+    "location":"Saguenay, QC, CA",
     "query":"CYBG"
   },
   {
@@ -5712,7 +5682,7 @@
       "CYFC",
       "YFC"
     ],
-    "name":"Fredericton Airport",
+    "name":"Fredericton International Airport",
     "location":"Fredericton, NB, CA",
     "query":"CYFC"
   },
@@ -6001,7 +5971,7 @@
       "CYJT",
       "YJT"
     ],
-    "name":"Dymond Airport",
+    "name":"Stephenville Dymond International Airport",
     "location":"Stephenville, NL, CA",
     "query":"CYJT"
   },
@@ -6241,7 +6211,7 @@
       "CYMM",
       "YMM"
     ],
-    "name":"Fort McMurray Airport",
+    "name":"Fort McMurray International Airport",
     "location":"Fort McMurray, AB, CA",
     "query":"CYMM"
   },
@@ -6281,7 +6251,7 @@
       "CYMX",
       "YMX"
     ],
-    "name":"Montreal International (Mirabel) Airport",
+    "name":"Montreal Mirabel International Airport",
     "location":"Montréal, QC, CA",
     "query":"CYMX"
   },
@@ -6480,7 +6450,7 @@
       "CYPQ",
       "YPQ"
     ],
-    "name":"Peterborough Municipal Airport",
+    "name":"Peterborough Regional Airport",
     "location":"Peterborough, ON, CA",
     "query":"CYPQ"
   },
@@ -6570,7 +6540,7 @@
       "CYQG",
       "YQG"
     ],
-    "name":"Windsor Airport",
+    "name":"Windsor International Airport",
     "location":"Windsor, ON, CA",
     "query":"CYQG"
   },
@@ -6630,7 +6600,7 @@
       "CYQQ",
       "YQQ"
     ],
-    "name":"Comox Valley Airport \/ CFB Comox",
+    "name":"Comox Valley International Airport \/ CFB Comox",
     "location":"Comox, BC, CA",
     "query":"CYQQ"
   },
@@ -6650,7 +6620,7 @@
       "CYQT",
       "YQT"
     ],
-    "name":"Thunder Bay Airport",
+    "name":"Thunder Bay International Airport",
     "location":"Thunder Bay, ON, CA",
     "query":"CYQT"
   },
@@ -6690,7 +6660,7 @@
       "CYQX",
       "YQX"
     ],
-    "name":"Gander International Airport \/ CFB Gander",
+    "name":"Gander International Airport",
     "location":"Gander, NL, CA",
     "query":"CYQX"
   },
@@ -6940,7 +6910,7 @@
       "CYTZ",
       "YTZ"
     ],
-    "name":"Billy Bishop Toronto City Centre Airport",
+    "name":"Billy Bishop Toronto City Airport",
     "location":"Toronto, ON, CA",
     "query":"CYTZ"
   },
@@ -7261,7 +7231,7 @@
       "CYXS",
       "YXS"
     ],
-    "name":"Prince George Airport",
+    "name":"Prince George (International) Airport",
     "location":"Prince George, BC, CA",
     "query":"CYXS"
   },
@@ -7281,7 +7251,7 @@
       "CYXU",
       "YXU"
     ],
-    "name":"London Airport",
+    "name":"London International Airport",
     "location":"London, ON, CA",
     "query":"CYXU"
   },
@@ -7481,7 +7451,7 @@
       "CYYZ",
       "YYZ"
     ],
-    "name":"Toronto Lester B. Pearson International Airport",
+    "name":"Toronto Pearson International Airport",
     "location":"Toronto, ON, CA",
     "query":"CYYZ"
   },
@@ -7891,7 +7861,7 @@
       "DAAJ",
       "DJG"
     ],
-    "name":"Djanet Inedbirene Airport",
+    "name":"Tiska Djanet Airport",
     "location":"Djanet, 56, DZ",
     "query":"DAAJ"
   },
@@ -8111,7 +8081,7 @@
       "DAUA",
       "AZR"
     ],
-    "name":"Touat Cheikh Sidi Mohamed Belkebir Airport",
+    "name":"Touat-Cheikh Sidi Mohamed Belkebir Airport",
     "location":"Adrar, 01, DZ",
     "query":"DAUA"
   },
@@ -8241,7 +8211,7 @@
       "DBBB",
       "COO"
     ],
-    "name":"Cadjehoun Airport",
+    "name":"Cotonou Cadjehoun International Airport",
     "location":"Cotonou, AQ, BJ",
     "query":"DBBB"
   },
@@ -8321,7 +8291,7 @@
       "DFFD",
       "OUA"
     ],
-    "name":"Ouagadougou Airport",
+    "name":"Ouagadougou Thomas Sankara International Airport",
     "location":"Ouagadougou, KAD, BF",
     "query":"DFFD"
   },
@@ -8361,7 +8331,7 @@
       "DGLE",
       "TML"
     ],
-    "name":"Tamale Airport",
+    "name":"Yakubu Tali International Airport",
     "location":"Tamale, NP, GH",
     "query":"DGLE"
   },
@@ -8371,7 +8341,7 @@
       "DGSI",
       "KMS"
     ],
-    "name":"Kumasi Airport",
+    "name":"Prempeh I International Airport",
     "location":"Kumasi, AH, GH",
     "query":"DGSI"
   },
@@ -8421,7 +8391,7 @@
       "DIYO",
       "ASK"
     ],
-    "name":"Yamoussoukro Airport",
+    "name":"Yamoussoukro International Airport",
     "location":"Yamoussoukro, YM, CI",
     "query":"DIYO"
   },
@@ -8612,8 +8582,8 @@
       "DNIL",
       "ILR"
     ],
-    "name":"Ilorin International Airport",
-    "location":"Ilorin, KW, NG",
+    "name":"General Tunde Idiagbon International Airport",
+    "location":"Ilorin\/Ogbomosho, KW, NG",
     "query":"DNIL"
   },
   {
@@ -8622,7 +8592,7 @@
       "DNIM",
       "QOW"
     ],
-    "name":"Sam Mbakwe International Airport",
+    "name":"Sam Mbakwe International Cargo Airport",
     "location":"Owerri, IM, NG",
     "query":"DNIM"
   },
@@ -8632,7 +8602,7 @@
       "DNKN",
       "KAN"
     ],
-    "name":"Mallam Aminu International Airport",
+    "name":"Mallam Aminu Kano International Airport",
     "location":"Kano, KN, NG",
     "query":"DNKN"
   },
@@ -8643,7 +8613,7 @@
       "DNKT",
       "DKA"
     ],
-    "name":"Katsina Airport",
+    "name":"Umaru Musa Yar'adua Airport",
     "location":"Katsina, KT, NG",
     "query":"DNKT"
   },
@@ -8666,16 +8636,6 @@
     "name":"Maiduguri International Airport",
     "location":"Maiduguri, BO, NG",
     "query":"DNMA"
-  },
-  {
-    "display":"DNMK",
-    "codes":[
-      "DNMK",
-      "MDI"
-    ],
-    "name":"Makurdi Airport",
-    "location":"Makurdi, BE, NG",
-    "query":"DNMK"
   },
   {
     "display":"DNMM",
@@ -8753,7 +8713,7 @@
       "KDOV",
       "DOV"
     ],
-    "name":"Dover Air Force Base",
+    "name":"Dover Civil Air Terminal\/Dover Air Force Base",
     "location":"Dover, DE, US",
     "query":"DOV"
   },
@@ -9341,6 +9301,16 @@
     "query":"E16"
   },
   {
+    "display":"KE35",
+    "codes":[
+      "KE35",
+      "E35"
+    ],
+    "name":"Fabens Airport",
+    "location":"Fabens, TX, US",
+    "query":"E35"
+  },
+  {
     "display":"KE38",
     "codes":[
       "KE38",
@@ -9507,6 +9477,16 @@
     "query":"EBG"
   },
   {
+    "display":"BE-0052",
+    "codes":[
+      "BE-0052",
+      "EBLB"
+    ],
+    "name":"Elsenborn Air Base",
+    "location":"Bütgenbach, WLG, BE",
+    "query":"EBLB"
+  },
+  {
     "display":"EBLG",
     "codes":[
       "EBLG",
@@ -9522,7 +9502,7 @@
       "EBOS",
       "OST"
     ],
-    "name":"Oostende-Brugge International Airport",
+    "name":"Ostend-Bruges International Airport",
     "location":"Oostende, VWV, BE",
     "query":"EBOS"
   },
@@ -9632,7 +9612,7 @@
       "EDDF",
       "FRA"
     ],
-    "name":"Frankfurt Airport",
+    "name":"Frankfurt Main Airport",
     "location":"Frankfurt am Main, HE, DE",
     "query":"EDDF"
   },
@@ -9862,7 +9842,7 @@
       "EDLV",
       "NRN"
     ],
-    "name":"Weeze Airport",
+    "name":"Weeze (Niederrhein) Airport",
     "location":"Weeze, NW, DE",
     "query":"EDLV"
   },
@@ -9913,7 +9893,7 @@
       "EDNY",
       "FDH"
     ],
-    "name":"Friedrichshafen Airport",
+    "name":"Bodensee Airport Friedrichshafen",
     "location":"Friedrichshafen, BW, DE",
     "query":"EDNY"
   },
@@ -10092,7 +10072,7 @@
       "TAY"
     ],
     "name":"Tartu Airport",
-    "location":"Reola, 7B, EE",
+    "location":"Tartu, 7B, EE",
     "query":"EETU"
   },
   {
@@ -10221,7 +10201,7 @@
       "EFKT",
       "KTT"
     ],
-    "name":"Kittilä Airport",
+    "name":"Kittilä International Airport",
     "location":"Kittilä, 10, FI",
     "query":"EFKT"
   },
@@ -10392,7 +10372,7 @@
       "LDY"
     ],
     "name":"City of Derry Airport",
-    "location":"Derry, NIR, GB",
+    "location":"Derry, Derry and Strabane, NIR, GB",
     "query":"EGAE"
   },
   {
@@ -10412,7 +10392,7 @@
       "GLO"
     ],
     "name":"Gloucestershire Airport",
-    "location":"Staverton, ENG, GB",
+    "location":"Staverton, Gloucestershire, ENG, GB",
     "query":"EGBJ"
   },
   {
@@ -10826,7 +10806,7 @@
       "EGOW"
     ],
     "name":"RAF Woodvale",
-    "location":"Southport, ENG, GB",
+    "location":"Southport, Sefton, ENG, GB",
     "query":"EGOW"
   },
   {
@@ -10836,7 +10816,7 @@
       "KOI"
     ],
     "name":"Kirkwall Airport",
-    "location":"Orkney Islands, SCT, GB",
+    "location":"Kirkwall, Orkney Islands, SCT, GB",
     "query":"EGPA"
   },
   {
@@ -10956,7 +10936,7 @@
       "TRE"
     ],
     "name":"Tiree Airport",
-    "location":"Balemartine, SCT, GB",
+    "location":"Balemartine, Argyll and Bute, SCT, GB",
     "query":"EGPU"
   },
   {
@@ -10986,7 +10966,7 @@
       "LMO"
     ],
     "name":"RAF Lossiemouth",
-    "location":"Lossiemouth, SCT, GB",
+    "location":"Lossiemouth, Moray, SCT, GB",
     "query":"EGQS"
   },
   {
@@ -11016,7 +10996,7 @@
       "STN"
     ],
     "name":"London Stansted Airport",
-    "location":"London, ENG, GB",
+    "location":"London, Essex, ENG, GB",
     "query":"EGSS"
   },
   {
@@ -11153,7 +11133,7 @@
       "EGVP"
     ],
     "name":"Middle Wallop Airfield",
-    "location":"Middle Wallop, ENG, GB",
+    "location":"Middle Wallop, Hampshire, ENG, GB",
     "query":"EGVP"
   },
   {
@@ -11162,7 +11142,7 @@
       "EGWC"
     ],
     "name":"RAF Cosford",
-    "location":"Cosford, ENG, GB",
+    "location":"Cosford, Shropshire, ENG, GB",
     "query":"EGWC"
   },
   {
@@ -11172,7 +11152,7 @@
       "NHT"
     ],
     "name":"RAF Northolt",
-    "location":"London, ENG, GB",
+    "location":"Northolt, Greater London, ENG, GB",
     "query":"EGWU"
   },
   {
@@ -11256,7 +11236,7 @@
       "EGYP",
       "MPN"
     ],
-    "name":"Mount Pleasant Airport",
+    "name":"Mount Pleasant Airport \/ RAF Mount Pleasant",
     "location":"Mount Pleasant, U-A, FK",
     "query":"EGYP"
   },
@@ -11542,7 +11522,7 @@
       "EICK",
       "ORK"
     ],
-    "name":"Cork Airport",
+    "name":"Cork International Airport",
     "location":"Cork, CO, IE",
     "query":"EICK"
   },
@@ -11582,7 +11562,7 @@
       "EIKN",
       "NOC"
     ],
-    "name":"Ireland West Knock Airport",
+    "name":"Ireland West Airport Knock",
     "location":"Charlestown, MO, IE",
     "query":"EIKN"
   },
@@ -11674,33 +11654,6 @@
     "name":"Esbjerg Airport",
     "location":"Esbjerg, 83, DK",
     "query":"EKEB"
-  },
-  {
-    "display":"EKGC",
-    "codes":[
-      "EKGC"
-    ],
-    "name":"Gorm C Helideck",
-    "location":"XX, DK",
-    "query":"EKGC"
-  },
-  {
-    "display":"EKHA",
-    "codes":[
-      "EKHA"
-    ],
-    "name":"Halfdan A Helideck",
-    "location":"XX, DK",
-    "query":"EKHA"
-  },
-  {
-    "display":"EKHD",
-    "codes":[
-      "EKHD"
-    ],
-    "name":"Harald Helideck",
-    "location":"XX, DK",
-    "query":"EKHD"
   },
   {
     "display":"EKHN",
@@ -11819,15 +11772,6 @@
     "name":"Skrydstrup Air Base",
     "location":"Vojens, 83, DK",
     "query":"EKSP"
-  },
-  {
-    "display":"EKTE",
-    "codes":[
-      "EKTE"
-    ],
-    "name":"Tyra E Helideck",
-    "location":"XX, DK",
-    "query":"EKTE"
   },
   {
     "display":"EKVD",
@@ -12005,7 +11949,7 @@
       "ENAL",
       "AES"
     ],
-    "name":"Ålesund Airport, Vigra",
+    "name":"Ålesund Airport",
     "location":"Ålesund, 15, NO",
     "query":"ENAL"
   },
@@ -12085,8 +12029,8 @@
       "ENCN",
       "KRS"
     ],
-    "name":"Kristiansand Airport, Kjevik",
-    "location":"Kjevik, 42, NO",
+    "name":"Kristiansand Airport",
+    "location":"Kristiansand(Kjevik), 42, NO",
     "query":"ENCN"
   },
   {
@@ -12124,7 +12068,7 @@
       "ENEV",
       "EVE"
     ],
-    "name":"Harstad\/Narvik Airport, Evenes",
+    "name":"Harstad\/Narvik Airport",
     "location":"Evenes, 18, NO",
     "query":"ENEV"
   },
@@ -12153,7 +12097,7 @@
       "ENGM",
       "OSL"
     ],
-    "name":"Oslo Airport, Gardermoen",
+    "name":"Oslo-Gardermoen International Airport",
     "location":"Oslo (Gardermoen), 32, NO",
     "query":"ENGM"
   },
@@ -12552,7 +12496,7 @@
       "ENTC",
       "TOS"
     ],
-    "name":"Tromsø Airport, Langnes",
+    "name":"Tromsø Airport",
     "location":"Tromsø, 55, NO",
     "query":"ENTC"
   },
@@ -12563,7 +12507,7 @@
       "TRF"
     ],
     "name":"Sandefjord Airport, Torp",
-    "location":"Torp, 39, NO",
+    "location":"Sandefjord(Torp), 39, NO",
     "query":"ENTO"
   },
   {
@@ -12670,7 +12614,7 @@
       "EPBY",
       "BZG"
     ],
-    "name":"Bydgoszcz Ignacy Jan Paderewski Airport",
+    "name":"Ignacy Jan Paderewski Bydgoszcz Airport",
     "location":"Bydgoszcz, KP, PL",
     "query":"EPBY"
   },
@@ -12720,7 +12664,7 @@
       "EPMO",
       "WMI"
     ],
-    "name":"Modlin Airport",
+    "name":"Warsaw Modlin Airport",
     "location":"Nowy Dwór Mazowiecki, MZ, PL",
     "query":"EPMO"
   },
@@ -13947,7 +13891,7 @@
       "BFN"
     ],
     "name":"Bram Fischer International Airport",
-    "location":"Bloemfontain, FS, ZA",
+    "location":"Bloemfontein, FS, ZA",
     "query":"FABL"
   },
   {
@@ -14037,12 +13981,13 @@
     "query":"FAGM"
   },
   {
-    "display":"FAHS",
+    "display":"FAHT",
     "codes":[
       "FAHS",
+      "FAHT",
       "HDS"
     ],
-    "name":"Hoedspruit Air Force Base Airport",
+    "name":"Eastgate Airport \/ Air Force Base Hoedspruit",
     "location":"Hoedspruit, NP, ZA",
     "query":"FAHS"
   },
@@ -14063,7 +14008,7 @@
       "MQP"
     ],
     "name":"Kruger Mpumalanga International Airport",
-    "location":"Mpumalanga, MP, ZA",
+    "location":"Mbombela, MP, ZA",
     "query":"FAKN"
   },
   {
@@ -14210,7 +14155,7 @@
       "FAUP",
       "UTN"
     ],
-    "name":"Pierre Van Ryneveld Airport",
+    "name":"Upington International Airport",
     "location":"Upington, NC, ZA",
     "query":"FAUP"
   },
@@ -14269,7 +14214,7 @@
       "FBKE",
       "BBK"
     ],
-    "name":"Kasane Airport",
+    "name":"Kasane International Airport",
     "location":"Kasane, CH, BW",
     "query":"FBKE"
   },
@@ -14289,7 +14234,7 @@
       "FBMN",
       "MUB"
     ],
-    "name":"Maun Airport",
+    "name":"Maun International Airport",
     "location":"Maun, NW, BW",
     "query":"FBMN"
   },
@@ -14300,7 +14245,7 @@
       "FBPM",
       "FRW"
     ],
-    "name":"P G Matante Intl",
+    "name":"Phillip Gaonwe Matante International Airport",
     "location":"Francistown, FR, BW",
     "query":"FBPM"
   },
@@ -14340,7 +14285,7 @@
       "FCBB",
       "BZV"
     ],
-    "name":"Maya-Maya Airport",
+    "name":"Maya-Maya International Airport",
     "location":"Brazzaville, 12, CG",
     "query":"FCBB"
   },
@@ -14385,37 +14330,6 @@
     "query":"FCOD"
   },
   {
-    "display":"FCOI",
-    "codes":[
-      "FCOI",
-      "ION"
-    ],
-    "name":"Impfondo Airport",
-    "location":"Impfondo, 7, CG",
-    "query":"FCOI"
-  },
-  {
-    "display":"FCOU",
-    "codes":[
-      "FCOU",
-      "OUE"
-    ],
-    "name":"Ouesso Airport",
-    "location":"13, CG",
-    "query":"FCOU"
-  },
-  {
-    "display":"FCPL",
-    "codes":[
-      "FCPD",
-      "FCPL",
-      "DIS"
-    ],
-    "name":"Ngot Nzoungou Airport",
-    "location":"Dolisie, 9, CG",
-    "query":"FCPD"
-  },
-  {
     "display":"FCPP",
     "codes":[
       "FCPP",
@@ -14451,7 +14365,7 @@
       "FDMS",
       "MTS"
     ],
-    "name":"Matsapha Airport",
+    "name":"Matsapha International Airport",
     "location":"Manzini, MA, SZ",
     "query":"FDMS"
   },
@@ -14641,7 +14555,7 @@
       "FGBT",
       "BSG"
     ],
-    "name":"Bata Airport",
+    "name":"Bata International Airport",
     "location":"Bata, LI, GQ",
     "query":"FGBT"
   },
@@ -14651,7 +14565,7 @@
       "FGSL",
       "SSG"
     ],
-    "name":"Malabo Airport",
+    "name":"Malabo International Airport",
     "location":"Malabo, BN, GQ",
     "query":"FGSL"
   },
@@ -14764,7 +14678,7 @@
       "FJDG",
       "NKW"
     ],
-    "name":"Diego Garcia Naval Support Facility",
+    "name":"Naval Support Facility Diego Garcia",
     "location":"Diego Garcia, U-A, IO",
     "query":"FJDG"
   },
@@ -14915,7 +14829,7 @@
       "FLMF",
       "MFU"
     ],
-    "name":"Mfuwe Airport",
+    "name":"Mfuwe International Airport",
     "location":"Mfuwe, 03, ZM",
     "query":"FLMF"
   },
@@ -14966,7 +14880,7 @@
       "KFME",
       "FME"
     ],
-    "name":"Tipton Airport",
+    "name":"Fort Meade Executive Airport",
     "location":"Fort Meade(Odenton), MD, US",
     "query":"FME"
   },
@@ -15016,7 +14930,7 @@
       "FMMI",
       "TNR"
     ],
-    "name":"Ivato Airport",
+    "name":"Ivato International Airport",
     "location":"Antananarivo, T, MG",
     "query":"FMMI"
   },
@@ -15076,7 +14990,7 @@
       "FMNN",
       "NOS"
     ],
-    "name":"Fascene Airport",
+    "name":"Nosy Be-Fascene International Airport",
     "location":"Nosy Be, D, MG",
     "query":"FMNN"
   },
@@ -15196,7 +15110,7 @@
       "FNUB",
       "SDD"
     ],
-    "name":"Lubango Airport",
+    "name":"Lubango Mukanka International Airport",
     "location":"Lubango, HUI, AO",
     "query":"FNUB"
   },
@@ -15267,7 +15181,7 @@
       "FOOG",
       "POG"
     ],
-    "name":"Port Gentil Airport",
+    "name":"Port Gentil International Airport",
     "location":"Port Gentil, 8, GA",
     "query":"FOOG"
   },
@@ -15348,9 +15262,19 @@
       "FQBR",
       "BEW"
     ],
-    "name":"Beira Airport",
+    "name":"Beira International Airport",
     "location":"Beira, S, MZ",
     "query":"FQBR"
+  },
+  {
+    "display":"FQCB",
+    "codes":[
+      "FQCB",
+      "FXO"
+    ],
+    "name":"Cuamba Airport",
+    "location":"Cuamba, A, MZ",
+    "query":"FQCB"
   },
   {
     "display":"FQCH",
@@ -15418,7 +15342,7 @@
       "FQNC",
       "MNC"
     ],
-    "name":"Nacala Airport",
+    "name":"Nacala International Airport",
     "location":"Nacala, N, MZ",
     "query":"FQNC"
   },
@@ -15458,7 +15382,7 @@
       "FQTT",
       "TET"
     ],
-    "name":"Chingozi Airport",
+    "name":"Tete Airport",
     "location":"Tete, T, MZ",
     "query":"FQTT"
   },
@@ -15479,7 +15403,7 @@
       "FRG"
     ],
     "name":"Republic Airport",
-    "location":"Farmingdale, NY, US",
+    "location":"East Farmingdale, NY, US",
     "query":"FRG"
   },
   {
@@ -15549,7 +15473,7 @@
       "SEZ"
     ],
     "name":"Seychelles International Airport",
-    "location":"Mahe Island, 20, SC",
+    "location":"Victoria, 20, SC",
     "query":"FSIA"
   },
   {
@@ -15700,7 +15624,7 @@
       "FVKB",
       "KAB"
     ],
-    "name":"Kariba International Airport",
+    "name":"Kariba Airport",
     "location":"Kariba, MW, ZW",
     "query":"FVKB"
   },
@@ -15832,7 +15756,7 @@
       "MSU"
     ],
     "name":"Moshoeshoe I International Airport",
-    "location":"Mazenod, A, LS",
+    "location":"Maseru(Mazenod), A, LS",
     "query":"FXMM"
   },
   {
@@ -15962,8 +15886,8 @@
       "FYWB",
       "WVB"
     ],
-    "name":"Walvis Bay Airport",
-    "location":"Rooikop, ER",
+    "name":"Walvis Bay International Airport",
+    "location":"Walvis Bay(Rooikop), ER",
     "query":"FYWB"
   },
   {
@@ -16015,16 +15939,6 @@
     "name":"Bangoka International Airport",
     "location":"Kisangani, TO, CD",
     "query":"FZIC"
-  },
-  {
-    "display":"FZNA",
-    "codes":[
-      "FZNA",
-      "GOM"
-    ],
-    "name":"Goma International Airport",
-    "location":"Goma, NK, CD",
-    "query":"FZNA"
   },
   {
     "display":"FZQA",
@@ -16102,8 +16016,8 @@
       "GAGO",
       "GAQ"
     ],
-    "name":"Gao Airport",
-    "location":"7, ML",
+    "name":"Gao International Airport",
+    "location":"Gao, 7, ML",
     "query":"GAGO"
   },
   {
@@ -16124,7 +16038,7 @@
       "KYS"
     ],
     "name":"Kayes Dag Dag Airport",
-    "location":"1, ML",
+    "location":"Kayes, 1, ML",
     "query":"GAKD"
   },
   {
@@ -16142,7 +16056,7 @@
       "GAMB",
       "MZI"
     ],
-    "name":"Mopti Ambodédjo International Airport",
+    "name":"Mopti Airport",
     "location":"Sévaré, 5, ML",
     "query":"GAMB"
   },
@@ -16162,7 +16076,7 @@
       "GATB",
       "TOM"
     ],
-    "name":"Timbuktu Airport",
+    "name":"Tombouktou Airport",
     "location":"Timbuktu, 7, ML",
     "query":"GATB"
   },
@@ -16542,6 +16456,16 @@
     "query":"GKY"
   },
   {
+    "display":"KGLE",
+    "codes":[
+      "KGLE",
+      "GLE"
+    ],
+    "name":"Gainesville Municipal Airport",
+    "location":"Gainesville, TX, US",
+    "query":"GLE"
+  },
+  {
     "display":"KGLR",
     "codes":[
       "KGLR",
@@ -16728,7 +16652,7 @@
       "GMML",
       "EUN"
     ],
-    "name":"Hassan I Airport",
+    "name":"Laayoune Hassan I International Airport",
     "location":"El Aaiún, U-A, EH",
     "query":"GMML"
   },
@@ -16758,8 +16682,8 @@
       "GMMX",
       "RAK"
     ],
-    "name":"Menara Airport",
-    "location":"Marrakech, 07, MA",
+    "name":"Marrakesh Menara Airport",
+    "location":"Marrakesh, 07, MA",
     "query":"GMMX"
   },
   {
@@ -16768,7 +16692,7 @@
       "GMMZ",
       "OZZ"
     ],
-    "name":"Ouarzazate Airport",
+    "name":"Ouarzazate International Airport",
     "location":"Ouarzazate, 08, MA",
     "query":"GMMZ"
   },
@@ -16871,17 +16795,6 @@
     "name":"Ziguinchor Airport",
     "location":"Ziguinchor, ZG, SN",
     "query":"GOGG"
-  },
-  {
-    "display":"GODK",
-    "codes":[
-      "GODK",
-      "GOGK",
-      "KDA"
-    ],
-    "name":"Kolda Airport",
-    "location":"Kolda, KD, SN",
-    "query":"GOGK"
   },
   {
     "display":"GOGS",
@@ -17219,7 +17132,7 @@
       "GUCY",
       "CKY"
     ],
-    "name":"Conakry International Airport",
+    "name":"Ahmed Sékou Touré International Airport",
     "location":"Conakry, C, GN",
     "query":"GUCY"
   },
@@ -17265,6 +17178,15 @@
     "query":"GUS"
   },
   {
+    "display":"GUXN",
+    "codes":[
+      "GUXN"
+    ],
+    "name":"Kankan Airport",
+    "location":"Kankan, K, GN",
+    "query":"GUXN"
+  },
+  {
     "display":"GVAC",
     "codes":[
       "GVAC",
@@ -17280,7 +17202,7 @@
       "GVBA",
       "BVC"
     ],
-    "name":"Rabil Airport",
+    "name":"Aristides Pereira International Airport",
     "location":"Rabil, B, CV",
     "query":"GVBA"
   },
@@ -17320,7 +17242,7 @@
       "GVSV",
       "VXE"
     ],
-    "name":"São Pedro Airport",
+    "name":"Cesaria Evora International Airport",
     "location":"São Pedro, B, CV",
     "query":"GVSV"
   },
@@ -17499,26 +17421,6 @@
     "query":"HAAB"
   },
   {
-    "display":"HABD",
-    "codes":[
-      "HABD",
-      "BJR"
-    ],
-    "name":"Bahir Dar Airport",
-    "location":"Bahir Dar, AM, ET",
-    "query":"HABD"
-  },
-  {
-    "display":"HADR",
-    "codes":[
-      "HADR",
-      "DIR"
-    ],
-    "name":"Aba Tenna Dejazmach Yilma International Airport",
-    "location":"Dire Dawa, DD, ET",
-    "query":"HADR"
-  },
-  {
     "display":"KHAE",
     "codes":[
       "KHAE",
@@ -17547,16 +17449,6 @@
     "name":"Three Rivers Municipal Dr Haines Airport",
     "location":"Three Rivers, MI, US",
     "query":"HAI"
-  },
-  {
-    "display":"HAMK",
-    "codes":[
-      "HAMK",
-      "MQX"
-    ],
-    "name":"Alula Aba Nega Airport",
-    "location":"Mekele, TI, ET",
-    "query":"HAMK"
   },
   {
     "display":"KHAO",
@@ -17624,7 +17516,7 @@
       "HCMF",
       "BSA"
     ],
-    "name":"Bosaso \/ Bender Qassim International Airport",
+    "name":"Bender Qassim International Airport",
     "location":"Bosaso, BR, SO",
     "query":"HCMF"
   },
@@ -17856,7 +17748,7 @@
       "HEMM",
       "MUH"
     ],
-    "name":"Marsa Matruh International Airport",
+    "name":"Mersa Matruh International Airport",
     "location":"Marsa Matruh, MT, EG",
     "query":"HEMM"
   },
@@ -17929,16 +17821,6 @@
     "name":"Sphinx International Airport",
     "location":"Al Jiza, GZ, EG",
     "query":"HESX"
-  },
-  {
-    "display":"HETB",
-    "codes":[
-      "HETB",
-      "TCP"
-    ],
-    "name":"Taba International Airport",
-    "location":"Taba, JS, EG",
-    "query":"HETB"
   },
   {
     "display":"HETR",
@@ -18087,7 +17969,7 @@
       "KHII",
       "HII"
     ],
-    "name":"Lake Havasu City International Airport",
+    "name":"Lake Havasu City Airport",
     "location":"Lake Havasu City, AZ, US",
     "query":"HII"
   },
@@ -18156,7 +18038,7 @@
       "HKKI",
       "KIS"
     ],
-    "name":"Kisumu Airport",
+    "name":"Kisumu International Airport",
     "location":"Kisumu, 600, KE",
     "query":"HKKI"
   },
@@ -18196,7 +18078,7 @@
       "HKML",
       "MYD"
     ],
-    "name":"Malindi Airport",
+    "name":"Malindi International Airport",
     "location":"Malindi, 300, KE",
     "query":"HKML"
   },
@@ -18226,7 +18108,7 @@
       "HKNK",
       "NUU"
     ],
-    "name":"Nakuru Airport",
+    "name":"Lanet Military Airstrip",
     "location":"Nakuru, 700, KE",
     "query":"HKNK"
   },
@@ -18239,6 +18121,15 @@
     "name":"Nairobi Wilson Airport",
     "location":"Nairobi, 110, KE",
     "query":"HKNW"
+  },
+  {
+    "display":"HKNY",
+    "codes":[
+      "HKNY"
+    ],
+    "name":"Laikipia Air Base",
+    "location":"Nanyuki, 700, KE",
+    "query":"HKNY"
   },
   {
     "display":"HKWJ",
@@ -18269,6 +18160,16 @@
     "name":"Batesville Airport",
     "location":"Batesville, IN, US",
     "query":"HLB"
+  },
+  {
+    "display":"HLGD",
+    "codes":[
+      "HLGD",
+      "SRX"
+    ],
+    "name":"Sirt International Airport \/ Ghardabiya Airbase",
+    "location":"Sirt, SR, LY",
+    "query":"HLGD"
   },
   {
     "display":"HLGT",
@@ -18339,6 +18240,16 @@
     "name":"Hood Army Air Field",
     "location":"Fort Cavazos (Killeen), TX, US",
     "query":"HLR"
+  },
+  {
+    "display":"HLTQ",
+    "codes":[
+      "HLTQ",
+      "TOB"
+    ],
+    "name":"Tobruk International Airport",
+    "location":"Adam, BU, LY",
+    "query":"HLTQ"
   },
   {
     "display":"KHLX",
@@ -18672,7 +18583,7 @@
       "KHST",
       "HST"
     ],
-    "name":"Homestead ARB Airport",
+    "name":"Homestead Air Reserve Base",
     "location":"Homestead, FL, US",
     "query":"HST"
   },
@@ -18821,7 +18732,7 @@
       "HTMW",
       "MWZ"
     ],
-    "name":"Mwanza Airport",
+    "name":"Mwanza International Airport",
     "location":"Mwanza, 18, TZ",
     "query":"HTMW"
   },
@@ -20219,6 +20130,16 @@
     "query":"K20V"
   },
   {
+    "display":"KK24",
+    "codes":[
+      "KK24",
+      "K24"
+    ],
+    "name":"Russell County Airport",
+    "location":"Jamestown, KY, US",
+    "query":"K24"
+  },
+  {
     "display":"KK62",
     "codes":[
       "KK62",
@@ -20295,7 +20216,7 @@
       "ABE"
     ],
     "name":"Lehigh Valley International Airport",
-    "location":"Allentown, PA, US",
+    "location":"Allentown\/Bethlehem, PA, US",
     "query":"KABE"
   },
   {
@@ -20635,7 +20556,7 @@
       "KAVP",
       "AVP"
     ],
-    "name":"Wilkes Barre Scranton International Airport",
+    "name":"Wilkes-Barre\/Scranton International Airport",
     "location":"Wilkes-Barre\/Scranton, PA, US",
     "query":"KAVP"
   },
@@ -20645,7 +20566,7 @@
       "KAZO",
       "AZO"
     ],
-    "name":"Kalamazoo Battle Creek International Airport",
+    "name":"Kalamazoo\/Battle Creek International Airport",
     "location":"Kalamazoo, MI, US",
     "query":"KAZO"
   },
@@ -20885,7 +20806,7 @@
       "KBOS",
       "BOS"
     ],
-    "name":"Logan International Airport",
+    "name":"Boston Logan International Airport",
     "location":"Boston, MA, US",
     "query":"KBOS"
   },
@@ -20975,7 +20896,7 @@
       "KBUR",
       "BUR"
     ],
-    "name":"Hollywood Burbank Airport",
+    "name":"Bobe Hope \/ Hollywood Burbank Airport",
     "location":"Burbank, CA, US",
     "query":"KBUR"
   },
@@ -21159,16 +21080,6 @@
     "name":"Chattanooga Metropolitan Airport (Lovell Field)",
     "location":"Chattanooga, TN, US",
     "query":"KCHA"
-  },
-  {
-    "display":"KCHS",
-    "codes":[
-      "KCHS",
-      "CHS"
-    ],
-    "name":"Charleston International Airport",
-    "location":"Charleston, SC, US",
-    "query":"KCHS"
   },
   {
     "display":"KCID",
@@ -21387,7 +21298,7 @@
       "KCSG",
       "CSG"
     ],
-    "name":"Columbus Metropolitan Airport",
+    "name":"Columbus Airport",
     "location":"Columbus, GA, US",
     "query":"KCSG"
   },
@@ -21497,7 +21408,7 @@
       "KDAY",
       "DAY"
     ],
-    "name":"James M Cox Dayton International Airport",
+    "name":"James M. Cox Dayton International Airport",
     "location":"Dayton, OH, US",
     "query":"KDAY"
   },
@@ -21928,7 +21839,7 @@
       "KEUG",
       "EUG"
     ],
-    "name":"Mahlon Sweet Field",
+    "name":"Eugene Airport",
     "location":"Eugene, OR, US",
     "query":"KEUG"
   },
@@ -22028,7 +21939,7 @@
       "KFLG",
       "FLG"
     ],
-    "name":"Flagstaff Pulliam International Airport",
+    "name":"Flagstaff Pulliam Airport",
     "location":"Flagstaff, AZ, US",
     "query":"KFLG"
   },
@@ -22088,7 +21999,7 @@
       "KFPR",
       "FPR"
     ],
-    "name":"St Lucie County International Airport",
+    "name":"Treasure Coast International Airport",
     "location":"Fort Pierce, FL, US",
     "query":"KFPR"
   },
@@ -22098,7 +22009,7 @@
       "KFSD",
       "FSD"
     ],
-    "name":"Sioux Falls Regional Airport \/ Joe Foss Field",
+    "name":"Sioux Falls Regional Airport",
     "location":"Sioux Falls, SD, US",
     "query":"KFSD"
   },
@@ -22370,8 +22281,8 @@
       "KGSP",
       "GSP"
     ],
-    "name":"Greenville Spartanburg International Airport",
-    "location":"Greer, SC, US",
+    "name":"Greenville-Spartanburg International Airport",
+    "location":"Greenville\/Greer\/Spartanburg, SC, US",
     "query":"KGSP"
   },
   {
@@ -22530,7 +22441,7 @@
       "KHOU",
       "HOU"
     ],
-    "name":"William P Hobby Airport",
+    "name":"William P. Hobby Airport",
     "location":"Houston, TX, US",
     "query":"KHOU"
   },
@@ -22591,7 +22502,7 @@
       "KHSV",
       "HSV"
     ],
-    "name":"Huntsville International Carl T Jones Field",
+    "name":"Huntsville International Airport",
     "location":"Huntsville, AL, US",
     "query":"KHSV"
   },
@@ -22661,7 +22572,7 @@
       "KIAH",
       "IAH"
     ],
-    "name":"George Bush Intercontinental Houston Airport",
+    "name":"George Bush Intercontinental Airport",
     "location":"Houston, TX, US",
     "query":"KIAH"
   },
@@ -22681,7 +22592,7 @@
       "KICT",
       "ICT"
     ],
-    "name":"Wichita Eisenhower National Airport",
+    "name":"Wichita Dwight D. Eisenhower National Airport",
     "location":"Wichita, KS, US",
     "query":"KICT"
   },
@@ -22812,7 +22723,7 @@
       "KISP",
       "ISP"
     ],
-    "name":"Long Island Mac Arthur Airport",
+    "name":"Long Island MacArthur Airport",
     "location":"Islip, NY, US",
     "query":"KISP"
   },
@@ -22872,7 +22783,7 @@
       "KJFK",
       "JFK"
     ],
-    "name":"John F Kennedy International Airport",
+    "name":"John F. Kennedy International Airport",
     "location":"New York, NY, US",
     "query":"KJFK"
   },
@@ -22942,7 +22853,7 @@
       "KLAN",
       "LAN"
     ],
-    "name":"Capital City Airport",
+    "name":"Capital Region International Airport",
     "location":"Lansing, MI, US",
     "query":"KLAN"
   },
@@ -23042,7 +22953,7 @@
       "KLGB",
       "LGB"
     ],
-    "name":"Long Beach Airport (Daugherty Field)",
+    "name":"Long Beach International Airport",
     "location":"Long Beach, CA, US",
     "query":"KLGB"
   },
@@ -23166,16 +23077,6 @@
     "name":"Southwest Washington Regional Airport",
     "location":"Kelso, WA, US",
     "query":"KLS"
-  },
-  {
-    "display":"KLSE",
-    "codes":[
-      "KLSE",
-      "LSE"
-    ],
-    "name":"La Crosse Regional Airport",
-    "location":"La Crosse, WI, US",
-    "query":"KLSE"
   },
   {
     "display":"KLVM",
@@ -23663,7 +23564,7 @@
       "KMRY",
       "MRY"
     ],
-    "name":"Monterey Peninsula Airport",
+    "name":"Monterey Regional Airport",
     "location":"Monterey, CA, US",
     "query":"KMRY"
   },
@@ -23693,7 +23594,7 @@
       "KMSO",
       "MSO"
     ],
-    "name":"Missoula International Airport",
+    "name":"Missoula Montana Airport",
     "location":"Missoula, MT, US",
     "query":"KMSO"
   },
@@ -23733,7 +23634,7 @@
       "KMTH",
       "MTH"
     ],
-    "name":"The Florida Keys Marathon Airport",
+    "name":"Florida Keys Marathon International Airport",
     "location":"Marathon, FL, US",
     "query":"KMTH"
   },
@@ -23925,7 +23826,7 @@
       "KOKC",
       "OKC"
     ],
-    "name":"Will Rogers World Airport",
+    "name":"OKC Will Rogers World Airport",
     "location":"Oklahoma City, OK, US",
     "query":"KOKC"
   },
@@ -24295,7 +24196,7 @@
       "KPRC",
       "PRC"
     ],
-    "name":"Prescott International Airport - Ernest A. Love Field",
+    "name":"Prescott Regional Airport - Ernest A. Love Field",
     "location":"Prescott, AZ, US",
     "query":"KPRC"
   },
@@ -24365,8 +24266,8 @@
       "KPVD",
       "PVD"
     ],
-    "name":"Theodore Francis Green State Airport",
-    "location":"Warwick, RI, US",
+    "name":"Rhode Island T. F. Green International Airport",
+    "location":"Providence\/Warwick, RI, US",
     "query":"KPVD"
   },
   {
@@ -24465,7 +24366,7 @@
       "KRDU",
       "RDU"
     ],
-    "name":"Raleigh Durham International Airport",
+    "name":"Raleigh-Durham International Airport",
     "location":"Raleigh\/Durham, NC, US",
     "query":"KRDU"
   },
@@ -24685,7 +24586,7 @@
       "KSBN",
       "SBN"
     ],
-    "name":"South Bend Regional Airport",
+    "name":"South Bend International Airport",
     "location":"South Bend, IN, US",
     "query":"KSBN"
   },
@@ -25040,16 +24941,6 @@
     "query":"KTOI"
   },
   {
-    "display":"KTOL",
-    "codes":[
-      "KTOL",
-      "TOL"
-    ],
-    "name":"Eugene F. Kranz Toledo Express Airport",
-    "location":"Toledo, OH, US",
-    "query":"KTOL"
-  },
-  {
     "display":"KTOP",
     "codes":[
       "KTOP",
@@ -25140,22 +25031,12 @@
     "query":"KTUL"
   },
   {
-    "display":"KTUP",
-    "codes":[
-      "KTUP",
-      "TUP"
-    ],
-    "name":"Tupelo Regional Airport",
-    "location":"Tupelo, MS, US",
-    "query":"KTUP"
-  },
-  {
     "display":"KTUS",
     "codes":[
       "KTUS",
       "TUS"
     ],
-    "name":"Tucson International Airport \/ Morris Air National Guard Base",
+    "name":"Tucson International Airport",
     "location":"Tucson, AZ, US",
     "query":"KTUS"
   },
@@ -25226,7 +25107,7 @@
       "TYS"
     ],
     "name":"McGhee Tyson Airport",
-    "location":"Alcoa, TN, US",
+    "location":"Knoxville\/Maryville, TN, US",
     "query":"KTYS"
   },
   {
@@ -25685,7 +25566,7 @@
       "LCEN",
       "ECN"
     ],
-    "name":"Nicosia (Lefkoşa) Ercan International Airport",
+    "name":"Ercan International Airport",
     "location":"Tymbou (Kirklar), 02, CY",
     "query":"LCEN"
   },
@@ -25776,7 +25657,7 @@
       "DBV"
     ],
     "name":"Dubrovnik Ruđer Bošković Airport",
-    "location":"Čilipi, 19, HR",
+    "location":"Dubrovnik, 19, HR",
     "query":"LDDU"
   },
   {
@@ -25816,7 +25697,7 @@
       "OSI"
     ],
     "name":"Osijek Airport",
-    "location":"Klisa, 14, HR",
+    "location":"Osijek(Klisa), 14, HR",
     "query":"LDOS"
   },
   {
@@ -25836,7 +25717,7 @@
       "RJK"
     ],
     "name":"Rijeka Airport",
-    "location":"Omišalj, 08, HR",
+    "location":"Rijeka(Omišalj), 08, HR",
     "query":"LDRI"
   },
   {
@@ -25855,8 +25736,8 @@
       "LDSP",
       "SPU"
     ],
-    "name":"Split Airport",
-    "location":"Kaštel Štafilić, 17, HR",
+    "name":"Split Saint Jerome Airport",
+    "location":"Split, 17, HR",
     "query":"LDSP"
   },
   {
@@ -25876,7 +25757,7 @@
       "ZAD"
     ],
     "name":"Zadar Airport",
-    "location":"Zemunik Donji (Zadar), 13, HR",
+    "location":"Zadar, 13, HR",
     "query":"LDZD"
   },
   {
@@ -26171,7 +26052,7 @@
       "LEMI",
       "RMU"
     ],
-    "name":"Región de Murcia International Airport",
+    "name":"Region of Murcia International Airport",
     "location":"Corvera, MC, ES",
     "query":"LEMI"
   },
@@ -26389,8 +26270,8 @@
       "LEZL",
       "SVQ"
     ],
-    "name":"Sevilla Airport",
-    "location":"Sevilla, AN, ES",
+    "name":"Seville Airport",
+    "location":"Seville, AN, ES",
     "query":"LEZL"
   },
   {
@@ -26599,15 +26480,6 @@
     "query":"LFBZ"
   },
   {
-    "display":"LFCG",
-    "codes":[
-      "LFCG"
-    ],
-    "name":"Aérodrome de Saint-Girons - Antichan",
-    "location":"Saint-Girons\/Antichan, OCC, FR",
-    "query":"LFCG"
-  },
-  {
     "display":"LFCK",
     "codes":[
       "LFCK",
@@ -26626,24 +26498,6 @@
     "name":"Rodez–Aveyron Airport",
     "location":"Rodez\/Marcillac, OCC, FR",
     "query":"LFCR"
-  },
-  {
-    "display":"LFDB",
-    "codes":[
-      "LFDB"
-    ],
-    "name":"Aérodrome Morin - Védrines",
-    "location":"Montauban, OCC, FR",
-    "query":"LFDB"
-  },
-  {
-    "display":"LFDH",
-    "codes":[
-      "LFDH"
-    ],
-    "name":"Auch Gers Airfield",
-    "location":"Auch, OCC, FR",
-    "query":"LFDH"
   },
   {
     "display":"LFGA",
@@ -26711,7 +26565,7 @@
       "LFKB",
       "BIA"
     ],
-    "name":"Bastia Poretta airport",
+    "name":"Bastia-Poretta International airport",
     "location":"Bastia, COR, FR",
     "query":"LFKB"
   },
@@ -26795,15 +26649,6 @@
     "query":"LFLL"
   },
   {
-    "display":"LFLM",
-    "codes":[
-      "LFLM"
-    ],
-    "name":"Mâcon-Charnay Airfield",
-    "location":"Charnay-lès-Mâcon, Saône-et-Loire, BFC, FR",
-    "query":"LFLM"
-  },
-  {
     "display":"LFLN",
     "codes":[
       "LFLN",
@@ -26822,15 +26667,6 @@
     "name":"Annecy Meythet airport",
     "location":"Annecy, ARA, FR",
     "query":"LFLP"
-  },
-  {
-    "display":"LFLQ",
-    "codes":[
-      "LFLQ"
-    ],
-    "name":"Montélimar-Ancône Airfield",
-    "location":"Montélimar, Drôme, ARA, FR",
-    "query":"LFLQ"
   },
   {
     "display":"LFLS",
@@ -27033,7 +26869,7 @@
       "LFOB",
       "BVA"
     ],
-    "name":"Beauvais Tillé airport",
+    "name":"Beauvais-Tillé airport",
     "location":"Beauvais, HDF, FR",
     "query":"LFOB"
   },
@@ -27048,15 +26884,6 @@
     "query":"LFOE"
   },
   {
-    "display":"LFOF",
-    "codes":[
-      "LFOF"
-    ],
-    "name":"Alençon-Valframbert Airfield",
-    "location":"Alençon, Orne, NOR, FR",
-    "query":"LFOF"
-  },
-  {
     "display":"LFOH",
     "codes":[
       "LFOH",
@@ -27065,15 +26892,6 @@
     "name":"Le Havre-Octeville Airport",
     "location":"Le Havre, NOR, FR",
     "query":"LFOH"
-  },
-  {
-    "display":"LFOI",
-    "codes":[
-      "LFOI"
-    ],
-    "name":"Abbeville-Buigny Baie de Somme Airfield",
-    "location":"Buigny-Saint-Maclou, HDF, FR",
-    "query":"LFOI"
   },
   {
     "display":"LFOJ",
@@ -27105,15 +26923,6 @@
     "query":"LFOP"
   },
   {
-    "display":"LFOR",
-    "codes":[
-      "LFOR"
-    ],
-    "name":"Chartres-Métropole Airfield",
-    "location":"Chartres, Eure-et-Loir, CVL, FR",
-    "query":"LFOR"
-  },
-  {
     "display":"LFOT",
     "codes":[
       "LFOT",
@@ -27134,15 +26943,6 @@
     "query":"LFOV"
   },
   {
-    "display":"LFOW",
-    "codes":[
-      "LFOW"
-    ],
-    "name":"Saint-Quentin-Roupy Airfield",
-    "location":"Fontaine-lès-Clercs, Aisne, HDF, FR",
-    "query":"LFOW"
-  },
-  {
     "display":"LFOZ",
     "codes":[
       "LFOZ",
@@ -27158,7 +26958,7 @@
       "LFPB",
       "LBG"
     ],
-    "name":"Paris-Le Bourget Airport",
+    "name":"Paris-Le Bourget International Airport",
     "location":"Paris, IDF, FR",
     "query":"LFPB"
   },
@@ -27560,18 +27360,9 @@
       "LFVP",
       "FSP"
     ],
-    "name":"St Pierre Airport",
+    "name":"Saint-Pierre Pointe-Blanche Airport",
     "location":"Saint-Pierre, SP, PM",
     "query":"LFVP"
-  },
-  {
-    "display":"LFXA",
-    "codes":[
-      "LFXA"
-    ],
-    "name":"Ambérieu Air Base (BA 278)",
-    "location":"Ambérieu, ARA, FR",
-    "query":"LFXA"
   },
   {
     "display":"LFYR",
@@ -27737,7 +27528,7 @@
       "LGKO",
       "KGS"
     ],
-    "name":"Kos Airport",
+    "name":"Kos International Airport \"Ippokratis\"",
     "location":"Kos Island, L, GR",
     "query":"LGKO"
   },
@@ -27792,16 +27583,6 @@
     "query":"LGLM"
   },
   {
-    "display":"LGLR",
-    "codes":[
-      "LGLR",
-      "LRA"
-    ],
-    "name":"Larissa Air Base",
-    "location":"Larissa, E, GR",
-    "query":"LGLR"
-  },
-  {
     "display":"LGMK",
     "codes":[
       "LGMK",
@@ -27847,7 +27628,7 @@
       "LGRP",
       "RHO"
     ],
-    "name":"Diagoras Airport",
+    "name":"Rhodes International Airport \"Diagoras\"",
     "location":"Rhodes, L, GR",
     "query":"LGRP"
   },
@@ -27907,7 +27688,7 @@
       "LGSR",
       "JTR"
     ],
-    "name":"Santorini Airport",
+    "name":"Santorini International Airport",
     "location":"Santorini Island, L, GR",
     "query":"LGSR"
   },
@@ -27920,15 +27701,6 @@
     "name":"Skiros Airport",
     "location":"Skiros Island, H, GR",
     "query":"LGSY"
-  },
-  {
-    "display":"LGTG",
-    "codes":[
-      "LGTG"
-    ],
-    "name":"Tanagra Air Base",
-    "location":"Tanagra, H, GR",
-    "query":"LGTG"
   },
   {
     "display":"LGTS",
@@ -28033,17 +27805,18 @@
       "LHPP",
       "PEV"
     ],
-    "name":"Pécs-Pogány Airport",
+    "name":"Pécs-Pogány International Airport",
     "location":"Pécs, BA, HU",
     "query":"LHPP"
   },
   {
     "display":"LHPR",
     "codes":[
-      "LHPR"
+      "LHPR",
+      "QGY"
     ],
-    "name":"Győr-Pér International Airport",
-    "location":"Pér, GS, HU",
+    "name":"Győr-Pér Airport",
+    "location":"Győr, GS, HU",
     "query":"LHPR"
   },
   {
@@ -28301,6 +28074,16 @@
     "query":"LICT"
   },
   {
+    "display":"IT-0653",
+    "codes":[
+      "IT-0653",
+      "LICU"
+    ],
+    "name":"Ustica Heliport",
+    "location":"Ustica (PA), 82, IT",
+    "query":"LICU"
+  },
+  {
     "display":"LICZ",
     "codes":[
       "CT04",
@@ -28382,7 +28165,7 @@
       "LIME",
       "BGY"
     ],
-    "name":"Milan Bergamo Airport \/ Antonio Locatelli Air Base",
+    "name":"Il Caravaggio International Airport",
     "location":"Orio al Serio (BG), 25, IT",
     "query":"LIME"
   },
@@ -28550,7 +28333,7 @@
       "TV01",
       "TSF"
     ],
-    "name":"Treviso Antonio Canova Airport",
+    "name":"Treviso Airport",
     "location":"Treviso (TV), 34, IT",
     "query":"LIPH"
   },
@@ -28571,7 +28354,7 @@
       "LIPK",
       "FRL"
     ],
-    "name":"Forlì Luigi Ridolfi Airport",
+    "name":"Forlì-Luigi Ridolfi International Airport",
     "location":"Forlì (FC), 45, IT",
     "query":"LIPK"
   },
@@ -28603,8 +28386,8 @@
       "LIPQ",
       "TRS"
     ],
-    "name":"Trieste–Friuli Venezia Giulia Airport",
-    "location":"Ronchi dei Legionari (GO), 36, IT",
+    "name":"Trieste Airport",
+    "location":"Ronchi dei Legionari\/Trieste, 36, IT",
     "query":"LIPQ"
   },
   {
@@ -28905,7 +28688,7 @@
       "MBX"
     ],
     "name":"Maribor Edvard Rusjan Airport",
-    "location":"Orehova Vas, 160, SI",
+    "location":"Maribor, 160, SI",
     "query":"LJMB"
   },
   {
@@ -28971,7 +28754,7 @@
       "LKMT",
       "OSR"
     ],
-    "name":"Ostrava Leos Janáček Airport",
+    "name":"Leoš Janáček Airport Ostrava",
     "location":"Mošnov, MO, CZ",
     "query":"LKMT"
   },
@@ -29003,15 +28786,6 @@
     "name":"Pardubice Airport",
     "location":"Pardubice, PA, CZ",
     "query":"LKPD"
-  },
-  {
-    "display":"LKPJ",
-    "codes":[
-      "LKPJ"
-    ],
-    "name":"Prostějov Airfield",
-    "location":"Prostějov, OL, CZ",
-    "query":"LKPJ"
   },
   {
     "display":"LKPR",
@@ -29100,7 +28874,7 @@
       "LLHA",
       "HFA"
     ],
-    "name":"Haifa International Airport",
+    "name":"Uri Michaeli Haifa International Airport",
     "location":"Haifa, HA, IL",
     "query":"LLHA"
   },
@@ -29329,7 +29103,7 @@
       "LOWL",
       "LNZ"
     ],
-    "name":"Linz-Hörsching Airport \/ Vogler Air Base",
+    "name":"Linz-Hörsching Airport",
     "location":"Linz, 4, AT",
     "query":"LOWL"
   },
@@ -29463,7 +29237,7 @@
       "LPFR",
       "FAO"
     ],
-    "name":"Faro Airport",
+    "name":"Faro - Gago Coutinho International Airport",
     "location":"Faro, 08, PT",
     "query":"LPFR"
   },
@@ -29493,7 +29267,7 @@
       "LPMA",
       "FNC"
     ],
-    "name":"Madeira International Airport Cristiano Ronaldo",
+    "name":"Cristiano Ronaldo International Airport",
     "location":"Funchal, 30, PT",
     "query":"LPMA"
   },
@@ -29604,6 +29378,16 @@
     "query":"LQMO"
   },
   {
+    "display":"KLQR",
+    "codes":[
+      "KLQR",
+      "LQR"
+    ],
+    "name":"Larned Pawnee County Airport",
+    "location":"Larned, KS, US",
+    "query":"LQR"
+  },
+  {
     "display":"LQSA",
     "codes":[
       "LQSA",
@@ -29680,7 +29464,7 @@
       "CND"
     ],
     "name":"Mihail Kogălniceanu International Airport",
-    "location":"Mihail Kogălniceanu, CT, RO",
+    "location":"Constanța, CT, RO",
     "query":"LRCK"
   },
   {
@@ -29689,7 +29473,7 @@
       "LRCL",
       "CLJ"
     ],
-    "name":"Cluj Avram Iancu International Airport",
+    "name":"Avram Iancu Cluj International Airport",
     "location":"Cluj-Napoca, CJ, RO",
     "query":"LRCL"
   },
@@ -29728,7 +29512,7 @@
       "LRIA",
       "IAS"
     ],
-    "name":"Iaşi Airport",
+    "name":"Iaşi International Airport",
     "location":"Iaşi, IS, RO",
     "query":"LRIA"
   },
@@ -29818,7 +29602,7 @@
       "LRTR",
       "TSR"
     ],
-    "name":"Timişoara Traian Vuia Airport",
+    "name":"Timișoara Traian Vuia International Airport",
     "location":"Timişoara, TM, RO",
     "query":"LRTR"
   },
@@ -29851,6 +29635,16 @@
     "name":"Lordsburg Municipal Airport",
     "location":"Lordsburg, NM, US",
     "query":"LSB"
+  },
+  {
+    "display":"KLSE",
+    "codes":[
+      "KLSE",
+      "LSE"
+    ],
+    "name":"La Crosse Regional Airport",
+    "location":"La Crosse, WI, US",
+    "query":"LSE"
   },
   {
     "display":"KLSF",
@@ -30169,7 +29963,7 @@
       "LTAU",
       "ASR"
     ],
-    "name":"Kayseri Erkilet Airport",
+    "name":"Kayseri Erkilet International Airport",
     "location":"Kayseri, 38, TR",
     "query":"LTAU"
   },
@@ -30209,7 +30003,7 @@
       "ISL"
     ],
     "name":"İstanbul Atatürk Airport",
-    "location":"Bakırköy, Istanbul, 34, TR",
+    "location":"Istanbul(Bakırköy), 34, TR",
     "query":"LTBA"
   },
   {
@@ -30338,7 +30132,7 @@
       "LTBY",
       "AOE"
     ],
-    "name":"Anadolu Airport",
+    "name":"Hasan Polatkan Airport",
     "location":"Eskişehir, 26, TR",
     "query":"LTBY"
   },
@@ -30608,7 +30402,7 @@
       "IST"
     ],
     "name":"İstanbul Airport",
-    "location":"Arnavutköy, Istanbul, 34, TR",
+    "location":"Istanbul, 34, TR",
     "query":"LTFM"
   },
   {
@@ -31354,15 +31148,6 @@
     "query":"MDAB"
   },
   {
-    "display":"MDBA",
-    "codes":[
-      "MDBA"
-    ],
-    "name":"Consuelo Batey Anita airport",
-    "location":"Consuelo, 30, DO",
-    "query":"MDBA"
-  },
-  {
     "display":"MDBH",
     "codes":[
       "MDBH",
@@ -31532,7 +31317,7 @@
       "KMFR",
       "MFR"
     ],
-    "name":"Rogue Valley International Medford Airport",
+    "name":"Rogue Valley International-Medford Airport",
     "location":"Medford, OR, US",
     "query":"MFR"
   },
@@ -31611,7 +31396,7 @@
       "MGGT",
       "GUA"
     ],
-    "name":"La Aurora Airport",
+    "name":"La Aurora International Airport",
     "location":"Guatemala City, GU, GT",
     "query":"MGGT"
   },
@@ -31750,7 +31535,7 @@
       "MHLC",
       "LCE"
     ],
-    "name":"Goloson International Airport",
+    "name":"Golosón International Airport",
     "location":"La Ceiba, AT, HN",
     "query":"MHLC"
   },
@@ -31810,7 +31595,7 @@
       "MHSC",
       "XPL"
     ],
-    "name":"Palmerola International Airport \/ José Enrique Soto Cano Air Base",
+    "name":"Palmerola International Airport",
     "location":"Palmerola, CM, HN",
     "query":"MHPR"
   },
@@ -31861,7 +31646,7 @@
       "MHTG",
       "TGU"
     ],
-    "name":"Toncontín International Airport",
+    "name":"Toncontín Airport",
     "location":"Tegucigalpa, FM, HN",
     "query":"MHTG"
   },
@@ -32306,7 +32091,7 @@
       "MMHO",
       "HMO"
     ],
-    "name":"General Ignacio P. Garcia International Airport",
+    "name":"General Ignacio L. Pesqueira International Airport",
     "location":"Hermosillo, SON, MX",
     "query":"MMHO"
   },
@@ -32330,6 +32115,16 @@
     "name":"Licenciado Miguel de la Madrid International Airport",
     "location":"Colima, COL, MX",
     "query":"MMIA"
+  },
+  {
+    "display":"MMIO",
+    "codes":[
+      "MMIO",
+      "SLW"
+    ],
+    "name":"Plan De Guadalupe International Airport",
+    "location":"Saltillo, COA, MX",
+    "query":"MMIO"
   },
   {
     "display":"KMMK",
@@ -32368,7 +32163,7 @@
       "BJ1",
       "BJX"
     ],
-    "name":"Del Bajío International Airport",
+    "name":"Guanajuato International Airport",
     "location":"Silao, GUA, MX",
     "query":"MMLO"
   },
@@ -32461,8 +32256,8 @@
       "ME1",
       "MEX"
     ],
-    "name":"Benito Juárez International Airport",
-    "location":"Ciudad de México, DIF, MX",
+    "name":"Mexico City Benito Juárez International Airport",
+    "location":"Mexico City, DIF, MX",
     "query":"MMMX"
   },
   {
@@ -32582,7 +32377,8 @@
     "display":"MMSL",
     "codes":[
       "MMSL",
-      "CSL"
+      "CSL",
+      "CSW"
     ],
     "name":"Cabo San Lucas International Airport",
     "location":"Cabo San Lucas, BCS, MX",
@@ -32595,7 +32391,7 @@
       "NLU",
       "SLM"
     ],
-    "name":"General Felipe Ángeles International Airport",
+    "name":"Felipe Ángeles International Airport",
     "location":"Mexico City, MEX, MX",
     "query":"MMSM"
   },
@@ -32646,7 +32442,7 @@
       "TAM"
     ],
     "name":"General Francisco Javier Mina International Airport",
-    "location":"Tampico, TAM, MX",
+    "location":"Ciudad Madero, TAM, MX",
     "query":"MMTM"
   },
   {
@@ -32893,7 +32689,7 @@
       "MPBO",
       "BOC"
     ],
-    "name":"Bocas del Toro International Airport",
+    "name":"Bocas del Toro \"Isla Colón\" International Airport",
     "location":"Isla Colón, 1, PA",
     "query":"MPBO"
   },
@@ -33096,7 +32892,7 @@
       "MRLB",
       "LIR"
     ],
-    "name":"Guanacaste Airport",
+    "name":"Daniel Oduber Quirós International Airport",
     "location":"Liberia, G, CR",
     "query":"MRLB"
   },
@@ -33106,18 +32902,9 @@
       "MRLM",
       "LIO"
     ],
-    "name":"Limon International Airport",
-    "location":"Puerto Limon, L, CR",
+    "name":"Limón International Airport",
+    "location":"Limón, L, CR",
     "query":"MRLM"
-  },
-  {
-    "display":"MRLN",
-    "codes":[
-      "MRLN"
-    ],
-    "name":"La Guinea Airport",
-    "location":"Nicoya, G, CR",
-    "query":"MRLN"
   },
   {
     "display":"KMRN",
@@ -33165,7 +32952,7 @@
       "MSLP",
       "SAL"
     ],
-    "name":"Monseñor Óscar Arnulfo Romero International Airport",
+    "name":"El Salvador International Airport Saint Óscar Arnulfo Romero y Galdámez",
     "location":"San Salvador (San Luis Talpa), PA, SV",
     "query":"MSLP"
   },
@@ -33358,16 +33145,6 @@
     "query":"MUGM"
   },
   {
-    "display":"MUGT",
-    "codes":[
-      "MUGT",
-      "GAO"
-    ],
-    "name":"Mariana Grajales Airport",
-    "location":"Guantánamo, 14, CU",
-    "query":"MUGT"
-  },
-  {
     "display":"MUHA",
     "codes":[
       "MUHA",
@@ -33452,7 +33229,7 @@
       "MUSC",
       "SNU"
     ],
-    "name":"Abel Santamaria Airport",
+    "name":"Abel Santamaria International Airport",
     "location":"Santa Clara, 05, CU",
     "query":"MUSC"
   },
@@ -33672,7 +33449,7 @@
       "MYSM",
       "ZSA"
     ],
-    "name":"San Salvador Airport",
+    "name":"San Salvador International Airport",
     "location":"San Salvador, SS, BS",
     "query":"MYSM"
   },
@@ -33758,6 +33535,16 @@
     "query":"N38"
   },
   {
+    "display":"KN40",
+    "codes":[
+      "KN40",
+      "N40"
+    ],
+    "name":"Sky Manor Airport",
+    "location":"Pittstown, NJ, US",
+    "query":"N40"
+  },
+  {
     "display":"KN79",
     "codes":[
       "KN79",
@@ -33786,6 +33573,17 @@
     "name":"New Orleans NAS JRB\/Alvin Callender Field",
     "location":"New Orleans, LA, US",
     "query":"NBG"
+  },
+  {
+    "display":"KNBJ",
+    "codes":[
+      "KNBJ",
+      "NBJ",
+      "NHX"
+    ],
+    "name":"Naval Outlying Field Barin",
+    "location":"Foley, AL, US",
+    "query":"NBJ"
   },
   {
     "display":"KNCA",
@@ -34374,7 +34172,7 @@
       "NTAA",
       "PPT"
     ],
-    "name":"Faa'a International Airport",
+    "name":"Fa'a'ā International Airport",
     "location":"Papeete, U-A, PF",
     "query":"NTAA"
   },
@@ -34633,7 +34431,7 @@
       "NZQN",
       "ZQN"
     ],
-    "name":"Queenstown International Airport",
+    "name":"Queenstown Airport",
     "location":"Queenstown, OTA, NZ",
     "query":"NZQN"
   },
@@ -34716,16 +34514,6 @@
     "name":"Lonnie Pool Field Weaverville Airport",
     "location":"Weaverville, CA, US",
     "query":"O54"
-  },
-  {
-    "display":"KO61",
-    "codes":[
-      "KO61",
-      "O61"
-    ],
-    "name":"Cameron Park Airport",
-    "location":"Cameron Park, CA, US",
-    "query":"O61"
   },
   {
     "display":"KO69",
@@ -34874,8 +34662,8 @@
       "OEAO",
       "ULH"
     ],
-    "name":"Majeed Bin Abdulaziz Airport",
-    "location":"Al Ula, 03, SA",
+    "name":"Al-Ula International Airport",
+    "location":"Al-Ula, 03, SA",
     "query":"OEAO"
   },
   {
@@ -34924,7 +34712,7 @@
       "OEDM",
       "DWD"
     ],
-    "name":"King Salman Abdulaziz Airport",
+    "name":"Dawadmi Domestic Airport",
     "location":"Dawadmi, 01, SA",
     "query":"OEDM"
   },
@@ -34954,8 +34742,8 @@
       "OEGS",
       "ELQ"
     ],
-    "name":"Gassim Airport",
-    "location":"Buraidah, 05, SA",
+    "name":"Prince Naif bin Abdulaziz International Airport",
+    "location":"Qassim, 05, SA",
     "query":"OEGS"
   },
   {
@@ -34987,6 +34775,16 @@
     "name":"King Abdulaziz International Airport",
     "location":"Jeddah, 02, SA",
     "query":"OEJN"
+  },
+  {
+    "display":"OEKK",
+    "codes":[
+      "OEKK",
+      "KMC"
+    ],
+    "name":"King Khaled Military City Airport",
+    "location":"King Khaled Military City, 04, SA",
+    "query":"OEKK"
   },
   {
     "display":"OEKM",
@@ -35074,7 +34872,7 @@
       "OERK",
       "RUH"
     ],
-    "name":"King Khaled International Airport",
+    "name":"King Khalid International Airport",
     "location":"Riyadh, 01, SA",
     "query":"OERK"
   },
@@ -35114,7 +34912,7 @@
       "OESK",
       "AJF"
     ],
-    "name":"Al-Jawf Domestic Airport",
+    "name":"Al-Jawf International Airport",
     "location":"Al-Jawf, 12, SA",
     "query":"OESK"
   },
@@ -35124,7 +34922,7 @@
       "OETB",
       "TUU"
     ],
-    "name":"Tabuk Airport",
+    "name":"Prince Sultan bin Abdulaziz International Airport",
     "location":"Tabuk, 07, SA",
     "query":"OETB"
   },
@@ -35134,8 +34932,8 @@
       "OETF",
       "TIF"
     ],
-    "name":"Ta’if Regional Airport",
-    "location":"Ta’if, 02, SA",
+    "name":"Taif International Airport",
+    "location":"Taif, 02, SA",
     "query":"OETF"
   },
   {
@@ -35174,7 +34972,7 @@
       "OEYN",
       "YNB"
     ],
-    "name":"Prince Abdul Mohsin bin Abdulaziz International Airport \/ Yanbu Airport",
+    "name":"Prince Abdulmohsen Bin Abdulaziz International Airport",
     "location":"Yanbu, 03, SA",
     "query":"OEYN"
   },
@@ -35234,7 +35032,7 @@
       "OIAA",
       "ABD"
     ],
-    "name":"Abadan Airport",
+    "name":"Abadan Ayatollah Jami International Airport",
     "location":"Abadan, 06, IR",
     "query":"OIAA"
   },
@@ -35274,7 +35072,7 @@
       "OIAW",
       "AWZ"
     ],
-    "name":"Lieutenant General Qasem Soleimani International Airport",
+    "name":"Qasem Soleimani International Airport",
     "location":"Ahvaz, 06, IR",
     "query":"OIAW"
   },
@@ -35503,7 +35301,7 @@
       "OIIP",
       "PYK"
     ],
-    "name":"Payam Karaj International Airport",
+    "name":"Payam International Airport",
     "location":"Karaj, 30, IR",
     "query":"OIIP"
   },
@@ -35553,8 +35351,8 @@
       "OIKQ",
       "GSM"
     ],
-    "name":"Qeshm Dayrestan International Airport",
-    "location":"Dayrestan, 22, IR",
+    "name":"Qeshm International Airport",
+    "location":"Qeshm(Dayrestan), 22, IR",
     "query":"OIKQ"
   },
   {
@@ -35863,7 +35661,7 @@
       "OJAM",
       "ADJ"
     ],
-    "name":"Amman Civil (Marka International) Airport",
+    "name":"Marka International (Amman Civil) Airport",
     "location":"Amman, AM, JO",
     "query":"OJAM"
   },
@@ -35873,7 +35671,7 @@
       "OJAQ",
       "AQJ"
     ],
-    "name":"Aqaba King Hussein International Airport",
+    "name":"King Hussein International Airport",
     "location":"Aqaba, AQ, JO",
     "query":"OJAQ"
   },
@@ -35885,6 +35683,17 @@
     "name":"Ali Al Salem Air Base",
     "location":"Al Damaikhi, JA, KW",
     "query":"OKAS"
+  },
+  {
+    "display":"KOKH",
+    "codes":[
+      "KOKH",
+      "ODW",
+      "OKH"
+    ],
+    "name":"AJ Eisenberg Airport",
+    "location":"Oak Harbor, WA, US",
+    "query":"OKH"
   },
   {
     "display":"KOKK",
@@ -36044,7 +35853,7 @@
       "DWC"
     ],
     "name":"Al Maktoum International Airport",
-    "location":"Jebel Ali, DU, AE",
+    "location":"Dubai(Jebel Ali), DU, AE",
     "query":"OMDW"
   },
   {
@@ -36195,7 +36004,7 @@
       "MCT"
     ],
     "name":"Muscat International Airport",
-    "location":"Muscat, MA, OM",
+    "location":"Muscat\/Seeb, MA, OM",
     "query":"OOMS"
   },
   {
@@ -36204,7 +36013,7 @@
       "OOSA",
       "SLL"
     ],
-    "name":"Salalah Airport",
+    "name":"Salalah International Airport",
     "location":"Salalah, ZU, OM",
     "query":"OOSA"
   },
@@ -36214,8 +36023,8 @@
       "OOSH",
       "OHS"
     ],
-    "name":"Sohar Airport",
-    "location":"Sohar, BA, OM",
+    "name":"Suhar International Airport",
+    "location":"Suhar, BA, OM",
     "query":"OOSH"
   },
   {
@@ -36325,7 +36134,7 @@
       "OPPS",
       "PEW"
     ],
-    "name":"Peshawar International Airport",
+    "name":"Bacha Khan International Airport",
     "location":"Peshawar, KP, PK",
     "query":"OPPS"
   },
@@ -36335,8 +36144,8 @@
       "OPSK",
       "SKZ"
     ],
-    "name":"Sukkur Airport",
-    "location":"Mirpur Khas, SD, PK",
+    "name":"Begum Nusrat Bhutto International Airport Sukkur",
+    "location":"Sukkur, SD, PK",
     "query":"OPSK"
   },
   {
@@ -36426,7 +36235,7 @@
       "ORKK",
       "KIK"
     ],
-    "name":"Kirkuk Air Base",
+    "name":"Kirkuk International Airport",
     "location":"Kirkuk, TS, IQ",
     "query":"ORKK"
   },
@@ -36518,8 +36327,8 @@
       "OSKL",
       "KAC"
     ],
-    "name":"Qamishli Airport",
-    "location":"Qamishly, HA, SY",
+    "name":"Qamishli International Airport",
+    "location":"Qamishli, HA, SY",
     "query":"OSKL"
   },
   {
@@ -37145,6 +36954,17 @@
     "query":"PAFE"
   },
   {
+    "display":"PAFM",
+    "codes":[
+      "PAFM",
+      "ABL",
+      "AFM"
+    ],
+    "name":"Ambler Airport",
+    "location":"Ambler, AK, US",
+    "query":"PAFM"
+  },
+  {
     "display":"PAFR",
     "codes":[
       "PAFR",
@@ -37296,6 +37116,16 @@
     "name":"Homer Airport",
     "location":"Homer, AK, US",
     "query":"PAHO"
+  },
+  {
+    "display":"PAHP",
+    "codes":[
+      "PAHP",
+      "HPB"
+    ],
+    "name":"Hooper Bay Airport",
+    "location":"Hooper Bay, AK, US",
+    "query":"PAHP"
   },
   {
     "display":"PAHX",
@@ -38237,16 +38067,6 @@
     "query":"PAWN"
   },
   {
-    "display":"PAWR",
-    "codes":[
-      "PAWR",
-      "IEM"
-    ],
-    "name":"Whittier Airport",
-    "location":"Whittier, AK, US",
-    "query":"PAWR"
-  },
-  {
     "display":"PAWS",
     "codes":[
       "PAWS",
@@ -38645,7 +38465,7 @@
       "PHKO",
       "KOA"
     ],
-    "name":"Ellison Onizuka Kona International Airport at Keahole",
+    "name":"Ellison Onizuka Kona International Airport at Keāhole",
     "location":"Kailua-Kona, HI, US",
     "query":"PHKO"
   },
@@ -38656,7 +38476,7 @@
       "LIH"
     ],
     "name":"Lihue Airport",
-    "location":"Lihue, HI, US",
+    "location":"Lihue, Kauai, HI, US",
     "query":"PHLI"
   },
   {
@@ -38695,7 +38515,7 @@
       "PHNL",
       "HNL"
     ],
-    "name":"Daniel K Inouye International Airport",
+    "name":"Daniel K. Inouye International Airport",
     "location":"Honolulu, Oahu, HI, US",
     "query":"PHNL"
   },
@@ -39115,6 +38935,16 @@
     "query":"PQL"
   },
   {
+    "display":"KPQN",
+    "codes":[
+      "KPQN",
+      "PQN"
+    ],
+    "name":"Pipestone Municipal Airport",
+    "location":"Pipestone, MN, US",
+    "query":"PQN"
+  },
+  {
     "display":"KPRG",
     "codes":[
       "KPRG",
@@ -39190,7 +39020,7 @@
       "KPSM",
       "PSM"
     ],
-    "name":"Portsmouth International at Pease Airport",
+    "name":"Portsmouth International Airport at Pease",
     "location":"Portsmouth, NH, US",
     "query":"PSM"
   },
@@ -39281,7 +39111,7 @@
       "PTRO",
       "ROR"
     ],
-    "name":"Palau International Airport",
+    "name":"Roman Tmetuchl International Airport",
     "location":"Babelthuap Island, 004, PW",
     "query":"PTRO"
   },
@@ -39433,7 +39263,7 @@
       "KPVU",
       "PVU"
     ],
-    "name":"Provo-Utah Lake International Airport",
+    "name":"Provo Municipal Airport",
     "location":"Provo, UT, US",
     "query":"PVU"
   },
@@ -39704,7 +39534,7 @@
       "RCSS",
       "TSA"
     ],
-    "name":"Taipei Songshan Airport",
+    "name":"Taipei Songshan International Airport",
     "location":"Taipei (Songshan), TPE, TW",
     "query":"RCSS"
   },
@@ -39887,7 +39717,7 @@
       "RJAH",
       "IBR"
     ],
-    "name":"Ibaraki Airport \/ JASDF Hyakuri Air Base",
+    "name":"Ibaraki International Airport",
     "location":"Omitama, 08, JP",
     "query":"RJAH"
   },
@@ -40212,7 +40042,7 @@
       "RJFS",
       "HSG"
     ],
-    "name":"Saga Airport",
+    "name":"Kyushu Saga International Airport",
     "location":"Saga, 41, JP",
     "query":"RJFS"
   },
@@ -40331,7 +40161,7 @@
       "RJNT",
       "TOY"
     ],
-    "name":"Toyama Airport",
+    "name":"Toyama Kitokito Airport",
     "location":"Toyama, 16, JP",
     "query":"RJNT"
   },
@@ -40418,7 +40248,7 @@
       "RJOI",
       "IWK"
     ],
-    "name":"Iwakuni Kintaikyo Airport \/ Marine Corps Air Station Iwakuni",
+    "name":"Iwakuni Kintaikyo Airport",
     "location":"Iwakuni, 35, JP",
     "query":"RJOI"
   },
@@ -40448,7 +40278,7 @@
       "RJOO",
       "ITM"
     ],
-    "name":"Osaka International Airport",
+    "name":"Osaka Itami International Airport",
     "location":"Osaka, 27, JP",
     "query":"RJOO"
   },
@@ -41016,7 +40846,7 @@
       "RKTN",
       "TAE"
     ],
-    "name":"Daegu Airport",
+    "name":"Daegu International Airport",
     "location":"Daegu, 27, KR",
     "query":"RKTN"
   },
@@ -41195,7 +41025,7 @@
       "ROAH",
       "OKA"
     ],
-    "name":"Naha Airport \/ JASDF Naha Air Base",
+    "name":"Naha International Airport",
     "location":"Naha, 47, JP",
     "query":"ROAH"
   },
@@ -41475,7 +41305,7 @@
       "CEB"
     ],
     "name":"Mactan Cebu International Airport",
-    "location":"Lapu-Lapu City, CEB, PH",
+    "location":"Cebu City\/Lapu-Lapu City, CEB, PH",
     "query":"RPVM"
   },
   {
@@ -41487,16 +41317,6 @@
     "name":"Puerto Princesa International Airport \/ PAF Antonio Bautista Air Base",
     "location":"Puerto Princesa, PLW, PH",
     "query":"RPVP"
-  },
-  {
-    "display":"KRPX",
-    "codes":[
-      "KRPX",
-      "RPX"
-    ],
-    "name":"Roundup Airport",
-    "location":"Roundup, MT, US",
-    "query":"RPX"
   },
   {
     "display":"KRQB",
@@ -41908,26 +41728,6 @@
     "query":"S52"
   },
   {
-    "display":"KS59",
-    "codes":[
-      "KS59",
-      "S59"
-    ],
-    "name":"Libby Airport",
-    "location":"Libby, MT, US",
-    "query":"S59"
-  },
-  {
-    "display":"KS71",
-    "codes":[
-      "KS71",
-      "S71"
-    ],
-    "name":"Edgar G Obie Airport",
-    "location":"Chinook, MT, US",
-    "query":"S71"
-  },
-  {
     "display":"KS72",
     "codes":[
       "KS72",
@@ -41936,16 +41736,6 @@
     "name":"Jack A Buell Airport",
     "location":"St Maries, ID, US",
     "query":"S72"
-  },
-  {
-    "display":"KS85",
-    "codes":[
-      "KS85",
-      "S85"
-    ],
-    "name":"Big Sky Field",
-    "location":"Culbertson, MT, US",
-    "query":"S85"
   },
   {
     "display":"KSAA",
@@ -42018,7 +41808,7 @@
       "AEP",
       "AER"
     ],
-    "name":"Jorge Newbery Airpark",
+    "name":"Aeroparque Jorge Newbery",
     "location":"Buenos Aires, C, AR",
     "query":"SABE"
   },
@@ -42029,7 +41819,7 @@
       "CBA",
       "COR"
     ],
-    "name":"Ingeniero Ambrosio Taravella Airport",
+    "name":"Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport",
     "location":"Cordoba, X, AR",
     "query":"SACO"
   },
@@ -42091,7 +41881,7 @@
       "SAEZ",
       "EZE"
     ],
-    "name":"Minister Pistarini International Airport",
+    "name":"Ezeiza International Airport - Ministro Pistarini",
     "location":"Buenos Aires (Ezeiza), B, AR",
     "query":"SAEZ"
   },
@@ -42112,7 +41902,7 @@
       "DOZ",
       "MDZ"
     ],
-    "name":"El Plumerillo Airport",
+    "name":"Governor Francisco Gabrielli International Airport",
     "location":"Mendoza, M, AR",
     "query":"SAME"
   },
@@ -42187,7 +41977,7 @@
       "SANT",
       "TUC"
     ],
-    "name":"Teniente Benjamin Matienzo Airport",
+    "name":"Teniente Benjamín Matienzo International Airport",
     "location":"San Miguel de Tucumán, T, AR",
     "query":"SANT"
   },
@@ -42329,7 +42119,7 @@
       "SAL",
       "SLA"
     ],
-    "name":"Martin Miguel De Guemes International Airport",
+    "name":"Martín Miguel de Güemes International Airport",
     "location":"Salta, A, AR",
     "query":"SASA"
   },
@@ -42361,7 +42151,7 @@
       "CRD",
       "CRV"
     ],
-    "name":"General E. Mosconi Airport",
+    "name":"General Enrique Mosconi International Airport",
     "location":"Comodoro Rivadavia, U, AR",
     "query":"SAVC"
   },
@@ -42448,7 +42238,7 @@
       "GRA",
       "RGA"
     ],
-    "name":"Gobernador Ramón Trejo Noel International Airport",
+    "name":"Hermes Quijada International Airport",
     "location":"Rio Grande, V, AR",
     "query":"SAWE"
   },
@@ -42459,7 +42249,7 @@
       "GAL",
       "RGL"
     ],
-    "name":"Piloto Civil N. Fernández Airport",
+    "name":"Piloto Civil Norberto Fernández International Airport",
     "location":"Rio Gallegos, Z, AR",
     "query":"SAWG"
   },
@@ -42524,8 +42314,8 @@
       "NEU",
       "NQN"
     ],
-    "name":"Presidente Peron Airport",
-    "location":"Neuquen, Q, AR",
+    "name":"Presidente Perón International Airport",
+    "location":"Neuquén, Q, AR",
     "query":"SAZN"
   },
   {
@@ -42546,7 +42336,7 @@
       "BAR",
       "BRC"
     ],
-    "name":"San Carlos de Bariloche Airport",
+    "name":"Teniente Luis Candelaria International Airport",
     "location":"San Carlos de Bariloche, R, AR",
     "query":"SAZS"
   },
@@ -42827,7 +42617,7 @@
       "SBCT",
       "CWB"
     ],
-    "name":"Afonso Pena Airport",
+    "name":"Curitiba-Afonso Pena International Airport",
     "location":"Curitiba, PR, BR",
     "query":"SBCT"
   },
@@ -42849,7 +42639,7 @@
       "SBCY",
       "CGB"
     ],
-    "name":"Marechal Rondon Airport",
+    "name":"Várzea Grande–Marechal Rondon International Airport",
     "location":"Cuiabá, MT, BR",
     "query":"SBCY"
   },
@@ -42978,7 +42768,7 @@
       "SBGO",
       "GYN"
     ],
-    "name":"Santa Genoveva Airport",
+    "name":"Santa Genoveva International Airport",
     "location":"Goiânia, GO, BR",
     "query":"SBGO"
   },
@@ -42989,7 +42779,7 @@
       "SBGR",
       "GRU"
     ],
-    "name":"Guarulhos - Governador André Franco Montoro International Airport",
+    "name":"São Paulo\/Guarulhos–Governor André Franco Montoro International Airport",
     "location":"São Paulo, SP, BR",
     "query":"SBGR"
   },
@@ -43089,7 +42879,7 @@
       "RRJ"
     ],
     "name":"Jacarepaguá - Roberto Marinho Airport",
-    "location":"Rio De Janeiro, RJ, BR",
+    "location":"Rio de Janeiro, RJ, BR",
     "query":"SBJR"
   },
   {
@@ -43261,7 +43051,7 @@
       "SBMO",
       "MCZ"
     ],
-    "name":"Zumbi dos Palmares Airport",
+    "name":"Zumbi dos Palmares International Airport",
     "location":"Maceió, AL, BR",
     "query":"SBMO"
   },
@@ -43368,7 +43158,7 @@
       "SBPA",
       "POA"
     ],
-    "name":"Salgado Filho International Airport",
+    "name":"Porto Alegre-Salgado Filho International Airport",
     "location":"Porto Alegre, RS, BR",
     "query":"SBPA"
   },
@@ -43445,7 +43235,7 @@
       "SBPS",
       "BPS"
     ],
-    "name":"Porto Seguro Airport",
+    "name":"Porto Seguro International Airport",
     "location":"Porto Seguro, BA, BR",
     "query":"SBPS"
   },
@@ -43456,7 +43246,7 @@
       "SBPV",
       "PVH"
     ],
-    "name":"Governador Jorge Teixeira de Oliveira Airport",
+    "name":"Governador Jorge Teixeira de Oliveira International Airport",
     "location":"Porto Velho, RO, BR",
     "query":"SBPV"
   },
@@ -43521,7 +43311,7 @@
       "SBSG",
       "NAT"
     ],
-    "name":"São Gonçalo do Amarante - Governador Aluízio Alves International Airport",
+    "name":"Rio Grande do Norte\/São Gonçalo do Amarante–Governador Aluízio Alves International Airport",
     "location":"Natal, RN, BR",
     "query":"SBSG"
   },
@@ -43576,7 +43366,7 @@
       "SBSP",
       "CGH"
     ],
-    "name":"Congonhas Airport",
+    "name":"Congonhas–Deputado Freitas Nobre Airport",
     "location":"São Paulo, SP, BR",
     "query":"SBSP"
   },
@@ -43762,7 +43552,7 @@
       "SBVT",
       "VIX"
     ],
-    "name":"Eurico de Aguiar Salles Airport",
+    "name":"Eurico de Aguiar Salles International Airport",
     "location":"Vitória, ES, BR",
     "query":"SBVT"
   },
@@ -43873,7 +43663,7 @@
       "SCCI",
       "PUQ"
     ],
-    "name":"President Carlos Ibañez del Campo International Airport",
+    "name":"President Carlos Ibáñez International Airport",
     "location":"Punta Arenas, MA, CL",
     "query":"SCCI"
   },
@@ -44002,7 +43792,7 @@
       "SCIE",
       "CCP"
     ],
-    "name":"Carriel Sur Airport",
+    "name":"Carriel Sur International Airport",
     "location":"Concepcion, BI, CL",
     "query":"SCIE"
   },
@@ -44012,7 +43802,7 @@
       "SCIP",
       "IPC"
     ],
-    "name":"Mataveri Airport",
+    "name":"Mataveri International Airport",
     "location":"Isla De Pascua, VS, CL",
     "query":"SCIP"
   },
@@ -44147,7 +43937,7 @@
       "SCTE",
       "PMC"
     ],
-    "name":"El Tepual Airport",
+    "name":"El Tepual International Airport",
     "location":"Puerto Montt, LL, CL",
     "query":"SCTE"
   },
@@ -44457,8 +44247,8 @@
       "SESA",
       "SNC"
     ],
-    "name":"General Ulpiano Paez Airport",
-    "location":"Salinas, 25, EC",
+    "name":"General Ulpiano Paez International Airport",
+    "location":"Salinas\/La Libertad, 25, EC",
     "query":"SESA"
   },
   {
@@ -44578,7 +44368,7 @@
       "SGCO",
       "CIO"
     ],
-    "name":"Aeropuerto Nacional Tte. Cnel. Carmelo Peralta",
+    "name":"Lieutenant Colonel Carmelo Peralta National Airport",
     "location":"Concepción, 1, PY",
     "query":"SGCO"
   },
@@ -44588,7 +44378,7 @@
       "SGEN",
       "ENO"
     ],
-    "name":"Aeropuerto Internacional Tte. Amín Ayub González",
+    "name":"Teniente Ramon A. Ayub Gonzalez International Airport",
     "location":"Encarnación, 7, PY",
     "query":"SGEN"
   },
@@ -44598,7 +44388,7 @@
       "SGES",
       "AGT"
     ],
-    "name":"Aeropuerto Internacional Guaraní",
+    "name":"Guaraní International Airport",
     "location":"Ciudad del Este, 10, PY",
     "query":"SGES"
   },
@@ -44649,7 +44439,7 @@
       "SGLV",
       "PCJ"
     ],
-    "name":"Aeródromo de Puerto La Victoria",
+    "name":"Puerto La Victoria Airport",
     "location":"Puerto La Victoria, 1, PY",
     "query":"SGLV"
   },
@@ -44659,7 +44449,7 @@
       "SGME",
       "ESG"
     ],
-    "name":"Aeropuerto Internacional Dr. Luis Maria Argaña",
+    "name":"Dr. Luis María Argaña International Airport",
     "location":"Mariscal Estigarribia, 19, PY",
     "query":"SGME"
   },
@@ -44717,7 +44507,7 @@
     "codes":[
       "SGSP"
     ],
-    "name":"Aeropuerto Nacional de San Pedro de Ycuamanindeyu",
+    "name":"San Pedro de Ycuamanindeyu National Airport",
     "location":"San Pedro del Ycuamandiyu, 2, PY",
     "query":"SGSP"
   },
@@ -45008,7 +44798,7 @@
       "SKGP",
       "GPI"
     ],
-    "name":"Juan Casiano Airport",
+    "name":"Guapi Airport",
     "location":"Guapi, CAU, CO",
     "query":"SKGP"
   },
@@ -45330,8 +45120,8 @@
       "SLAL",
       "SRE"
     ],
-    "name":"Alcantarí Airport",
-    "location":"Yamparaez, H, BO",
+    "name":"Alcantarí International Airport",
+    "location":"Sucre, H, BO",
     "query":"SLAL"
   },
   {
@@ -45530,7 +45320,7 @@
       "SLOR",
       "ORU"
     ],
-    "name":"Juan Mendoza Airport",
+    "name":"Juan Mendoza International Airport",
     "location":"Oruro, O, BO",
     "query":"SLOR"
   },
@@ -45640,7 +45430,7 @@
       "SLSR",
       "SRB"
     ],
-    "name":"Santa Rosa De Yacuma Airport",
+    "name":"Santa Rosa de Yacuma Airport",
     "location":"Santa Rosa, B, BO",
     "query":"SLSR"
   },
@@ -45740,7 +45530,7 @@
       "PBM"
     ],
     "name":"Johan Adolf Pengel International Airport",
-    "location":"Zandery, PR, SR",
+    "location":"Paramaribo, PR, SR",
     "query":"SMJP"
   },
   {
@@ -45950,7 +45740,7 @@
       "SPHI",
       "CIX"
     ],
-    "name":"Air Force Captain Jose A Quinones Gonzales International Airport",
+    "name":"Capitán FAP José A. Quiñones González International Airport",
     "location":"Chiclayo, LAM, PE",
     "query":"SPHI"
   },
@@ -46151,7 +45941,7 @@
       "SPRU",
       "TRU"
     ],
-    "name":"Capitan FAP Carlos Martinez De Pinillos International Airport",
+    "name":"Capitán FAP Carlos Martínez de Pinillos International Airport",
     "location":"Trujillo, LAL, PE",
     "query":"SPRU"
   },
@@ -46201,7 +45991,7 @@
       "SPUR",
       "PIU"
     ],
-    "name":"Capitán FAP Guillermo Concha Iberico International Airport",
+    "name":"PAF Captain Guillermo Concha Iberico International Airport",
     "location":"Piura, PIU, PE",
     "query":"SPUR"
   },
@@ -46481,8 +46271,8 @@
       "SURV",
       "RVY"
     ],
-    "name":"Presidente General Don Oscar D. Gestido International Airport",
-    "location":"Rivera, RV, UY",
+    "name":"Pres. Gral. Óscar D. Gestido Binational Airport",
+    "location":"Rivera\/Santana do Livramento, RV, UY",
     "query":"SURV"
   },
   {
@@ -46571,7 +46361,7 @@
       "SVBM",
       "BRM"
     ],
-    "name":"Barquisimeto International Airport",
+    "name":"Jacinto Lara International Airport",
     "location":"Barquisimeto, K, VE",
     "query":"SVBM"
   },
@@ -46596,24 +46386,14 @@
     "query":"SVC"
   },
   {
-    "display":"SVCB",
+    "display":"SVCP",
     "codes":[
-      "SVCB",
-      "CBL"
+      "SVCP",
+      "CUP"
     ],
-    "name":"General Tomas de Heres Airport",
-    "location":"Ciudad Bolivar, F, VE",
-    "query":"SVCB"
-  },
-  {
-    "display":"SVCR",
-    "codes":[
-      "SVCR",
-      "CZE"
-    ],
-    "name":"José Leonardo Chirinos Airport",
-    "location":"Coro, I, VE",
-    "query":"SVCR"
+    "name":"General Francisco Bermúdez Airport",
+    "location":"Carúpano, R, VE",
+    "query":"SVCP"
   },
   {
     "display":"KSVE",
@@ -46725,16 +46505,6 @@
     "query":"SVN"
   },
   {
-    "display":"SVPR",
-    "codes":[
-      "SVPR",
-      "PZO"
-    ],
-    "name":"General Manuel Carlos Piar International Airport",
-    "location":"Puerto Ordaz-Ciudad Guayana, F, VE",
-    "query":"SVPR"
-  },
-  {
     "display":"KU42",
     "codes":[
       "KSVR",
@@ -46751,19 +46521,9 @@
       "SVSA",
       "SVZ"
     ],
-    "name":"San Antonio Del Tachira Airport",
-    "location":"S, VE",
+    "name":"Juan Vicente Gómez International Airport",
+    "location":"San Antonio del Tachira, S, VE",
     "query":"SVSA"
-  },
-  {
-    "display":"SVSZ",
-    "codes":[
-      "SVSZ",
-      "STB"
-    ],
-    "name":"Miguel Urdaneta Fernández Airport",
-    "location":"San Carlos del Zulia, V, VE",
-    "query":"SVSZ"
   },
   {
     "display":"SVVA",
@@ -47054,7 +46814,7 @@
       "TAPA",
       "ANU"
     ],
-    "name":"V C Bird International Airport",
+    "name":"V. C. Bird International Airport",
     "location":"Osbourn, 03, AG",
     "query":"TAPA"
   },
@@ -47062,9 +46822,10 @@
     "display":"AG-0001",
     "codes":[
       "AG-0001",
-      "TAPB"
+      "TAPB",
+      "BBQ"
     ],
-    "name":"New Barbuda Airport",
+    "name":"Burton-Nibbs International Airport",
     "location":"Codrington, 10, AG",
     "query":"TAPB"
   },
@@ -47224,7 +46985,7 @@
       "TFFJ",
       "SBH"
     ],
-    "name":"Saint Barthélemy - Gustaf III Airport",
+    "name":"St. Jean Airport",
     "location":"Gustavia, U-A, BL",
     "query":"TFFJ"
   },
@@ -47234,7 +46995,7 @@
       "TFFR",
       "PTP"
     ],
-    "name":"Guadeloupe - Maryse Condé International Airport",
+    "name":"Maryse Condé International Airport",
     "location":"Pointe-à-Pitre, U-A, GP",
     "query":"TFFR"
   },
@@ -47277,16 +47038,6 @@
     "name":"Tullahoma Regional Airport William Northern Field",
     "location":"Tullahoma, TN, US",
     "query":"THA"
-  },
-  {
-    "display":"KTHM",
-    "codes":[
-      "KTHM",
-      "THM"
-    ],
-    "name":"Thompson Falls Airport",
-    "location":"Thompson Falls, MT, US",
-    "query":"THM"
   },
   {
     "display":"KTHV",
@@ -47344,7 +47095,7 @@
       "TISX",
       "STX"
     ],
-    "name":"Henry E Rohlsen Airport",
+    "name":"Henry E. Rohlsen Airport",
     "location":"Christiansted, SC, VI",
     "query":"TISX"
   },
@@ -47394,9 +47145,20 @@
       "TJPS",
       "PSE"
     ],
-    "name":"Mercedita Airport",
+    "name":"Mercedita International Airport",
     "location":"Ponce, U-A, PR",
     "query":"TJPS"
+  },
+  {
+    "display":"TJRV",
+    "codes":[
+      "TJRV",
+      "NRR",
+      "RVR"
+    ],
+    "name":"José Aponte de la Torre Airport",
+    "location":"Ceiba, U-A, PR",
+    "query":"TJRV"
   },
   {
     "display":"TJSJ",
@@ -47475,7 +47237,7 @@
       "KTLH",
       "TLH"
     ],
-    "name":"Tallahassee Regional Airport",
+    "name":"Tallahassee International Airport",
     "location":"Tallahassee, FL, US",
     "query":"TLH"
   },
@@ -47643,6 +47405,16 @@
     "query":"TOC"
   },
   {
+    "display":"KTOL",
+    "codes":[
+      "KTOL",
+      "TOL"
+    ],
+    "name":"Eugene F. Kranz Toledo Express Airport",
+    "location":"Toledo, OH, US",
+    "query":"TOL"
+  },
+  {
     "display":"KTPF",
     "codes":[
       "KTPF",
@@ -47698,7 +47470,7 @@
       "TQPF",
       "AXA"
     ],
-    "name":"Clayton J Lloyd International Airport",
+    "name":"Clayton J. Lloyd International Airport",
     "location":"The Valley, U-A, AI",
     "query":"TQPF"
   },
@@ -47792,6 +47564,16 @@
     "name":"Space Florida Launch and Landing Facility",
     "location":"Titusville, FL, US",
     "query":"TTS"
+  },
+  {
+    "display":"KTUP",
+    "codes":[
+      "KTUP",
+      "TUP"
+    ],
+    "name":"Tupelo Regional Airport",
+    "location":"Tupelo, MS, US",
+    "query":"TUP"
   },
   {
     "display":"TUPJ",
@@ -48033,7 +47815,7 @@
       "UACK",
       "KOV"
     ],
-    "name":"Kokshetau Airport",
+    "name":"Kokshetau International Airport",
     "location":"Kokshetau, AKM, KZ",
     "query":"UACK"
   },
@@ -48043,7 +47825,7 @@
       "UACP",
       "PPK"
     ],
-    "name":"Petropavl Airport",
+    "name":"Petropavl International Airport",
     "location":"Petropavl, SEV, KZ",
     "query":"UACP"
   },
@@ -48053,7 +47835,7 @@
       "UADD",
       "DMB"
     ],
-    "name":"Taraz Airport",
+    "name":"Taraz International Airport",
     "location":"Taraz, ZHA, KZ",
     "query":"UADD"
   },
@@ -48083,7 +47865,7 @@
       "UASK",
       "UKK"
     ],
-    "name":"Ust-Kamenogorsk Airport",
+    "name":"Oskemen International Airport",
     "location":"Ust-Kamenogorsk (Oskemen), VOS, KZ",
     "query":"UASK"
   },
@@ -48093,7 +47875,7 @@
       "UASP",
       "PWQ"
     ],
-    "name":"Pavlodar Airport",
+    "name":"Pavlodar International Airport",
     "location":"Pavlodar, PAV, KZ",
     "query":"UASP"
   },
@@ -48103,7 +47885,7 @@
       "UASS",
       "PLX"
     ],
-    "name":"Semey Airport",
+    "name":"Semei International Airport",
     "location":"Semey, ABA, KZ",
     "query":"UASS"
   },
@@ -48113,7 +47895,7 @@
       "UATE",
       "SCO"
     ],
-    "name":"Aktau Airport",
+    "name":"Aktau International Airport",
     "location":"Aktau, MAN, KZ",
     "query":"UATE"
   },
@@ -48133,7 +47915,7 @@
       "UATT",
       "AKX"
     ],
-    "name":"Aktobe Airport",
+    "name":"Aktobe International Airport",
     "location":"Aktobe, AKT, KZ",
     "query":"UATT"
   },
@@ -48143,7 +47925,7 @@
       "UAUU",
       "KSN"
     ],
-    "name":"Kostanay West Airport",
+    "name":"Kostanay International Airport",
     "location":"Kostanay, KUS, KZ",
     "query":"UAUU"
   },
@@ -48193,7 +47975,7 @@
       "UBBN",
       "NAJ"
     ],
-    "name":"Nakhchivan Airport",
+    "name":"Nakhchivan International Airport",
     "location":"Nakhchivan, NX, AZ",
     "query":"UBBN"
   },
@@ -48254,7 +48036,7 @@
       "UCFO",
       "OSS"
     ],
-    "name":"Osh Airport",
+    "name":"Osh International Airport",
     "location":"Osh, O, KG",
     "query":"UCFO"
   },
@@ -48312,9 +48094,10 @@
     "display":"UEEE",
     "codes":[
       "UEEE",
+      "XEEE",
       "YKS"
     ],
-    "name":"Yakutsk Airport",
+    "name":"Platon Oyunsky Yakutsk International Airport",
     "location":"Yakutsk, SA, RU",
     "query":"UEEE"
   },
@@ -48372,7 +48155,7 @@
       "UGSB",
       "BUS"
     ],
-    "name":"Batumi International Airport",
+    "name":"Alexander Kartveli Batumi International Airport",
     "location":"Batumi, AJ, GE",
     "query":"UGSB"
   },
@@ -48518,14 +48301,14 @@
     "query":"UKL"
   },
   {
-    "display":"UKLI",
+    "display":"UKLL",
     "codes":[
-      "UKLI",
-      "IFO"
+      "UKLL",
+      "LWO"
     ],
-    "name":"Ivano-Frankivsk International Airport",
-    "location":"Ivano-Frankivsk, 26, UA",
-    "query":"UKLI"
+    "name":"Lviv International Airport",
+    "location":"Lviv, 46, UA",
+    "query":"UKLL"
   },
   {
     "display":"KUKT",
@@ -48563,7 +48346,7 @@
       "ULMM",
       "MMK"
     ],
-    "name":"Murmansk Airport",
+    "name":"Emperor Nicholas II Murmansk Airport",
     "location":"Murmansk, MUR, RU",
     "query":"ULMM"
   },
@@ -48573,7 +48356,7 @@
       "ULOO",
       "PKV"
     ],
-    "name":"Pskov Airport",
+    "name":"Princess Olga Pskov International Airport",
     "location":"Pskov, PSK, RU",
     "query":"ULOO"
   },
@@ -48674,7 +48457,7 @@
       "UNBB",
       "BAX"
     ],
-    "name":"Barnaul Airport",
+    "name":"Barnaul Gherman Titov International Airport",
     "location":"Barnaul, ALT, RU",
     "query":"UNBB"
   },
@@ -48684,7 +48467,7 @@
       "UNEE",
       "KEJ"
     ],
-    "name":"Kemerovo Airport",
+    "name":"Alexei Leonov Kemerovo International Airport",
     "location":"Kemerovo, KEM, RU",
     "query":"UNEE"
   },
@@ -48725,7 +48508,7 @@
       "UNTT",
       "TOF"
     ],
-    "name":"Bogashevo Airport",
+    "name":"Tomsk Kamov Airport",
     "location":"Tomsk, TOM, RU",
     "query":"UNTT"
   },
@@ -48766,7 +48549,7 @@
       "UOOO",
       "NSK"
     ],
-    "name":"Norilsk-Alykel Airport",
+    "name":"Alykel International Airport",
     "location":"Norilsk, KYA, RU",
     "query":"UOOO"
   },
@@ -48796,7 +48579,7 @@
       "URMG",
       "GRV"
     ],
-    "name":"Grozny Airport",
+    "name":"Akhmat Kadyrov Grozny International Airport",
     "location":"Grozny, CE, RU",
     "query":"URMG"
   },
@@ -48816,7 +48599,7 @@
       "URMM",
       "MRV"
     ],
-    "name":"Mineralnyye Vody Airport",
+    "name":"Mineralnye Vody Airport",
     "location":"Mineralnyye Vody, STA, RU",
     "query":"URMM"
   },
@@ -48906,7 +48689,7 @@
       "USCC",
       "CEK"
     ],
-    "name":"Chelyabinsk Balandino Airport",
+    "name":"Kurchatov Chelyabinsk International Airport",
     "location":"Chelyabinsk, CHE, RU",
     "query":"USCC"
   },
@@ -48986,7 +48769,7 @@
       "USRR",
       "SGC"
     ],
-    "name":"Surgut Airport",
+    "name":"Surgut International Airport",
     "location":"Surgut, KHM, RU",
     "query":"USRR"
   },
@@ -49096,7 +48879,7 @@
       "UTDL",
       "LBD"
     ],
-    "name":"Khujand Airport",
+    "name":"Khujand International Airport",
     "location":"Khujand, SU, TJ",
     "query":"UTDL"
   },
@@ -49111,39 +48894,6 @@
     "query":"UTDT"
   },
   {
-    "display":"UTFN",
-    "codes":[
-      "UTFN",
-      "UZFN",
-      "NMA"
-    ],
-    "name":"Namangan Airport",
-    "location":"Namangan, NG, UZ",
-    "query":"UTFN"
-  },
-  {
-    "display":"UTNN",
-    "codes":[
-      "UTNN",
-      "UZNN",
-      "NCU"
-    ],
-    "name":"Nukus Airport",
-    "location":"Nukus, QR, UZ",
-    "query":"UTNN"
-  },
-  {
-    "display":"UTNU",
-    "codes":[
-      "UTNU",
-      "UZNU",
-      "UGC"
-    ],
-    "name":"Urgench Airport",
-    "location":"Urgench, XO, UZ",
-    "query":"UTNU"
-  },
-  {
     "display":"KUTS",
     "codes":[
       "KUTS",
@@ -49153,51 +48903,6 @@
     "name":"Huntsville Regional Airport",
     "location":"Huntsville, TX, US",
     "query":"UTS"
-  },
-  {
-    "display":"UTSB",
-    "codes":[
-      "UTSB",
-      "UZSB",
-      "BHK"
-    ],
-    "name":"Bukhara International Airport",
-    "location":"Bukhara, BU, UZ",
-    "query":"UTSB"
-  },
-  {
-    "display":"UTSK",
-    "codes":[
-      "UT1N",
-      "UTSK",
-      "UZSK",
-      "KSQ"
-    ],
-    "name":"Karshi Airport",
-    "location":"Karshi, QA, UZ",
-    "query":"UTSK"
-  },
-  {
-    "display":"UTST",
-    "codes":[
-      "UTST",
-      "UZST",
-      "TMJ"
-    ],
-    "name":"Termez Airport",
-    "location":"Termez, SU, UZ",
-    "query":"UTST"
-  },
-  {
-    "display":"UTTT",
-    "codes":[
-      "UTTT",
-      "UZTT",
-      "TAS"
-    ],
-    "name":"Tashkent International Airport",
-    "location":"Tashkent, TO, UZ",
-    "query":"UTTT"
   },
   {
     "display":"UUBC",
@@ -49235,7 +48940,7 @@
       "UUDL",
       "IAR"
     ],
-    "name":"Tunoshna Airport",
+    "name":"Golden Ring Yaroslavl International Airport",
     "location":"Tunoshna, YAR, RU",
     "query":"UUDL"
   },
@@ -49376,7 +49081,7 @@
       "UWLW",
       "ULY"
     ],
-    "name":"Ulyanovsk East Airport",
+    "name":"Ulyanovsk Vostochny Airport",
     "location":"Cherdakly, ULY, RU",
     "query":"UWLW"
   },
@@ -49396,7 +49101,7 @@
       "UWPS",
       "SKX"
     ],
-    "name":"Saransk Airport",
+    "name":"Saransk International Airport",
     "location":"Saransk, MO, RU",
     "query":"UWPS"
   },
@@ -49462,12 +49167,112 @@
     "query":"UZA"
   },
   {
+    "display":"UTKA",
+    "codes":[
+      "UTKA",
+      "UZFA",
+      "AZN"
+    ],
+    "name":"Andijan International Airport",
+    "location":"Andijan, AN, UZ",
+    "query":"UZFA"
+  },
+  {
+    "display":"UTKF",
+    "codes":[
+      "UTKF",
+      "UZFF",
+      "FEG"
+    ],
+    "name":"Fergana International Airport",
+    "location":"Fergana, FA, UZ",
+    "query":"UZFF"
+  },
+  {
+    "display":"UTFN",
+    "codes":[
+      "UTFN",
+      "UZFN",
+      "NMA"
+    ],
+    "name":"Namangan International Airport",
+    "location":"Namangan, NG, UZ",
+    "query":"UZFN"
+  },
+  {
+    "display":"UTNN",
+    "codes":[
+      "UTNN",
+      "UZNN",
+      "NCU"
+    ],
+    "name":"Nukus International Airport",
+    "location":"Nukus, QR, UZ",
+    "query":"UZNN"
+  },
+  {
+    "display":"UTNU",
+    "codes":[
+      "UTNU",
+      "UZNU",
+      "UGC"
+    ],
+    "name":"Urgench International Airport",
+    "location":"Urgench, XO, UZ",
+    "query":"UZNU"
+  },
+  {
+    "display":"UTSB",
+    "codes":[
+      "UTSB",
+      "UZSB",
+      "BHK"
+    ],
+    "name":"Bukhara International Airport",
+    "location":"Bukhara, BU, UZ",
+    "query":"UZSB"
+  },
+  {
+    "display":"UTSK",
+    "codes":[
+      "UT1N",
+      "UTSK",
+      "UZSK",
+      "KSQ"
+    ],
+    "name":"Karshi Airport",
+    "location":"Karshi, QA, UZ",
+    "query":"UZSK"
+  },
+  {
+    "display":"UTST",
+    "codes":[
+      "UTST",
+      "UZST",
+      "TMJ"
+    ],
+    "name":"Termez Airport",
+    "location":"Termez, SU, UZ",
+    "query":"UZST"
+  },
+  {
+    "display":"UTTT",
+    "codes":[
+      "UTTT",
+      "UZTT",
+      "TAS"
+    ],
+    "name":"Tashkent International Airport",
+    "location":"Tashkent, TO, UZ",
+    "query":"UZTT"
+  },
+  {
     "display":"VAAH",
     "codes":[
       "VAAH",
       "AMD"
     ],
-    "name":"Sardar Vallabh Bhai Patel International Airport",
+    "name":"Sardar Vallabh Patel International Airport",
     "location":"Ahmedabad, GJ, IN",
     "query":"VAAH"
   },
@@ -49487,7 +49292,7 @@
       "VABB",
       "BOM"
     ],
-    "name":"Chhatrapati Shivaji International Airport",
+    "name":"Chhatrapati Shivaji Maharaj International Airport",
     "location":"Mumbai, MM, IN",
     "query":"VABB"
   },
@@ -49507,7 +49312,7 @@
       "VABO",
       "BDQ"
     ],
-    "name":"Vadodara Airport",
+    "name":"Vadodara International Airport",
     "location":"Vadodara, GJ, IN",
     "query":"VABO"
   },
@@ -49579,7 +49384,7 @@
       "VAID",
       "IDR"
     ],
-    "name":"Devi Ahilyabai Holkar Airport",
+    "name":"Devi Ahilya Bai Holkar International Airport",
     "location":"Indore, MP, IN",
     "query":"VAID"
   },
@@ -49658,8 +49463,8 @@
       "VAOZ",
       "ISK"
     ],
-    "name":"Nashik Airport",
-    "location":"Nasik, MM, IN",
+    "name":"Nashik International Airport",
+    "location":"Nashik, MM, IN",
     "query":"VAOZ"
   },
   {
@@ -49668,7 +49473,7 @@
       "VAPO",
       "PNQ"
     ],
-    "name":"Pune Airport \/ Lohagaon Air Force Station",
+    "name":"Pune International Airport",
     "location":"Pune, MM, IN",
     "query":"VAPO"
   },
@@ -49698,7 +49503,7 @@
       "VASD",
       "SAG"
     ],
-    "name":"Shirdi Airport",
+    "name":"Shirdi International Airport",
     "location":"Kakadi, MM, IN",
     "query":"VASD"
   },
@@ -49708,7 +49513,7 @@
       "VASU",
       "STV"
     ],
-    "name":"Surat Airport",
+    "name":"Surat International Airport",
     "location":"Surat, GJ, IN",
     "query":"VASU"
   },
@@ -49779,7 +49584,7 @@
       "VCCC",
       "RML"
     ],
-    "name":"Colombo Ratmalana Airport",
+    "name":"Colombo Ratmalana International Airport",
     "location":"Colombo, 1, LK",
     "query":"VCCC"
   },
@@ -49870,7 +49675,7 @@
       "VDSV",
       "KOS"
     ],
-    "name":"Sihanoukville International Airport",
+    "name":"Sihanouk International Airport",
     "location":"Preah Sihanouk, 18, KH",
     "query":"VDSV"
   },
@@ -49913,7 +49718,7 @@
       "VEAY",
       "AYJ"
     ],
-    "name":"Ayodhya Airport",
+    "name":"Maharshi Valmiki International Airport",
     "location":"Faizabad, UP, IN",
     "query":"VEAY"
   },
@@ -49943,7 +49748,7 @@
       "VEBN",
       "VNS"
     ],
-    "name":"Lal Bahadur Shastri Airport",
+    "name":"Lal Bahadur Shastri International Airport",
     "location":"Varanasi, UP, IN",
     "query":"VEBN"
   },
@@ -50073,7 +49878,7 @@
       "VEIM",
       "IMF"
     ],
-    "name":"Imphal Airport",
+    "name":"Bir Tikendrajit International Airport",
     "location":"Imphal, MN, IN",
     "query":"VEIM"
   },
@@ -50327,7 +50132,7 @@
       "KVGT",
       "VGT"
     ],
-    "name":"North Las Vegas Metropolitan International Airport",
+    "name":"North Las Vegas Airport",
     "location":"Las Vegas, NV, US",
     "query":"VGT"
   },
@@ -50367,7 +50172,7 @@
       "VIAR",
       "ATQ"
     ],
-    "name":"Sri Guru Ram Dass Jee International Airport",
+    "name":"Sri Guru Ram Das Ji International Airport",
     "location":"Amritsar, PB, IN",
     "query":"VIAR"
   },
@@ -50397,7 +50202,7 @@
       "VICG",
       "IXC"
     ],
-    "name":"Chandigarh International Airport",
+    "name":"Shaheed Bhagat Singh International Airport",
     "location":"Chandigarh, CH, IN",
     "query":"VICG"
   },
@@ -50773,8 +50578,8 @@
       "VOBL",
       "BLR"
     ],
-    "name":"Kempegowda International Airport",
-    "location":"Bangalore, KA, IN",
+    "name":"Kempegowda International Airport Bengaluru",
+    "location":"Bengaluru, KA, IN",
     "query":"VOBL"
   },
   {
@@ -50794,8 +50599,8 @@
       "VOBZ",
       "VGA"
     ],
-    "name":"Vijayawada Airport",
-    "location":"Gannavaram, AP, IN",
+    "name":"Vijayawada International Airport",
+    "location":"Vijayawada, AP, IN",
     "query":"VOBZ"
   },
   {
@@ -50863,7 +50668,7 @@
       "VOGO",
       "GOI"
     ],
-    "name":"Dabolim Airport",
+    "name":"Goa Dabolim International Airport",
     "location":"Vasco da Gama, GA, IN",
     "query":"VOGO"
   },
@@ -50874,8 +50679,8 @@
       "VOHB",
       "HBX"
     ],
-    "name":"Hubli Airport",
-    "location":"Hubli, KA, IN",
+    "name":"Hubballi Airport",
+    "location":"Hubballi, KA, IN",
     "query":"VOHB"
   },
   {
@@ -50954,8 +50759,8 @@
       "VOML",
       "IXE"
     ],
-    "name":"Mangalore International Airport",
-    "location":"Mangalore, KA, IN",
+    "name":"Mangaluru International Airport",
+    "location":"Mangaluru, KA, IN",
     "query":"VOML"
   },
   {
@@ -51066,7 +50871,7 @@
       "VOTP",
       "TIR"
     ],
-    "name":"Tirupati Airport",
+    "name":"Tirupati International Airport",
     "location":"Tirupati, AP, IN",
     "query":"VOTP"
   },
@@ -51097,7 +50902,7 @@
       "VOVZ",
       "VTZ"
     ],
-    "name":"Visakhapatnam Airport",
+    "name":"Visakhapatnam International Airport",
     "location":"Visakhapatnam, AP, IN",
     "query":"VOVZ"
   },
@@ -51147,7 +50952,7 @@
       "VRMH",
       "HAQ"
     ],
-    "name":"Hanimaadhoo Airport",
+    "name":"Hanimaadhoo International Airport",
     "location":"Haa Dhaalu Atoll, 23, MV",
     "query":"VRMH"
   },
@@ -51157,7 +50962,7 @@
       "VRMM",
       "MLE"
     ],
-    "name":"Malé International Airport",
+    "name":"Velana International Airport",
     "location":"Malé, MLE, MV",
     "query":"VRMM"
   },
@@ -51367,7 +51172,7 @@
       "VTSM",
       "USM"
     ],
-    "name":"Samui Airport",
+    "name":"Samui International Airport",
     "location":"Na Thon (Ko Samui Island), 84, TH",
     "query":"VTSM"
   },
@@ -51417,7 +51222,7 @@
       "VTUD",
       "UTH"
     ],
-    "name":"Udon Thani Airport",
+    "name":"Udon Thani International Airport",
     "location":"Udon Thani, 41, TH",
     "query":"VTUD"
   },
@@ -51528,7 +51333,7 @@
       "CXR"
     ],
     "name":"Cam Ranh International Airport \/ Cam Ranh Air Base",
-    "location":"Cam Ranh, SCC, VN",
+    "location":"Nha Trang\/nha Trang aiurportCam Ranh, SCC, VN",
     "query":"VVCR"
   },
   {
@@ -51567,7 +51372,7 @@
       "VVPQ",
       "PQC"
     ],
-    "name":"Phu Quoc International Airport",
+    "name":"Phú Quốc International Airport",
     "location":"Phu Quoc Island, SW, VN",
     "query":"VVPQ"
   },
@@ -51628,7 +51433,7 @@
       "NYT"
     ],
     "name":"Nay Pyi Taw International Airport",
-    "location":"Pyinmana, 04, MM",
+    "location":"Naypyitaw, 04, MM",
     "query":"VYNT"
   },
   {
@@ -51776,8 +51581,8 @@
       "WAAA",
       "UPG"
     ],
-    "name":"Hasanuddin International Airport",
-    "location":"Ujung Pandang, SN, ID",
+    "name":"Sultan Hasanuddin International Airport",
+    "location":"Makassar, SN, ID",
     "query":"WAAA"
   },
   {
@@ -51838,7 +51643,7 @@
       "WARS",
       "SRG"
     ],
-    "name":"Achmad Yani Airport",
+    "name":"Jenderal Ahmad Yani Airport",
     "location":"Semarang, JT, ID",
     "query":"WAHS"
   },
@@ -51888,7 +51693,7 @@
       "WAMM",
       "MDC"
     ],
-    "name":"Sam Ratulangi Airport",
+    "name":"Sam Ratulangi International Airport",
     "location":"Manado, SA, ID",
     "query":"WAMM"
   },
@@ -51899,7 +51704,7 @@
       "BDJ"
     ],
     "name":"Syamsudin Noor International Airport",
-    "location":"Landasan Ulin, KS, ID",
+    "location":"Banjarbaru, KS, ID",
     "query":"WAOO"
   },
   {
@@ -52151,7 +51956,7 @@
       "WIOO",
       "PNK"
     ],
-    "name":"Supadio Airport",
+    "name":"Supadio International Airport",
     "location":"Pontianak, KB, ID",
     "query":"WIOO"
   },
@@ -52919,8 +52724,8 @@
       "YMAV",
       "AVV"
     ],
-    "name":"Avalon Airport",
-    "location":"Lara, VIC, AU",
+    "name":"Melbourne Avalon International Airport",
+    "location":"Geelong\/Melbourne, VIC, AU",
     "query":"YMAV"
   },
   {
@@ -53088,7 +52893,7 @@
       "YPXM",
       "XCH"
     ],
-    "name":"Christmas Island Airport",
+    "name":"Christmas Island International Airport",
     "location":"Flying Fish Cove, U-A, CX",
     "query":"YPXM"
   },
@@ -53183,6 +52988,16 @@
     "query":"ZBAD"
   },
   {
+    "display":"ZBDS",
+    "codes":[
+      "ZBDS",
+      "DSN"
+    ],
+    "name":"Ordos Ejin Horo International Airport",
+    "location":"Ordos, 15, CN",
+    "query":"ZBDS"
+  },
+  {
     "display":"ZBSJ",
     "codes":[
       "ZBSJ",
@@ -53201,6 +53016,16 @@
     "name":"Tianjin Binhai International Airport",
     "location":"Tianjin, 12, CN",
     "query":"ZBTJ"
+  },
+  {
+    "display":"ZBYC",
+    "codes":[
+      "ZBYC",
+      "YCU"
+    ],
+    "name":"Yuncheng Yanhu International Airport",
+    "location":"Yuncheng (Yanhu), 61, CN",
+    "query":"ZBYC"
   },
   {
     "display":"ZBYN",
@@ -53248,7 +53073,7 @@
       "ZGNN",
       "NNG"
     ],
-    "name":"Nanning Wuxu Airport",
+    "name":"Nanning Wuxu International Airport",
     "location":"Nanning (Jiangnan), 45, CN",
     "query":"ZGNN"
   },
@@ -53258,7 +53083,7 @@
       "ZHEC",
       "EHU"
     ],
-    "name":"Ezhou Huahu Airport",
+    "name":"Ezhou Huahu International Airport",
     "location":"Ezhou, 42, CN",
     "query":"ZHEC"
   },
@@ -53339,7 +53164,7 @@
       "LJG"
     ],
     "name":"Lijiang Sanyi International Airport",
-    "location":"Lijiang (Gucheng), 53, CN",
+    "location":"Lijiang, 53, CN",
     "query":"ZPLJ"
   },
   {
@@ -53421,16 +53246,6 @@
     "name":"Wenzhou Longwan International Airport",
     "location":"Wenzhou (Longwan), 33, CN",
     "query":"ZSWZ"
-  },
-  {
-    "display":"ZSXZ",
-    "codes":[
-      "ZSXZ",
-      "XUZ"
-    ],
-    "name":"Xuzhou Guanyin International Airport",
-    "location":"Xuzhou, 32, CN",
-    "query":"ZSXZ"
   },
   {
     "display":"ZUGY",

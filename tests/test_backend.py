@@ -55,6 +55,15 @@ class TestMetarAPI(helper.CPWebCase):
             assert 'IFR' in first_hour
             assert 'LIFR' in first_hour
 
+            # Check utc_offsets is present and has correct structure
+            assert 'utc_offsets' in response_data
+            utc_offsets = response_data['utc_offsets']
+            assert isinstance(utc_offsets, list)
+            # KPAO in June should have PDT (America/Los_Angeles)
+            if len(utc_offsets) > 0:
+                assert 'abbr' in utc_offsets[0]
+                assert 'utc_offset_hours' in utc_offsets[0]
+
     def test_statistics_endpoint_invalid_month(self):
         """Test that invalid month returns error."""
         # Make request with invalid month

@@ -24,4 +24,7 @@ venv.bak/
 
 SESSION_NOTES.md
 
+# HTTP response cache for convert_airports.py
+.http_cache.sqlite
+
 **/*~

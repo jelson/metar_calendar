@@ -15,8 +15,9 @@ Output fields: display, codes, name, location, query
 import airportsdata
 import pandas as pd
 from pathlib import Path
-import requests
+import requests_cache
 from io import StringIO
+from datetime import timedelta
 
 # URLs
 OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.csv'
@@ -26,11 +27,15 @@ IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network
 OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v3.json'
 OUTPUT_METADATA = Path(__file__).parent / '../../backend/data/airport_metadata.parquet'
 
+# Cache HTTP responses to SQLite for 1 day to avoid hammering servers during dev
+CACHE_PATH = Path(__file__).parent / '.http_cache'
+session = requests_cache.CachedSession(str(CACHE_PATH), expire_after=timedelta(days=1))
+
 
 def fetch_iem_stations():
     """Download list of all IEM weather stations with lat/lon."""
     print(f"Fetching IEM station list from {IEM_STATIONS_URL}...")
-    response = requests.get(IEM_STATIONS_URL, timeout=30)
+    response = session.get(IEM_STATIONS_URL, timeout=30)
     response.raise_for_status()
 
     # Parse CSV from response
@@ -65,7 +70,7 @@ def convert_airports():
 
     # Fetch OurAirports CSV
     print(f"\nFetching OurAirports data from {OURAIRPORTS_URL}...")
-    response = requests.get(OURAIRPORTS_URL, timeout=30)
+    response = session.get(OURAIRPORTS_URL, timeout=30)
     response.raise_for_status()
 
     df = pd.read_csv(StringIO(response.text), usecols=[

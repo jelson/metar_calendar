@@ -65,7 +65,7 @@ class MetarSummarizer:
         cols_needed = ['valid', 'vsby', 'skyc1', 'skyl1', 'skyc2', 'skyl2',
                        'skyc3', 'skyl3', 'skyc4', 'skyl4']
         df = pd.read_csv(io.StringIO(raw_csv.decode('utf8', errors='ignore')),
-                         usecols=cols_needed)
+                         usecols=cols_needed, low_memory=False)
 
         # Rename and parse date column
         df = df.rename({'valid': 'date'}, axis=1)

@@ -5,6 +5,7 @@ channels:
 dependencies:
   # Core
   - python>=3.14
+  - pip
   - pandas
   - pyarrow
   - requests
@@ -14,6 +15,7 @@ dependencies:
   - plotly
   - cherrypy>=18.0.0
   - boto3>=1.26.0
+  - uwsgi
 
   # Testing
   - pytest>=7.0.0

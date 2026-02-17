@@ -125,7 +125,7 @@ if __name__ == '__main__':
     cherrypy.engine.start()
     cherrypy.engine.block()
 else:
-    # Loaded by uwsgi: initialize once at module load time (not per request)
+    # Loaded by uwsgi - production server
     api, conf = create_app(dev_mode=False)
     cherrypy.tree.mount(api, '/', conf)
     cherrypy.config.update({

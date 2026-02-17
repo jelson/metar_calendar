@@ -416,13 +416,22 @@
 
         // Show loading state
         hideError();
-        // Preserve height to prevent page jump when switching to loading state
-        const currentHeight = resultDisplay.offsetHeight;
-        if (currentHeight > 0) {
-            loadingState.style.minHeight = `${currentHeight}px`;
+        const isReload = !resultDisplay.classList.contains('hidden');
+        if (isReload) {
+            // Hide content but preserve layout space to prevent page reflow
+            resultDisplay.style.minHeight = resultDisplay.offsetHeight + 'px';
+            resultDisplay.style.position = 'relative';
+            resultDisplay.style.visibility = 'hidden';
+
+            // Overlay a visible spinner inside the invisible container
+            const spinner = document.createElement('div');
+            spinner.id = 'reloadSpinner';
+            spinner.style.cssText = 'visibility:visible; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;';
+            spinner.innerHTML = '<div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><p class="mt-4 text-gray-600">Loading...</p>';
+            resultDisplay.appendChild(spinner);
+        } else {
+            loadingState.classList.remove('hidden');
         }
-        resultDisplay.classList.add('hidden');
-        loadingState.classList.remove('hidden');
 
         // Blur search input to prevent mobile keyboard from appearing when touching chart
         searchInput.blur();
@@ -445,25 +454,34 @@
             // Update result title with display code
             resultTitle.textContent = `${monthNames[month]} at ${selectedAirport.display} (${selectedAirport.name})`;
 
-            // Clear old chart immediately to prevent flash
-            const resultImage = document.getElementById('resultImage');
-            resultImage.innerHTML = '';
-
-            // Hide loading state and show result display
-            loadingState.style.minHeight = '';
             loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
 
-            // Render chart after container is visible and sized
-            requestAnimationFrame(() => {
+            // Clean up reload overlay
+            const spinner = document.getElementById('reloadSpinner');
+            if (spinner) spinner.remove();
+            resultDisplay.style.visibility = '';
+            resultDisplay.style.minHeight = '';
+            resultDisplay.style.position = '';
+
+            if (isReload) {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
-                // Scroll to results after chart is rendered to ensure whole chart is visible
+            } else {
+                // First load: render after container is visible and sized
                 requestAnimationFrame(() => {
-                    resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    displayWeatherChart(data, selectedAirport, monthNames[month]);
+                    requestAnimationFrame(() => {
+                        resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
                 });
-            });
+            }
         } catch (error) {
             loadingState.classList.add('hidden');
+            const errSpinner = document.getElementById('reloadSpinner');
+            if (errSpinner) errSpinner.remove();
+            resultDisplay.style.visibility = '';
+            resultDisplay.style.minHeight = '';
+            resultDisplay.style.position = '';
             console.error('API error:', error);
             showError(`Failed to load weather data: ${error.message}`);
         }
@@ -490,6 +508,9 @@
     // Display weather data as interactive Plotly chart
     function displayWeatherChart(data, airport, monthName) {
         const resultImage = document.getElementById('resultImage');
+
+        // Lock container height to prevent page reflow during content swap
+        resultImage.style.minHeight = resultImage.offsetHeight + 'px';
 
         // Create chart container
         resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
@@ -642,6 +663,8 @@
         Plotly.newPlot('plotlyChart', traces, layout, {
             responsive: true,
             displayModeBar: false
+        }).then(() => {
+            resultImage.style.minHeight = '';
         });
     }
 

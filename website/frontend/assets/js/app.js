@@ -561,48 +561,64 @@
             warningElement.classList.add('hidden');
         }
 
-        // Create traces for each flight condition (VFR first for bottom stacking)
-        const traces = [
-            {
-                x: hours,
-                y: vfrData,
-                name: 'VFR',
-                type: 'bar',
-                marker: { color: 'green' },
-                hovertemplate: 'Hour %{x}:00<br>VFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: mvfrData,
-                name: 'MVFR',
-                type: 'bar',
-                marker: { color: 'blue' },
-                hovertemplate: 'Hour %{x}:00<br>MVFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: ifrData,
-                name: 'IFR',
-                type: 'bar',
-                marker: { color: 'red' },
-                hovertemplate: 'Hour %{x}:00<br>IFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: lifrData,
-                name: 'LIFR',
-                type: 'bar',
-                marker: { color: 'magenta' },
-                hovertemplate: 'Hour %{x}:00<br>LIFR: %{y:.1%}<extra></extra>'
-            }
-        ];
-
         // Detect mobile viewport
         const isMobile = window.innerWidth < 768;
 
         // Timezone offsets from backend
         const utcOffsets = data.utc_offsets || [];
         const hasTimezone = utcOffsets.length > 0;
+
+        // Build hover labels: "14:00 UTC (2p PDT)" or just "14:00 UTC" if no timezone
+        const hoverHours = hours.map(h => {
+            let label = `${h}:00 UTC`;
+            if (hasTimezone) {
+                const localParts = utcOffsets.map(o =>
+                    `${formatLocalHour(h, o.utc_offset_hours)} ${o.abbr}`
+                );
+                label += ` (${localParts.join(' / ')})`;
+            }
+            return [label];
+        });
+
+        // Create traces for each flight condition (VFR first for bottom stacking)
+        const traces = [
+            {
+                x: hours,
+                y: vfrData,
+                customdata: hoverHours,
+                name: 'VFR',
+                type: 'bar',
+                marker: { color: 'green' },
+                hovertemplate: '%{customdata[0]}<br>VFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: mvfrData,
+                customdata: hoverHours,
+                name: 'MVFR',
+                type: 'bar',
+                marker: { color: 'blue' },
+                hovertemplate: '%{customdata[0]}<br>MVFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: ifrData,
+                customdata: hoverHours,
+                name: 'IFR',
+                type: 'bar',
+                marker: { color: 'red' },
+                hovertemplate: '%{customdata[0]}<br>IFR: %{y:.1%}<extra></extra>'
+            },
+            {
+                x: hours,
+                y: lifrData,
+                customdata: hoverHours,
+                name: 'LIFR',
+                type: 'bar',
+                marker: { color: 'magenta' },
+                hovertemplate: '%{customdata[0]}<br>LIFR: %{y:.1%}<extra></extra>'
+            }
+        ];
 
         // Bottom margin: base for tick labels, plus extra per timezone row (no x-axis title when tz shown)
         const extraRowHeight = isMobile ? 12 : 16;

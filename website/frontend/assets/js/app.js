@@ -172,7 +172,7 @@
         }
 
         monthSelect.value = newMonth;
-        searchForm.requestSubmit();
+        searchForm.dispatchEvent(new Event('submit', { cancelable: true }));
     }
 
     // Handle input changes

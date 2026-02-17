@@ -3,12 +3,19 @@ import argparse
 import appdirs
 import os
 import sys
+from pathlib import Path
+
+import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from lib.analyzer import METARAnalyzer  # noqa: E402
 from lib.storage import LocalFileStorage  # noqa: E402
+from lib.sun_utils import get_daylight_utc_hours  # noqa: E402
+from lib.timezone_utils import get_utc_offsets_for_month  # noqa: E402
 from lib.visualizer import METARVisualizer  # noqa: E402
+
+METADATA_PATH = Path(__file__).parent / '../website/backend/data/airport_metadata.parquet'
 
 
 def main():
@@ -60,9 +67,20 @@ def main():
         print(METARVisualizer.format_table(hourly))
 
     if args.chart:
-        output_filename = f'{args.airport.upper()}-{args.month:02d}.png'
+        # Look up timezone and location metadata for the airport
+        metadata = pd.read_parquet(METADATA_PATH)
+        airport_upper = args.airport.upper()
+        utc_offsets = []
+        daylight_utc = None
+        if airport_upper in metadata.index:
+            row = metadata.loc[airport_upper]
+            utc_offsets = get_utc_offsets_for_month(row.get('tz'), args.month)
+            daylight_utc = get_daylight_utc_hours(
+                row.get('lat'), row.get('lon'), args.month)
+
+        output_filename = f'{airport_upper}-{args.month:02d}.png'
         output_path = os.path.join(args.directory, output_filename)
-        png_bytes = METARVisualizer.generate_png(hourly)
+        png_bytes = METARVisualizer.generate_png(hourly, utc_offsets, daylight_utc)
         with open(output_path, 'wb') as f:
             f.write(png_bytes)
 

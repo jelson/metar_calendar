@@ -110,18 +110,6 @@ def create_app(dev_mode=False):
     return api, conf
 
 
-# "application" is the magic function called by uwsgi
-def application(environ, start_response):
-    api, conf = create_app(dev_mode=False)
-    cherrypy.tree.mount(api, '/', conf)
-    cherrypy.config.update({
-        'log.screen': True,
-        'environment': 'production',
-        'tools.proxy.on': True,
-    })
-    return cherrypy.tree(environ, start_response)
-
-
 if __name__ == '__main__':
     # Running directly - use development mode
     api, conf = create_app(dev_mode=True)
@@ -136,3 +124,16 @@ if __name__ == '__main__':
 
     cherrypy.engine.start()
     cherrypy.engine.block()
+else:
+    # Loaded by uwsgi: initialize once at module load time (not per request)
+    api, conf = create_app(dev_mode=False)
+    cherrypy.tree.mount(api, '/', conf)
+    cherrypy.config.update({
+        'log.screen': True,
+        'environment': 'production',
+        'tools.proxy.on': True,
+    })
+
+    # "application" is the magic function called by uwsgi on each request
+    def application(environ, start_response):
+        return cherrypy.tree(environ, start_response)

@@ -22,6 +22,6 @@ dependencies:
 
   # Packages not available (or too old) on conda-forge
   - pip:
-    - kaleido
+    - "kaleido<1.0"
     - astral>=3.2
     - "moto[s3]>=5.0.0"

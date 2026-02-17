@@ -30,11 +30,18 @@
     async function init() {
         try {
             // Load airport data
-            const response = await fetch('/assets/data/airports_v3.json');
+            const response = await fetch('/assets/data/airports_v4.json');
             if (!response.ok) throw new Error('Failed to load airport data');
             airports = await response.json();
 
-            // Initialize Fuse.js with custom options
+            // Add a cleaned location field with parenthesized text removed,
+            // e.g. "Paris (Roissy-en-France, Val-d'Oise), IDF, FR" -> "Paris, IDF, FR"
+            airports.forEach(a => {
+                a.locationClean = a.location?.replace(/\s*\([^)]*\)/g, '') || '';
+            });
+
+            // Initialize Fuse.js for fuzzy matching only (exact/substring
+            // matching is handled separately in performSearch)
             fuse = new Fuse(airports, {
                 keys: [
                     { name: 'codes', weight: 0.4 },
@@ -190,69 +197,75 @@
         performSearch(query);
     }
 
+    // Check if query appears as a whole word in text
+    function hasWholeWord(text, query) {
+        const re = new RegExp('\\b' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+        return re.test(text);
+    }
+
+    // Score an airport against the query. Lower score = better match.
+    function scoreAirport(airport, queryLower, queryUpper) {
+        const hasExactCode = airport.codes?.some(code => code === queryUpper);
+        const hasStartingCode = airport.codes?.some(code => code.startsWith(queryUpper));
+        const hasSubstringCode = airport.codes?.some(code => code.includes(queryUpper));
+
+        // Code matches (highest priority)
+        if (hasExactCode) return 0;
+        if (hasStartingCode) return 0.1;
+        if (hasSubstringCode) return 0.2;
+
+        // Whole-word matches
+        const nameWord = airport.name && hasWholeWord(airport.name, queryLower);
+        const locWord = airport.locationClean && hasWholeWord(airport.locationClean, queryLower);
+
+        if (nameWord && airport.name.toLowerCase().startsWith(queryLower)) return 0.25;
+        if (locWord && airport.locationClean.toLowerCase().startsWith(queryLower)) return 0.3;
+        if (nameWord) return 0.35;
+        if (locWord) return 0.4;
+
+        // Substring matches (e.g. "paris" inside "parish")
+        if (airport.name?.toLowerCase().includes(queryLower)) return 0.5;
+        if (airport.locationClean?.toLowerCase().includes(queryLower)) return 0.55;
+        if (airport.location?.toLowerCase().includes(queryLower)) return 0.6;
+
+        return null;
+    }
+
     // Perform search with custom scoring
     function performSearch(query) {
         if (!fuse) return;
 
-        // Get fuzzy search results
-        let results = fuse.search(query);
-
-        // Custom scoring for exact and substring matches
+        const queryLower = query.toLowerCase();
         const queryUpper = query.toUpperCase();
 
-        results = results.map(result => {
-            const airport = result.item;
-            let customScore;
+        // Direct substring search to guarantee exact matches aren't missed
+        const seen = new Set();
+        const results = [];
 
-            // Check for matches in codes array
-            const hasExactCode = airport.codes?.some(code => code === queryUpper);
-            const hasStartingCode = airport.codes?.some(code => code.startsWith(queryUpper));
-            const hasSubstringCode = airport.codes?.some(code => code.includes(queryUpper));
-
-            // Exact code match (highest priority)
-            if (hasExactCode) {
-                customScore = 0;
+        airports.forEach(airport => {
+            const score = scoreAirport(airport, queryLower, queryUpper);
+            if (score !== null) {
+                seen.add(airport.query);
+                results.push({ item: airport, customScore: score });
             }
-            // Code starts with query
-            else if (hasStartingCode) {
-                customScore = 0.1;
-            }
-            // Substring match in codes
-            else if (hasSubstringCode) {
-                customScore = 0.2;
-            }
-            // Name starts with query (case insensitive)
-            else if (airport.name?.toLowerCase().startsWith(query.toLowerCase())) {
-                customScore = 0.25;
-            }
-            // Substring match in name
-            else if (airport.name?.toLowerCase().includes(query.toLowerCase())) {
-                customScore = 0.3;
-            }
-            // Location starts with query
-            else if (airport.location?.toLowerCase().startsWith(query.toLowerCase())) {
-                customScore = 0.4;
-            }
-            // Substring match in location
-            else if (airport.location?.toLowerCase().includes(query.toLowerCase())) {
-                customScore = 0.5;
-            }
-            // Fuzzy match (fallback) - add offset to ensure it's lower priority than all exact matches
-            else {
-                customScore = 0.6 + result.score;
-            }
-
-            return {
-                ...result,
-                customScore
-            };
         });
 
-        // Sort by custom score
-        results.sort((a, b) => a.customScore - b.customScore);
+        // Supplement with Fuse.js fuzzy results
+        fuse.search(query).forEach(result => {
+            if (!seen.has(result.item.query)) {
+                seen.add(result.item.query);
+                results.push({ item: result.item, customScore: 0.7 + result.score });
+            }
+        });
 
-        // Limit to top 10 results
-        currentResults = results.slice(0, 10);
+        // Sort by custom score, then by airport size (large=0, medium=1, small=2)
+        results.sort((a, b) =>
+            a.customScore - b.customScore ||
+            (a.item.size ?? 3) - (b.item.size ?? 3)
+        );
+
+        // Limit to top 20 results
+        currentResults = results.slice(0, 20);
 
         displayResults(currentResults);
     }

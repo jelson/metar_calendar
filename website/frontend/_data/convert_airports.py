@@ -24,7 +24,7 @@ OURAIRPORTS_URL = 'https://davidmegginson.github.io/ourairports-data/airports.cs
 IEM_STATIONS_URL = 'https://mesonet.agron.iastate.edu/sites/networks.php?network=_ALL_&format=csv&nohtml=on'
 
 # Output paths
-OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v3.json'
+OUTPUT_JSON = Path(__file__).parent / '../assets/data/airports_v4.json'
 OUTPUT_METADATA = Path(__file__).parent / '../../backend/data/airport_metadata.parquet'
 
 # Cache HTTP responses to SQLite for 1 day to avoid hammering servers during dev
@@ -74,7 +74,7 @@ def convert_airports():
     response.raise_for_status()
 
     df = pd.read_csv(StringIO(response.text), usecols=[
-        'ident', 'icao_code', 'iata_code', 'local_code', 'gps_code',
+        'ident', 'type', 'icao_code', 'iata_code', 'local_code', 'gps_code',
         'name', 'municipality', 'iso_region', 'iso_country', 'latitude_deg', 'longitude_deg'
     ])
 
@@ -201,8 +201,13 @@ def convert_airports():
     metadata.to_parquet(OUTPUT_METADATA)
     print(f"Generated {OUTPUT_METADATA} ({len(metadata)} airports, {OUTPUT_METADATA.stat().st_size / 1024:.0f} KB)")
 
+    # Map airport type to a numeric size for search ranking
+    # (lower = more important)
+    type_rank = {'large_airport': 0, 'medium_airport': 1, 'small_airport': 2}
+    df['size'] = df['type'].map(type_rank).fillna(3).astype(int)
+
     # Keep only the columns we need for frontend JSON output
-    df = df[['display', 'codes', 'name', 'location', 'query']]
+    df = df[['display', 'codes', 'name', 'location', 'size', 'query']]
 
     print(f"Airports with IEM METAR data: {len(df)}")
 

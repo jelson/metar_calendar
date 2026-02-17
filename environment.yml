@@ -4,7 +4,10 @@ channels:
   - defaults
 dependencies:
   # Core
-  - python>=3.13
+  # Pinned: uwsgi embeds the Python interpreter, so the micro version must
+  # match exactly. conda-forge uwsgi 2.0.31 is built against 3.13.11.
+  # See https://github.com/conda-forge/uwsgi-feedstock/issues/XXX
+  - python=3.13.11
   - pip
   - pandas
   - pyarrow
@@ -16,6 +19,8 @@ dependencies:
   - cherrypy>=18.0.0
   - boto3>=1.26.0
   - uwsgi
+  - airportsdata
+  - requests-cache
 
   # Testing
   - pytest>=7.0.0

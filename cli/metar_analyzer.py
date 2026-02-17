@@ -67,13 +67,23 @@ def main():
         print(METARVisualizer.format_table(hourly))
 
     if args.chart:
-        # Look up timezone and location metadata for the airport
+        # Look up timezone and location metadata for the airport.
+        # The metadata parquet is keyed by IEM query code (e.g., "SMO"),
+        # but the user may provide the ICAO code (e.g., "KSMO"). Try both.
         metadata = pd.read_parquet(METADATA_PATH)
         airport_upper = args.airport.upper()
+        meta_key = None
+        if airport_upper in metadata.index:
+            meta_key = airport_upper
+        elif len(airport_upper) == 4 and airport_upper.startswith('K'):
+            stripped = airport_upper[1:]
+            if stripped in metadata.index:
+                meta_key = stripped
+
         utc_offsets = []
         daylight_utc = None
-        if airport_upper in metadata.index:
-            row = metadata.loc[airport_upper]
+        if meta_key is not None:
+            row = metadata.loc[meta_key]
             utc_offsets = get_utc_offsets_for_month(row.get('tz'), args.month)
             daylight_utc = get_daylight_utc_hours(
                 row.get('lat'), row.get('lon'), args.month)

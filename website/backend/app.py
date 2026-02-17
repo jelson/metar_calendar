@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from lib.analyzer import METARAnalyzer  # noqa: E402
 from lib.storage import LocalFileStorage  # noqa: E402
+from lib.sun_utils import get_daylight_utc_hours  # noqa: E402
 from lib.timezone_utils import get_utc_offsets_for_month  # noqa: E402
 from lib.utils import say  # noqa: E402
 
@@ -48,12 +49,18 @@ class MetarAPI:
             analyzer = METARAnalyzer(airport_code, self.storage)
             hourly = analyzer.get_hourly_statistics(month)
 
-            # Look up timezone offsets for this airport and month
+            # Look up airport metadata for timezone and daylight computation
             tz_name = None
+            daylight_utc = None
             if airport_code in self.airport_metadata.index:
-                tz_name = self.airport_metadata.loc[airport_code, 'tz']
+                meta = self.airport_metadata.loc[airport_code]
+                tz_name = meta.get('tz')
                 if pd.isna(tz_name):
                     tz_name = None
+                lat = meta.get('lat')
+                lon = meta.get('lon')
+                if lat is not None and lon is not None and not pd.isna(lat) and not pd.isna(lon):
+                    daylight_utc = get_daylight_utc_hours(float(lat), float(lon), month)
             utc_offsets = get_utc_offsets_for_month(tz_name, month)
 
             # Convert DataFrame to JSON-serializable dict
@@ -61,6 +68,7 @@ class MetarAPI:
                 'airport': hourly.attrs.get('airport'),
                 'month': hourly.attrs.get('month'),
                 'utc_offsets': utc_offsets,
+                'daylight_utc': daylight_utc,
                 'hourly_stats': {
                     int(hour): {
                         'VFR': float(row['VFR']),

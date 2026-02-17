@@ -192,10 +192,10 @@ def convert_airports():
     tz_found = df['tz'].notna().sum()
     print(f"Timezone lookup: {tz_found}/{len(df)} airports matched in airportsdata")
 
-    # Generate backend metadata parquet (airport_code -> tz, extensible later)
-    # Done before column trimming so 'tz' is still available
-    metadata = df[['query', 'tz']].copy()
-    metadata = metadata.rename(columns={'query': 'airport_code'})
+    # Generate backend metadata parquet (airport_code -> tz, lat, lon)
+    # Done before column trimming so all fields are still available
+    metadata = df[['query', 'tz', 'latitude_deg', 'longitude_deg']].copy()
+    metadata = metadata.rename(columns={'query': 'airport_code', 'latitude_deg': 'lat', 'longitude_deg': 'lon'})
     metadata = metadata.set_index('airport_code')
     OUTPUT_METADATA.parent.mkdir(parents=True, exist_ok=True)
     metadata.to_parquet(OUTPUT_METADATA)

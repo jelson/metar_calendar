@@ -660,6 +660,34 @@
             layout.xaxis.range = [-1.5, 23.5];
         }
 
+        // Add daylight background
+        if (data.daylight_utc) {
+            const { sunrise, sunset } = data.daylight_utc;
+            const xMin = -0.5;
+            const xMax = 23.5;
+            const shapeStyle = {
+                type: 'rect',
+                xref: 'x',
+                yref: 'paper',
+                y0: 0,
+                y1: 1,
+                fillcolor: 'rgba(255, 255, 0, 0.4)',
+                line: { width: 0 },
+                layer: 'below',
+            };
+
+            if (sunrise < sunset) {
+                // Daylight doesn't wrap around midnight UTC (e.g., European airports)
+                layout.shapes = [{ ...shapeStyle, x0: sunrise, x1: sunset }];
+            } else {
+                // Daylight wraps around midnight UTC (e.g., American airports)
+                layout.shapes = [
+                    { ...shapeStyle, x0: xMin, x1: sunset },
+                    { ...shapeStyle, x0: sunrise, x1: xMax },
+                ];
+            }
+        }
+
         // Render the chart with full width
         Plotly.newPlot('plotlyChart', traces, layout, {
             responsive: true,

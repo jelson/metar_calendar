@@ -6,3 +6,4 @@ pytz
 appdirs
 plotly
 kaleido
+astral>=3.2

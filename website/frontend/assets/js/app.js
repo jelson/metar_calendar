@@ -591,9 +591,10 @@
         const utcOffsets = data.utc_offsets || [];
         const hasTimezone = utcOffsets.length > 0;
 
-        // Extra bottom margin per local time row
+        // Bottom margin: base for tick labels, plus extra per timezone row (no x-axis title when tz shown)
         const extraRowHeight = isMobile ? 12 : 16;
-        const bottomMargin = 70 + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+        const baseBottom = hasTimezone ? 25 : 70;
+        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
         const leftMargin = isMobile ? 40 : 70;
 
         // Layout configuration

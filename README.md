@@ -18,17 +18,17 @@ marine layers. The analyzer shows this:
 
 ![KSMO June weather prediction](website/frontend/assets/images/KSMO-06.png)
 
-- At hour 0 UTC (5 PM local), VFR extends from 0 to 0.70, meaning 70% of days had VFR conditions
-- By hour 8 UTC (1 AM local), VFR drops to just 27%, with a 73% chance of marine layer
-- Worst hours are 13-14 UTC (6-7 AM local): only 22-27% VFR, with 73-78% marine layer
-- Best conditions are 20-23 UTC (1-4 PM local): 76-87% VFR
+- At hour 0 UTC (5 PM local), VFR is 77%
+- By hour 10 UTC (3 AM local), VFR drops to just 28%, with a 72% chance of marine layer
+- Worst hours are 13-14 UTC (6-7 AM local): only 26-31% VFR
+- Best conditions are 20-22 UTC (1-3 PM local): 81-90% VFR
 
 Our typical backup was Van Nuys, just 14 miles away but usually with better conditions due to being protected from the marine layer by the Santa Monica Mountains:
 
 ![KVNY June weather prediction](website/frontend/assets/images/KVNY-06.png)
 
-- Best VFR: 19 UTC through 6 UTC (noon through 11 PM local) at 79-93%
-- At worst hours (13-14 UTC / 6-7 AM local), VFR is still ~40%—significantly better than KSMO's ~25%
+- Best VFR: 19 UTC through 6 UTC (noon through 11 PM local) at 81-94%
+- At worst hours (13-14 UTC / 6-7 AM local), VFR is still ~37-38%—better than KSMO's ~26-31%
 
 ## How It Works
 
@@ -42,6 +42,21 @@ Flight conditions are determined by ceiling and visibility, with the more restri
 | **MVFR** | ≥ 1,000 and < 3,000 ft AGL | ≥ 3 and < 5 statute miles |
 | **IFR** | ≥ 500 and < 1,000 ft AGL | ≥ 1 and < 3 statute miles |
 | **LIFR** | < 500 ft AGL | < 1 statute mile |
+
+## Setup
+
+Dependencies are managed via conda. To create (or update) the environment:
+
+```bash
+conda env create -f environment.yml    # first time
+conda env update -f environment.yml    # after changes to environment.yml
+```
+
+Then activate it before running anything:
+
+```bash
+conda activate avmapper
+```
 
 ## Usage
 

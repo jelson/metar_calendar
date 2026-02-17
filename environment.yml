@@ -1,0 +1,27 @@
+name: avmapper
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Core
+  - python>=3.14
+  - pandas
+  - pyarrow
+  - requests
+  - python-dateutil
+  - pytz
+  - appdirs
+  - plotly
+  - cherrypy>=18.0.0
+  - boto3>=1.26.0
+
+  # Testing
+  - pytest>=7.0.0
+  - pytest-cov>=4.0.0
+  - pytest-mock>=3.10.0
+
+  # Packages not available (or too old) on conda-forge
+  - pip:
+    - kaleido
+    - astral>=3.2
+    - "moto[s3]>=5.0.0"

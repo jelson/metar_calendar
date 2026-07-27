@@ -143,6 +143,14 @@
         prevMonthBtnMobile.addEventListener('click', () => changeMonth(-1));
         nextMonthBtnMobile.addEventListener('click', () => changeMonth(1));
 
+        // Temperature unit toggle (°C / °F)
+        document.getElementById('tempUnitToggle').addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-unit]');
+            if (btn) {
+                setTempUnit(btn.dataset.unit);
+            }
+        });
+
         // Click outside to close dropdown
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
@@ -492,11 +500,13 @@
             if (isReload) {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
                 displayWindCharts(data);
+                displayWeatherCharts(data);
             } else {
                 // First load: render after container is visible and sized
                 requestAnimationFrame(() => {
                     displayWeatherChart(data, selectedAirport, monthNames[month]);
                     displayWindCharts(data);
+                    displayWeatherCharts(data);
                     requestAnimationFrame(() => {
                         resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     });
@@ -985,6 +995,231 @@
         applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
 
         Plotly.newPlot('windDirChart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
+    // Temperature unit toggle: persisted in localStorage, defaults to Celsius
+    let tempUnit = localStorage.getItem('metarTempUnit') === 'F' ? 'F' : 'C';
+    let lastStatsData = null;
+
+    function setTempUnit(unit) {
+        tempUnit = unit;
+        localStorage.setItem('metarTempUnit', unit);
+
+        const toggle = document.getElementById('tempUnitToggle');
+        toggle.querySelectorAll('button').forEach(btn => {
+            const active = btn.dataset.unit === unit;
+            btn.classList.toggle('bg-blue-600', active);
+            btn.classList.toggle('text-white', active);
+            btn.classList.toggle('text-gray-600', !active);
+        });
+
+        if (lastStatsData) {
+            displayTemperatureChart(lastStatsData);
+        }
+    }
+
+    // Display the two weather charts (temperature/dewpoint + precipitation)
+    function displayWeatherCharts(data) {
+        const weatherSection = document.getElementById('weatherSection');
+
+        if (!data.temperature || !data.precipitation) {
+            weatherSection.classList.add('hidden');
+            return;
+        }
+        weatherSection.classList.remove('hidden');
+
+        lastStatsData = data;
+        setTempUnit(tempUnit);
+        displayPrecipitationChart(data);
+    }
+
+    // Temperature and dewpoint as median lines with a 10th-90th percentile
+    // shaded band (a single average would hide day-to-day spread)
+    function displayTemperatureChart(data) {
+        const temperature = data.temperature;
+        const isMobile = window.innerWidth < 768;
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+        const hourLabels = buildHourLabels(utcOffsets);
+
+        const mapping = buildHourMapping(data);
+        const hours = mapping.map(m => m.x);
+        const stats = mapping.map(m => temperature.hourly[m.utc] || null);
+        const customdata = mapping.map(m => [hourLabels[m.utc]]);
+
+        // API values are Fahrenheit; convert to Celsius here if that's the
+        // active display unit (percentiles are order-preserving under this
+        // linear conversion, so no need to recompute from raw data). null
+        // (missing dewpoint) must pass through unchanged -- "null - 32"
+        // coerces to -32 in JS, which would otherwise plot a fake value.
+        const toDisplay = tempUnit === 'C'
+            ? f => f === null ? null : (f - 32) * 5 / 9
+            : f => f;
+        const unitLabel = tempUnit === 'C' ? '°C' : '°F';
+
+        // Build a shaded percentile band + median line for one series
+        // (temp or dewpoint). Two invisible traces (upper, lower-with-fill)
+        // draw the band; showlegend is false on both so only the median
+        // line's legend entry appears.
+        function bandTraces(key, name, lineColor, bandColor) {
+            const upper = stats.map(s => s ? toDisplay(s[`${key}_p90`]) : null);
+            const lower = stats.map(s => s ? toDisplay(s[`${key}_p10`]) : null);
+            const median = stats.map(s => s ? toDisplay(s[`${key}_median`]) : null);
+            return [
+                {
+                    x: hours, y: upper, mode: 'lines',
+                    line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
+                },
+                {
+                    x: hours, y: lower, mode: 'lines',
+                    line: { width: 0 }, fill: 'tonexty', fillcolor: bandColor,
+                    showlegend: false, hoverinfo: 'skip'
+                },
+                {
+                    x: hours, y: median, customdata, name,
+                    mode: 'lines+markers',
+                    line: { color: lineColor, width: 2 },
+                    marker: { size: 5 },
+                    hovertemplate: `%{customdata[0]}<br>${name}: %{y:.0f}${unitLabel}<extra></extra>`
+                },
+            ];
+        }
+
+        const traces = [
+            ...bandTraces('temp', 'Temperature', '#dc2626', 'rgba(220,38,38,0.15)'),
+            ...bandTraces('dewpoint', 'Dewpoint', '#0369a1', 'rgba(3,105,161,0.15)'),
+        ];
+
+        const extraRowHeight = isMobile ? 12 : 16;
+        const baseBottom = hasTimezone ? 25 : 70;
+        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+
+        const layout = {
+            height: isMobile ? 260 : 340,
+            xaxis: {
+                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
+                dtick: 1,
+                zeroline: false,
+                range: [-0.5, 23.5],
+                fixedrange: true
+            },
+            yaxis: {
+                title: isMobile ? '' : { text: `Degrees ${tempUnit === 'C' ? 'Celsius' : 'Fahrenheit'}`, standoff: 10 },
+                zeroline: false,
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h',
+                x: 0.5,
+                xanchor: 'center',
+                y: 1.02,
+                yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
+        };
+
+        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
+
+        Plotly.newPlot('temperatureChart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
+    // Sequential-by-severity categorical colors for precipitation type
+    const PRECIP_TYPE_COLORS = {
+        'Thunderstorm': '#f59e0b',
+        'Freezing': '#7c3aed',
+        'Snow/Ice': '#0d9488',
+        'Rain': '#2563eb',
+        'Drizzle': '#7dd3fc',
+        'Other / Unspecified': '#9ca3af',
+    };
+
+    // Stacked bars of precipitation frequency per hour, broken down by type
+    function displayPrecipitationChart(data) {
+        const precipitation = data.precipitation;
+        const isMobile = window.innerWidth < 768;
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+        const hourLabels = buildHourLabels(utcOffsets);
+
+        const mapping = buildHourMapping(data);
+        const hours = mapping.map(m => m.x);
+
+        const customdata = mapping.map(m => {
+            const stats = precipitation.hourly[m.utc];
+            let text = 'No precipitation recorded';
+            if (stats && stats.count > 0) {
+                const hourWord = stats.count === 1 ? 'hour' : 'hours';
+                text = `Measurable precipitation in ${stats.count} ${hourWord}` +
+                    ` (${(stats.freq * 100).toFixed(0)}% of this hour's samples)`;
+                if (stats.median_in !== null) {
+                    text += `, typically ${stats.median_in.toFixed(2)} in`;
+                }
+            }
+            return [hourLabels[m.utc], text];
+        });
+
+        const traces = precipitation.types.map(type => ({
+            x: hours,
+            y: mapping.map(m => {
+                const stats = precipitation.hourly[m.utc];
+                return stats ? stats.type_count[type] : 0;
+            }),
+            customdata,
+            name: type,
+            type: 'bar',
+            marker: { color: PRECIP_TYPE_COLORS[type] },
+            hovertemplate: `%{customdata[0]}<br>${type}: %{y}<br>%{customdata[1]}<extra></extra>`
+        }));
+
+        const extraRowHeight = isMobile ? 12 : 16;
+        const baseBottom = hasTimezone ? 25 : 70;
+        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+
+        // Tallest stacked bar (total count per hour), for the y-axis ceiling
+        const maxCount = Math.max(
+            0, ...mapping.map(m => (precipitation.hourly[m.utc] || {}).count || 0));
+
+        const layout = {
+            barmode: 'stack',
+            height: isMobile ? 240 : 300,
+            xaxis: {
+                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
+                dtick: 1,
+                zeroline: false,
+                range: [-0.5, 23.5],
+                fixedrange: true
+            },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Number of Hours', standoff: 10 },
+                tickformat: 'd',
+                // rangemode 'tozero' isn't enough when every value is 0 (Plotly
+                // still autoscales to an arbitrary range), so pin an explicit
+                // floor and give a little headroom above the tallest bar
+                rangemode: 'tozero',
+                range: [0, Math.max(1, maxCount) * 1.15],
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h',
+                x: 0.5,
+                xanchor: 'center',
+                y: 1.02,
+                yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
+        };
+
+        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
+
+        Plotly.newPlot('precipitationChart', traces, layout, {
             responsive: true,
             displayModeBar: false
         });

@@ -31,6 +31,17 @@ class METARAnalyzer:
     # distribution: light winds meander and their direction is mostly noise.
     WIND_DIRECTION_MIN_KNOTS = 5
 
+    # An hour counts as having measurable precipitation above this amount
+    # (inches); this excludes trace amounts, which METAR itself distinguishes
+    # from measurable precipitation.
+    PRECIP_MEASURABLE_THRESHOLD_IN = 0.01
+
+    # Precipitation types, most significant first. When an hour's wxcodes
+    # match more than one (e.g. a thunderstorm with rain), the first match
+    # in this list wins.
+    PRECIP_TYPES = [
+        'Thunderstorm', 'Freezing', 'Snow/Ice', 'Rain', 'Drizzle', 'Other / Unspecified']
+
     def __init__(self, airport_code: str, storage: Storage):
         self.airport_code = airport_code.upper().strip()
         cache = Cache(storage)
@@ -46,6 +57,49 @@ class METARAnalyzer:
         if ceiling >= 500 and vsby >= 1:
             return FlightCondition.IFR
         return FlightCondition.LIFR
+
+    def _classify_precip_type(self, wxcodes: str) -> str:
+        """Classify an hour's present-weather codes into a precipitation type.
+
+        wxcodes is a space-joined string of raw METAR present-weather groups
+        (e.g. "-RA BR", "+TSRA", "SN FZFG"). Each token is stripped of its
+        intensity prefix (+/-) and the "in the vicinity" prefix (VC), then
+        matched against known phenomenon codes; unrelated codes such as BR
+        (mist) or FG (fog) don't match anything. When multiple precipitation
+        types are present, PRECIP_TYPES' order decides which one wins.
+
+        Returns 'Other / Unspecified' if wxcodes is empty (some automated
+        stations report a measurable amount from their rain gauge (p01i)
+        without ever sending a present-weather code for it) or if wxcodes is
+        present but matches no known type (this covers UP, METAR's own
+        "unknown precipitation" code).
+        """
+        if not wxcodes:
+            return 'Other / Unspecified'
+
+        types_present = set()
+        for token in wxcodes.split():
+            t = token[1:] if token[:1] in ('+', '-') else token
+            if t.startswith('VC'):
+                t = t[2:]
+
+            if 'TS' in t:
+                types_present.add('Thunderstorm')
+            if 'FZ' in t and ('RA' in t or 'DZ' in t):
+                types_present.add('Freezing')
+            if any(code in t for code in ('SN', 'SG', 'PL', 'IC', 'GR', 'GS')):
+                types_present.add('Snow/Ice')
+            if 'RA' in t and 'FZ' not in t:
+                types_present.add('Rain')
+            if 'DZ' in t and 'FZ' not in t:
+                types_present.add('Drizzle')
+            if 'UP' in t:
+                types_present.add('Other / Unspecified')
+
+        for precip_type in self.PRECIP_TYPES:
+            if precip_type in types_present:
+                return precip_type
+        return 'Other / Unspecified'
 
     def get_hourly_statistics(self, month: int) -> pd.DataFrame:
         # Filter to requested month
@@ -151,4 +205,103 @@ class METARAnalyzer:
             'direction_step': self.WIND_DIRECTION_STEP,
             'direction_min_kt': self.WIND_DIRECTION_MIN_KNOTS,
             'hourly_direction': hourly_direction,
+        }
+
+    def get_hourly_temperature_statistics(self, month: int) -> dict:
+        """Compute per-UTC-hour temperature/dewpoint distributions.
+
+        A percentile band (rather than a single average) is used because
+        conditions vary considerably day to day even at a fixed hour.
+
+        Returns a dict with 'hourly': {hour: {
+            'temp_p10'/'temp_median'/'temp_p90': degrees Fahrenheit,
+            'dewpoint_p10'/'dewpoint_median'/'dewpoint_p90': degrees Fahrenheit or None,
+        }}
+        """
+        if 'tmpf' not in self.hourly_summary.columns:
+            raise ValueError(
+                'Cached summary has no temperature data; clear the cache to regenerate')
+
+        df = self.hourly_summary
+        df = df.loc[df.index.month == month]
+
+        hourly = {}
+        for hour, group in df.groupby(df.index.hour):
+            temps = group['tmpf'].dropna()
+            if len(temps) == 0:
+                continue
+
+            entry = {
+                'temp_p10': float(temps.quantile(0.1)),
+                'temp_median': float(temps.median()),
+                'temp_p90': float(temps.quantile(0.9)),
+            }
+
+            dewpoints = group['dwpf'].dropna()
+            if len(dewpoints) > 0:
+                entry['dewpoint_p10'] = float(dewpoints.quantile(0.1))
+                entry['dewpoint_median'] = float(dewpoints.median())
+                entry['dewpoint_p90'] = float(dewpoints.quantile(0.9))
+            else:
+                entry['dewpoint_p10'] = None
+                entry['dewpoint_median'] = None
+                entry['dewpoint_p90'] = None
+
+            hourly[int(hour)] = entry
+
+        return {'hourly': hourly}
+
+    def get_hourly_precipitation_statistics(self, month: int) -> dict:
+        """Compute per-UTC-hour precipitation frequency for the given month.
+
+        Returns a dict with:
+            threshold_in: precipitation amounts at or below this (inches)
+                don't count as measurable
+            types: ordered list of precipitation type labels
+            hourly: {hour: {
+                'freq': fraction of hours with measurable precipitation,
+                'count': number of hours with measurable precipitation,
+                'median_in': median amount on hours with precipitation, or None,
+                'type_freq': {type: fraction of all hours classified as that
+                    type}, summing to 'freq' (each measurable-precipitation
+                    hour is classified as exactly one type),
+                'type_count': {type: number of hours classified as that
+                    type}, summing to 'count',
+            }}
+        """
+        has_precip_data = ('p01i' in self.hourly_summary.columns
+                           and 'wxcodes' in self.hourly_summary.columns)
+        if not has_precip_data:
+            raise ValueError(
+                'Cached summary has no precipitation data; clear the cache to regenerate')
+
+        df = self.hourly_summary
+        df = df.loc[df.index.month == month]
+
+        hourly = {}
+        for hour, group in df.groupby(df.index.hour):
+            n = len(group)
+            if n == 0:
+                continue
+
+            is_measurable = group['p01i'] > self.PRECIP_MEASURABLE_THRESHOLD_IN
+            measurable = group.loc[is_measurable, 'p01i']
+
+            types = group.loc[is_measurable, 'wxcodes'].apply(self._classify_precip_type)
+            type_counts = types.value_counts()
+            type_freq = {t: float(type_counts.get(t, 0) / n) for t in self.PRECIP_TYPES}
+            type_count = {t: int(type_counts.get(t, 0)) for t in self.PRECIP_TYPES}
+
+            hourly[int(hour)] = {
+                'freq': float(len(measurable) / n),
+                'count': int(len(measurable)),
+                'median_in': float(measurable.median()) if len(measurable) else None,
+                'type_freq': type_freq,
+                'type_count': type_count,
+            }
+
+        return {
+            'threshold_in': self.PRECIP_MEASURABLE_THRESHOLD_IN,
+            'types': self.PRECIP_TYPES,
+            'hourly': hourly,
         }

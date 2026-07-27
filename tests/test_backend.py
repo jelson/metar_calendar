@@ -67,6 +67,22 @@ class TestMetarAPI(helper.CPWebCase):
             assert 'median' in wind['hourly_gust'][first_wind_hour]
             assert 'max' in wind['hourly_gust'][first_wind_hour]
 
+            # Check temperature and precipitation blocks
+            temperature = response_data['temperature']
+            first_temp_hour = list(temperature['hourly'].keys())[0]
+            temp_stats = temperature['hourly'][first_temp_hour]
+            assert 'temp_median' in temp_stats
+            assert 'dewpoint_median' in temp_stats
+
+            precipitation = response_data['precipitation']
+            assert precipitation['threshold_in'] == 0.01
+            assert 'Rain' in precipitation['types']
+            first_precip_hour = list(precipitation['hourly'].keys())[0]
+            assert 'freq' in precipitation['hourly'][first_precip_hour]
+            assert 'count' in precipitation['hourly'][first_precip_hour]
+            assert 'type_freq' in precipitation['hourly'][first_precip_hour]
+            assert 'type_count' in precipitation['hourly'][first_precip_hour]
+
             # The test queries by ICAO code (KPAO), which is not in the
             # metadata index (keyed by IEM code PAO), so no timezone is found
             assert response_data['primary_utc_offset_hours'] is None

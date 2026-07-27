@@ -117,6 +117,20 @@ title: Home
                         <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Wind Speed</h3>
                         <div id="windSpeedChart" class="bg-gray-100/50 rounded-lg"></div>
                     </div>
+                    <div id="weatherSection" class="hidden">
+                        <div class="flex items-center justify-between" style="margin-top:2.5rem;">
+                            <h3 class="text-base md:text-xl font-bold text-gray-800">Temperature &amp; Dewpoint</h3>
+                            <div id="tempUnitToggle" class="flex text-xs border border-gray-300 rounded" style="overflow:hidden; flex-shrink:0;">
+                                <button type="button" data-unit="C" class="px-3 py-1 cursor-pointer transition">&deg;C</button>
+                                <button type="button" data-unit="F" class="px-3 py-1 cursor-pointer transition">&deg;F</button>
+                            </div>
+                        </div>
+                        <p class="text-xs md:text-sm text-gray-600">Shaded bands show the typical range (10th&ndash;90th percentile) at each hour; lines show the median.</p>
+                        <div id="temperatureChart" class="bg-gray-100/50 rounded-lg"></div>
+                        <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Precipitation</h3>
+                        <p class="text-xs md:text-sm text-gray-600">How often measurable precipitation was reported at each hour, broken down by type.</p>
+                        <div id="precipitationChart" class="bg-gray-100/50 rounded-lg"></div>
+                    </div>
                 </div>
 
                 <!-- Next month button (desktop only) -->

@@ -53,12 +53,16 @@ class MetarSummarizer:
         - Minimum ceiling for that hour
         - Maximum sustained wind (sknt) and gust for that hour
         - Wind direction (drct) at the strongest sustained wind of the hour
+        - Mean temperature (tmpf) and dewpoint (dwpf), in Fahrenheit
+        - Maximum precipitation (p01i), in inches
+        - Present-weather codes (wxcodes) for the hour, space-joined
 
         Args:
             airport: Airport code (normalized, e.g., 'KSFO', 'KPAO')
 
         Returns:
-            DataFrame indexed by hour with columns: vsby, ceiling, sknt, gust, drct
+            DataFrame indexed by hour with columns: vsby, ceiling, sknt, gust,
+            drct, tmpf, dwpf, p01i, wxcodes
         """
         # Get raw CSV data
         raw_csv = self.retriever.get(airport)
@@ -66,7 +70,7 @@ class MetarSummarizer:
         # Parse CSV into dataframe - only read columns we need for performance
         cols_needed = ['valid', 'vsby', 'skyc1', 'skyl1', 'skyc2', 'skyl2',
                        'skyc3', 'skyl3', 'skyc4', 'skyl4',
-                       'drct', 'sknt', 'gust']
+                       'drct', 'sknt', 'gust', 'tmpf', 'dwpf', 'p01i', 'wxcodes']
         df = pd.read_csv(io.StringIO(raw_csv.decode('utf8', errors='ignore')),
                          usecols=cols_needed, low_memory=False)
 
@@ -76,9 +80,11 @@ class MetarSummarizer:
         df['date'] = df['date'].apply(lambda d: datetime.datetime.strptime(
             d, "%Y-%m-%d %H:%M").replace(tzinfo=pytz.UTC))
 
-        # Convert visibility, sky levels and wind to numeric (coerce errors to NaN)
+        # Convert visibility, sky levels, wind and temperature/precip to
+        # numeric (coerce errors to NaN, e.g. p01i sometimes reports 'T' for
+        # a trace amount of precipitation)
         for col in ['vsby', 'skyl1', 'skyl2', 'skyl3', 'skyl4',
-                    'drct', 'sknt', 'gust']:
+                    'drct', 'sknt', 'gust', 'tmpf', 'dwpf', 'p01i']:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
 
@@ -87,19 +93,30 @@ class MetarSummarizer:
             if col in df.columns:
                 df[col] = df[col].astype(str)
 
+        # Present-weather codes (e.g. "-RA", "+TSRA", "SN") as a plain string,
+        # empty for observations that reported none
+        df['wxcodes'] = df['wxcodes'].fillna('').astype(str)
+
         say(f'Fetched {len(df)} rows from {df["date"].min()} to {df["date"].max()}')
 
         # Calculate ceiling for each observation
         df['ceiling'] = df.apply(self._calculate_ceiling, axis=1)
 
         # Group by hour: minimum visibility and ceiling, maximum sustained
-        # wind and gust (the strongest wind is what matters to a pilot)
+        # wind and gust (the strongest wind is what matters to a pilot),
+        # mean temperature and dewpoint, and maximum precipitation (p01i is
+        # already a rolling one-hour total, so max avoids double-counting
+        # when an hour has more than one observation)
         grouping = df['date'].dt.floor('1h')
         hourly = df.groupby(grouping).agg({
             'vsby': 'min',
             'ceiling': 'min',
             'sknt': 'max',
             'gust': 'max',
+            'tmpf': 'mean',
+            'dwpf': 'mean',
+            'p01i': 'max',
+            'wxcodes': lambda codes: ' '.join(c for c in codes if c),
         })
 
         # Wind direction: take the direction observed at the strongest
@@ -127,8 +144,8 @@ class MetarSummarizer:
             DataFrame indexed by day and hour with columns: vsby, ceiling
         """
         airport = airport.upper().strip()
-        # v2: adds wind columns (sknt, gust, drct)
-        cache_key = f"{airport}.summarized.v2.parquet"
+        # v4: adds wxcodes (v3 added tmpf, dwpf, p01i; v2 added sknt, gust, drct)
+        cache_key = f"{airport}.summarized.v4.parquet"
 
         def compute_and_serialize() -> bytes:
             """Compute the summary and serialize to parquet bytes."""

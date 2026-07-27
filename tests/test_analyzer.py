@@ -155,7 +155,7 @@ class TestMETARAnalyzer:
         import io
         buffer = io.BytesIO()
         df.to_parquet(buffer)
-        storage.put(f'{airport}.summarized.v2.parquet', buffer.getvalue())
+        storage.put(f'{airport}.summarized.v4.parquet', buffer.getvalue())
 
     def test_wind_stats_calm_and_direction_wrapping(self, storage):
         """Calm/light hours have no direction; 355 and 005 both bin to 000."""
@@ -207,6 +207,145 @@ class TestMETARAnalyzer:
         analyzer = METARAnalyzer('KTEST', storage)
         with pytest.raises(ValueError, match='no wind data'):
             analyzer.get_hourly_wind_statistics(6)
+
+    @pytest.mark.parametrize("airport", get_test_airports())
+    @patch('lib.raw_metar_retriever.requests.get')
+    def test_temperature_stats_structure(self, mock_requests, storage, airport):
+        """Test that get_hourly_temperature_statistics returns a well-formed result."""
+        mock_requests.side_effect = mock_requests_get
+
+        analyzer = METARAnalyzer(airport, storage)
+        result = analyzer.get_hourly_temperature_statistics(6)
+
+        assert len(result['hourly']) > 0
+        for hour, stats in result['hourly'].items():
+            assert 0 <= hour <= 23
+            assert stats['temp_p10'] <= stats['temp_median'] <= stats['temp_p90']
+            if stats['dewpoint_median'] is not None:
+                assert stats['dewpoint_p10'] <= stats['dewpoint_median'] <= stats['dewpoint_p90']
+
+    def test_temperature_stats_synthetic(self, storage):
+        """Percentiles are computed correctly from the underlying samples."""
+        index = pd.DatetimeIndex([
+            f'2025-06-{day:02d} 10:00' for day in range(1, 11)], tz='UTC')
+        temps = [50.0, 52.0, 54.0, 56.0, 58.0, 60.0, 62.0, 64.0, 66.0, 68.0]
+        dewpoints = [t - 10 for t in temps]
+        df = pd.DataFrame({
+            'vsby': [10.0] * 10,
+            'ceiling': [10000.0] * 10,
+            'tmpf': temps,
+            'dwpf': dewpoints,
+            'p01i': [0.0] * 10,
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        result = analyzer.get_hourly_temperature_statistics(6)
+
+        stats = result['hourly'][10]
+        assert stats['temp_median'] == pytest.approx(59.0)
+        assert stats['temp_p10'] == pytest.approx(51.8)
+        assert stats['temp_p90'] == pytest.approx(66.2)
+        assert stats['dewpoint_median'] == pytest.approx(49.0)
+
+    def test_temperature_stats_raises_without_temperature_column(self, storage):
+        """A stale cached summary without temperature data raises a clear error."""
+        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
+        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        with pytest.raises(ValueError, match='no temperature data'):
+            analyzer.get_hourly_temperature_statistics(6)
+
+    @pytest.mark.parametrize("airport", get_test_airports())
+    @patch('lib.raw_metar_retriever.requests.get')
+    def test_precipitation_stats_structure(self, mock_requests, storage, airport):
+        """Test that get_hourly_precipitation_statistics returns a well-formed result."""
+        mock_requests.side_effect = mock_requests_get
+
+        analyzer = METARAnalyzer(airport, storage)
+        result = analyzer.get_hourly_precipitation_statistics(6)
+
+        assert result['threshold_in'] == 0.01
+        assert result['types'] == [
+            'Thunderstorm', 'Freezing', 'Snow/Ice', 'Rain', 'Drizzle', 'Other / Unspecified']
+        assert len(result['hourly']) > 0
+        for hour, stats in result['hourly'].items():
+            assert 0 <= hour <= 23
+            assert 0 <= stats['freq'] <= 1
+            assert stats['count'] >= 0
+            if stats['freq'] > 0:
+                assert stats['median_in'] > 0
+            # Type breakdown always sums to the overall frequency/count
+            assert sum(stats['type_freq'].values()) == pytest.approx(stats['freq'])
+            assert sum(stats['type_count'].values()) == stats['count']
+
+    def test_precipitation_stats_synthetic(self, storage):
+        """Frequency and median only count measurable precipitation."""
+        index = pd.DatetimeIndex([
+            f'2025-06-{day:02d} 10:00' for day in range(1, 6)], tz='UTC')
+        df = pd.DataFrame({
+            'vsby': [10.0] * 5,
+            'ceiling': [10000.0] * 5,
+            'tmpf': [50.0] * 5,
+            'dwpf': [40.0] * 5,
+            # trace (below threshold), dry, measurable, measurable, missing
+            'p01i': [0.005, 0.0, 0.10, 0.20, float('nan')],
+            'wxcodes': ['-RA', '', '-RA', '+TSRA', ''],
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        result = analyzer.get_hourly_precipitation_statistics(6)
+
+        stats = result['hourly'][10]
+        assert stats['freq'] == pytest.approx(0.4)  # 2 of 5 hours
+        assert stats['count'] == 2
+        assert stats['median_in'] == pytest.approx(0.15)
+        # The two measurable hours are Rain (0.10) and Thunderstorm (0.20)
+        assert stats['type_freq']['Rain'] == pytest.approx(0.2)
+        assert stats['type_freq']['Thunderstorm'] == pytest.approx(0.2)
+        assert stats['type_freq']['Snow/Ice'] == 0.0
+        assert stats['type_count']['Rain'] == 1
+        assert stats['type_count']['Thunderstorm'] == 1
+        assert stats['type_count']['Snow/Ice'] == 0
+
+    def test_precipitation_stats_raises_without_precipitation_column(self, storage):
+        """A stale cached summary without precipitation data raises a clear error."""
+        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
+        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        with pytest.raises(ValueError, match='no precipitation data'):
+            analyzer.get_hourly_precipitation_statistics(6)
+
+    @pytest.mark.parametrize("wxcodes,expected", [
+        ('', 'Other / Unspecified'),      # no wx code at all, e.g. a gauge-only station
+        ('BR', 'Other / Unspecified'),    # mist alone isn't precipitation
+        ('-RA', 'Rain'),
+        ('-RA BR', 'Rain'),
+        ('+RA', 'Rain'),
+        ('-DZ', 'Drizzle'),
+        ('-SN', 'Snow/Ice'),
+        ('SN FZFG', 'Snow/Ice'),          # freezing fog isn't freezing precip
+        ('-SN BLSN', 'Snow/Ice'),         # blowing snow still counts as snow
+        ('GR', 'Snow/Ice'),               # hail
+        ('-FZRA BR', 'Freezing'),
+        ('-FZDZ', 'Freezing'),
+        ('TS', 'Thunderstorm'),
+        ('-TSRA', 'Thunderstorm'),
+        ('VCTS -RA', 'Thunderstorm'),     # thunderstorm outranks rain
+        ('UP', 'Other / Unspecified'),
+        ('UP BR', 'Other / Unspecified'),
+    ])
+    def test_classify_precip_type(self, wxcodes, expected):
+        """Test present-weather code classification with real-world examples."""
+        # _classify_precip_type only reads class-level constants, so it's
+        # safe to call without fetching any data via __init__
+        analyzer = METARAnalyzer.__new__(METARAnalyzer)
+        assert analyzer._classify_precip_type(wxcodes) == expected
 
     @patch('lib.raw_metar_retriever.requests.get')
     def test_multiple_months(self, mock_requests, storage):

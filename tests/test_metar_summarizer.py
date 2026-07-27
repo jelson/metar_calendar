@@ -35,7 +35,8 @@ class TestMetarSummarizer:
         df = summarizer.get("KPAO")
 
         assert isinstance(df, pd.DataFrame)
-        assert list(df.columns) == ['vsby', 'ceiling', 'sknt', 'gust', 'drct']
+        assert list(df.columns) == [
+            'vsby', 'ceiling', 'sknt', 'gust', 'tmpf', 'dwpf', 'p01i', 'wxcodes', 'drct']
         assert pd.api.types.is_datetime64_any_dtype(df.index)
         assert df.attrs['airport'] == 'KPAO'
 
@@ -93,8 +94,8 @@ class TestMetarSummarizer:
         assert mock_requests.call_count == 2
 
         # Verify separate cache files exist
-        assert cache.storage.get("KPAO.summarized.v2.parquet") is not None
-        assert cache.storage.get("KMSN.summarized.v2.parquet") is not None
+        assert cache.storage.get("KPAO.summarized.v4.parquet") is not None
+        assert cache.storage.get("KMSN.summarized.v4.parquet") is not None
 
         # Fetch again - should hit cache
         df1_cached = summarizer.get("KPAO")
@@ -118,7 +119,7 @@ class TestMetarSummarizer:
         df1 = summarizer.get("  kpao  ")
 
         # Verify cache key was normalized
-        assert cache.storage.get("KPAO.summarized.v2.parquet") is not None
+        assert cache.storage.get("KPAO.summarized.v4.parquet") is not None
 
         # Fetch with normalized code should hit same cache
         df2 = summarizer.get("KPAO")
@@ -173,26 +174,27 @@ class TestMetarSummarizer:
 
     @patch('lib.raw_metar_retriever.requests.get')
     def test_hourly_aggregation_takes_minimum(self, mock_requests, cache):
-        """Test hourly aggregation: minimum visibility/ceiling, maximum wind."""
+        """Test hourly aggregation: min vis/ceiling, max wind, mean temp, max precip."""
         # Create synthetic CSV with multiple observations across several hours
-        # Each hour has multiple observations with varying visibility, ceiling and wind
+        # Each hour has multiple observations with varying visibility, ceiling,
+        # wind, temperature/dewpoint and precipitation
         synthetic_csv = b"""\
-station,valid,vsby,skyc1,skyl1,skyc2,skyl2,skyc3,skyl3,skyc4,skyl4,drct,sknt,gust
-KTEST,2025-01-01 10:05,10.0,SCT,2000,BKN,3000,,,,,180,5,
-KTEST,2025-01-01 10:20,5.0,BKN,1500,OVC,2500,,,,,190,8,
-KTEST,2025-01-01 10:35,8.0,OVC,2000,,,,,,,300,12,20
-KTEST,2025-01-01 10:50,7.0,BKN,2500,,,,,,,200,7,
-KTEST,2025-01-01 11:10,3.0,BKN,4000,,,,,,,0,0,
-KTEST,2025-01-01 11:25,7.0,OVC,5000,,,,,,,0,0,
-KTEST,2025-01-01 11:40,4.0,SCT,3000,BKN,3500,,,,,90,3,
-KTEST,2025-01-01 11:55,9.0,OVC,4500,,,,,,,100,2,
-KTEST,2025-01-01 12:00,2.0,VV,300,,,,,,,,,
-KTEST,2025-01-01 12:15,6.0,BKN,1000,OVC,2000,,,,,210,6,25
-KTEST,2025-01-01 12:30,10.0,FEW,500,SCT,1500,BKN,5000,,,220,10,
-KTEST,2025-01-01 12:45,8.0,SCT,2000,OVC,6000,,,,,230,8,
-KTEST,2025-01-01 13:05,1.0,VV,200,,,,,,,,,
-KTEST,2025-01-01 13:20,4.0,BKN,800,,,,,,,,,
-KTEST,2025-01-01 13:40,5.0,OVC,1200,,,,,,,,,
+station,valid,vsby,skyc1,skyl1,skyc2,skyl2,skyc3,skyl3,skyc4,skyl4,drct,sknt,gust,tmpf,dwpf,p01i,wxcodes
+KTEST,2025-01-01 10:05,10.0,SCT,2000,BKN,3000,,,,,180,5,,50.0,40.0,0.00,-RA
+KTEST,2025-01-01 10:20,5.0,BKN,1500,OVC,2500,,,,,190,8,,52.0,42.0,0.05,
+KTEST,2025-01-01 10:35,8.0,OVC,2000,,,,,,,300,12,20,54.0,44.0,T,BR
+KTEST,2025-01-01 10:50,7.0,BKN,2500,,,,,,,200,7,,56.0,46.0,0.02,
+KTEST,2025-01-01 11:10,3.0,BKN,4000,,,,,,,0,0,,60.0,,0.00,
+KTEST,2025-01-01 11:25,7.0,OVC,5000,,,,,,,0,0,,62.0,,0.00,
+KTEST,2025-01-01 11:40,4.0,SCT,3000,BKN,3500,,,,,90,3,,64.0,,0.00,
+KTEST,2025-01-01 11:55,9.0,OVC,4500,,,,,,,100,2,,66.0,,0.00,
+KTEST,2025-01-01 12:00,2.0,VV,300,,,,,,,,,,45.0,44.0,0.01,
+KTEST,2025-01-01 12:15,6.0,BKN,1000,OVC,2000,,,,,210,6,25,47.0,46.0,0.00,-SN
+KTEST,2025-01-01 12:30,10.0,FEW,500,SCT,1500,BKN,5000,,,220,10,,49.0,48.0,T,
+KTEST,2025-01-01 12:45,8.0,SCT,2000,OVC,6000,,,,,230,8,,51.0,50.0,0.00,+TSRA
+KTEST,2025-01-01 13:05,1.0,VV,200,,,,,,,,,,30.0,29.0,,
+KTEST,2025-01-01 13:20,4.0,BKN,800,,,,,,,,,,32.0,31.0,,
+KTEST,2025-01-01 13:40,5.0,OVC,1200,,,,,,,,,,34.0,33.0,,
 """
 
         # Mock requests to return synthetic data
@@ -210,39 +212,62 @@ KTEST,2025-01-01 13:40,5.0,OVC,1200,,,,,,,,,
         # Hour 1 (10:00): visibility min(10.0, 5.0, 8.0, 7.0) = 5.0
         #                 ceiling min(3000, 1500, 2000, 2500) = 1500
         #                 wind max(5, 8, 12, 7) = 12 kt from 300, gust max = 20
+        #                 temp mean(50,52,54,56) = 53.0, dewpoint mean = 43.0
+        #                 p01i max(0.00, 0.05, T->NaN, 0.02) = 0.05
         hour1 = df.loc[df.index[0]]
         assert hour1['vsby'] == 5.0
         assert hour1['ceiling'] == 1500
         assert hour1['sknt'] == 12
         assert hour1['drct'] == 300
         assert hour1['gust'] == 20
+        assert hour1['tmpf'] == 53.0
+        assert hour1['dwpf'] == 43.0
+        assert hour1['p01i'] == 0.05
+        assert hour1['wxcodes'] == '-RA BR'
 
         # Hour 2 (11:00): visibility min(3.0, 7.0, 4.0, 9.0) = 3.0
         #                 ceiling min(4000, 5000, 3500, 4500) = 3500
         #                 wind max(0, 0, 3, 2) = 3 kt from 090, no gusts
+        #                 temp mean(60,62,64,66) = 63.0, no dewpoint data
+        #                 p01i max(0.00, 0.00, 0.00, 0.00) = 0.00
         hour2 = df.loc[df.index[1]]
         assert hour2['vsby'] == 3.0
         assert hour2['ceiling'] == 3500
         assert hour2['sknt'] == 3
         assert hour2['drct'] == 90
         assert pd.isna(hour2['gust'])
+        assert hour2['tmpf'] == 63.0
+        assert pd.isna(hour2['dwpf'])
+        assert hour2['p01i'] == 0.0
+        assert hour2['wxcodes'] == ''
 
         # Hour 3 (12:00): visibility min(2.0, 6.0, 10.0, 8.0) = 2.0
         #                 ceiling min(300, 1000, 5000, 6000) = 300
         #                 wind max(-, 6, 10, 8) = 10 kt from 220, gust max = 25
+        #                 temp mean(45,47,49,51) = 48.0, dewpoint mean = 47.0
+        #                 p01i max(0.01, 0.00, T->NaN, 0.00) = 0.01
         hour3 = df.loc[df.index[2]]
         assert hour3['vsby'] == 2.0
         assert hour3['ceiling'] == 300
         assert hour3['sknt'] == 10
         assert hour3['drct'] == 220
         assert hour3['gust'] == 25
+        assert hour3['tmpf'] == 48.0
+        assert hour3['dwpf'] == 47.0
+        assert hour3['p01i'] == 0.01
+        assert hour3['wxcodes'] == '-SN +TSRA'
 
         # Hour 4 (13:00): visibility min(1.0, 4.0, 5.0) = 1.0
         #                 ceiling min(200, 800, 1200) = 200
-        #                 no wind observations at all
+        #                 no wind or precipitation observations at all
+        #                 temp mean(30,32,34) = 32.0, dewpoint mean = 31.0
         hour4 = df.loc[df.index[3]]
         assert hour4['vsby'] == 1.0
         assert hour4['ceiling'] == 200
         assert pd.isna(hour4['sknt'])
         assert pd.isna(hour4['drct'])
         assert pd.isna(hour4['gust'])
+        assert hour4['tmpf'] == 32.0
+        assert hour4['dwpf'] == 31.0
+        assert pd.isna(hour4['p01i'])
+        assert hour4['wxcodes'] == ''

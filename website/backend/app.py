@@ -81,6 +81,8 @@ class MetarAPI:
                     for hour, row in hourly.iterrows()
                 },
                 'wind': analyzer.get_hourly_wind_statistics(month),
+                'temperature': analyzer.get_hourly_temperature_statistics(month),
+                'precipitation': analyzer.get_hourly_precipitation_statistics(month),
             }
         except Exception as e:
             say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')

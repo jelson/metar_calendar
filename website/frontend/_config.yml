@@ -1,6 +1,6 @@
 # Site settings
-title: Hourly METAR Predictor
-description: Predict hourly METAR conditions for airports worldwide
+title: METAR Predictor
+description: Predict METAR conditions for airports worldwide
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site
 

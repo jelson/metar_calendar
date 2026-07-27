@@ -6,7 +6,7 @@ title: Home
 <section class="container mx-auto px-4 py-4 pb-2 md:pb-4">
     <div class="max-w-4xl mx-auto text-center mb-4">
         <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-2 md:mb-4">
-            Hourly METAR Predictor
+            METAR Predictor
         </h1>
         <p class="text-base md:text-lg text-gray-600">
             Predict cloud coverage and wind based on historical patterns
@@ -16,24 +16,27 @@ title: Home
     <div id="searchCard" class="hidden max-w-3xl mx-auto backdrop-blur-card rounded-xl card-enhanced p-6 md:p-8 relative z-50">
         <form id="searchForm" class="space-y-4 md:space-y-6">
             <div class="flex flex-col md:flex-row gap-4 md:items-end">
-                <div class="w-full md:w-52">
-                    <label for="monthSelect" class="block text-sm font-medium text-gray-700 mb-2">
-                        Month
+                <div class="w-full md:w-56">
+                    <label for="timeframeSelect" class="block text-sm font-medium text-gray-700 mb-2">
+                        Timeframe
                     </label>
-                    <select id="monthSelect"
+                    <select id="timeframeSelect"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
+                        <option value="year">📅 Year-Round</option>
+                        <optgroup label="By Month">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </optgroup>
                     </select>
                 </div>
 
@@ -102,9 +105,7 @@ title: Home
                 <div style="padding-bottom:1.5rem;" class="backdrop-blur-card rounded-xl card-enhanced px-4 pt-4 md:px-12 flex-grow">
                     <h2 class="text-base md:text-2xl font-bold text-gray-800" id="resultTitle"></h2>
                     <div id="partialCoverageWarning" class="hidden mt-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <p class="text-xs md:text-sm text-yellow-800">
-                            ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.
-                        </p>
+                        <p id="partialCoverageText" class="text-xs md:text-sm text-yellow-800"></p>
                     </div>
                     <h3 class="text-base md:text-xl font-bold text-gray-800 mt-2">Flight Conditions</h3>
                     <div id="resultImage" class="flex justify-center items-center bg-gray-100/50 rounded-lg">
@@ -112,7 +113,7 @@ title: Home
                     </div>
                     <div id="windSection" class="hidden">
                         <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Wind Direction</h3>
-                        <p class="text-xs md:text-sm text-gray-600">How often the wind blows from each direction (20° bins) at each hour. Light winds (≤ 5 kt), calm and variable winds are not shown.</p>
+                        <p id="windDirCaption" class="text-xs md:text-sm text-gray-600">How often the wind blows from each direction (20° bins) at each hour. Light winds (≤ 5 kt), calm and variable winds are not shown.</p>
                         <div id="windDirChart" class="bg-gray-100/50 rounded-lg"></div>
                         <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Wind Speed</h3>
                         <div id="windSpeedChart" class="bg-gray-100/50 rounded-lg"></div>
@@ -125,10 +126,10 @@ title: Home
                                 <button type="button" data-unit="F" class="px-3 py-1 cursor-pointer transition">&deg;F</button>
                             </div>
                         </div>
-                        <p class="text-xs md:text-sm text-gray-600">Shaded bands show the typical range (10th&ndash;90th percentile) at each hour; lines show the median.</p>
+                        <p id="temperatureCaption" class="text-xs md:text-sm text-gray-600">Shaded bands show the typical range (10th&ndash;90th percentile) at each hour; lines show the median.</p>
                         <div id="temperatureChart" class="bg-gray-100/50 rounded-lg"></div>
                         <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Precipitation</h3>
-                        <p class="text-xs md:text-sm text-gray-600">How often measurable precipitation was reported at each hour, broken down by type.</p>
+                        <p id="precipitationCaption" class="text-xs md:text-sm text-gray-600">How often measurable precipitation was reported at each hour, broken down by type.</p>
                         <div id="precipitationChart" class="bg-gray-100/50 rounded-lg"></div>
                     </div>
                 </div>

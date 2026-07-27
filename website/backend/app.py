@@ -92,6 +92,42 @@ class MetarAPI:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    def monthly_statistics(self, airport_code):
+        """GET /api/monthly_statistics?airport_code=KSMO
+
+        Same statistics as /statistics, but pooling all hours of the day
+        together and broken out by calendar month (Jan-Dec) instead of by
+        hour of day within a single month. There's no local-time axis here
+        (a calendar month is the same everywhere), so no timezone or
+        daylight fields are returned.
+        """
+        try:
+            analyzer = METARAnalyzer(airport_code, self.storage)
+            monthly = analyzer.get_monthly_statistics()
+
+            return {
+                'airport': monthly.attrs.get('airport'),
+                'monthly_stats': {
+                    int(month): {
+                        'VFR': float(row['VFR']),
+                        'MVFR': float(row['MVFR']),
+                        'IFR': float(row['IFR']),
+                        'LIFR': float(row['LIFR']),
+                    }
+                    for month, row in monthly.iterrows()
+                },
+                'wind': analyzer.get_monthly_wind_statistics(),
+                'temperature': analyzer.get_monthly_temperature_statistics(),
+                'precipitation': analyzer.get_monthly_precipitation_statistics(),
+            }
+        except Exception as e:
+            say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
+            traceback.print_exc()
+            cherrypy.response.status = 400
+            return {'error': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
     def health(self):
         """GET /api/health"""
         return {'status': 'ok'}

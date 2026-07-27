@@ -101,42 +101,111 @@ class METARAnalyzer:
                 return precip_type
         return 'Other / Unspecified'
 
-    def get_hourly_statistics(self, month: int) -> pd.DataFrame:
-        # Filter to requested month
-        df = self.hourly_summary
-        df = df.loc[df.index.month == month].copy()
+    def _condition_statistics(self, df: pd.DataFrame, group_key) -> pd.DataFrame:
+        """Shared flight-condition computation for the hourly and monthly views.
 
-        # Classify each hour based on pre-computed ceiling and visibility
+        Args:
+            df: pre-filtered hourly_summary rows
+            group_key: array-like to group by (e.g. df.index.hour or df.index.month)
+        """
+        df = df.copy()
+
+        # Classify each row based on pre-computed ceiling and visibility
         # (the summarizer already found the minimum ceiling and visibility for each hour)
         df['Sky Condition'] = df.apply(
             lambda row: self._classify_flight_condition(row['ceiling'], row['vsby']),
             axis=1
         )
 
-        # For every one of the 24 hours, count how many times a flight
-        # condition occurred during that hour
-        hourly = (df.groupby(df.index.hour)['Sky Condition']
+        # Count how many times each flight condition occurred within each group
+        result = (df.groupby(group_key)['Sky Condition']
                   .value_counts().unstack().fillna(0))
 
         # Convert raw counts into percentages
-        hourly = hourly.apply(lambda row: row / row.sum(), axis=1)
+        result = result.apply(lambda row: row / row.sum(), axis=1)
 
-        # Rename the axes
-        hourly.index = hourly.index.rename('UTC hour')
-        hourly = hourly.rename({r.value: r.name for r in FlightCondition}, axis=1)
+        result = result.rename({r.value: r.name for r in FlightCondition}, axis=1)
 
         # Ensure all flight condition columns exist (add missing ones with zeros)
         for condition in ['VFR', 'MVFR', 'IFR', 'LIFR']:
-            if condition not in hourly.columns:
-                hourly[condition] = 0.0
+            if condition not in result.columns:
+                result[condition] = 0.0
 
         # Reverse column order so VFR is on bottom (plotly stacks left to right)
-        hourly = hourly[['VFR', 'MVFR', 'IFR', 'LIFR']]
+        return result[['VFR', 'MVFR', 'IFR', 'LIFR']]
+
+    def get_hourly_statistics(self, month: int) -> pd.DataFrame:
+        df = self.hourly_summary
+        df = df.loc[df.index.month == month]
+
+        hourly = self._condition_statistics(df, df.index.hour)
+        hourly.index = hourly.index.rename('UTC hour')
 
         hourly.attrs['airport'] = self.airport_code
         hourly.attrs['month'] = month
 
         return hourly
+
+    def get_monthly_statistics(self) -> pd.DataFrame:
+        """Flight condition percentages per calendar month, pooling all hours
+        of the day together (unlike get_hourly_statistics, which is scoped
+        to a single month and broken out by hour of day)."""
+        df = self.hourly_summary
+
+        monthly = self._condition_statistics(df, df.index.month)
+        monthly.index = monthly.index.rename('Month')
+
+        monthly.attrs['airport'] = self.airport_code
+
+        return monthly
+
+    def _wind_statistics(self, df: pd.DataFrame, group_key) -> dict:
+        """Shared wind computation for the hourly and monthly views.
+
+        Args:
+            df: pre-filtered hourly_summary rows
+            group_key: array-like to group by (e.g. df.index.hour or df.index.month)
+
+        Returns a dict with 'speed', 'gust' and 'direction', each keyed by the
+        group_key's values (see get_hourly_wind_statistics for the shape).
+        """
+        num_sectors = 360 // self.WIND_DIRECTION_STEP
+        speed = {}
+        gust = {}
+        direction = {}
+
+        for key, group in df.groupby(group_key):
+            speeds = group['sknt'].dropna()
+            n = len(speeds)
+            if n == 0:
+                continue
+
+            speed[int(key)] = {
+                label: float(((speeds > low) & (speeds <= high)).sum() / n)
+                for label, low, high in self.WIND_SPEED_BINS
+            }
+
+            gusts = group['gust'].dropna()
+            gust[int(key)] = {
+                'freq': float(len(gusts) / n),
+                'median': float(gusts.median()) if len(gusts) else None,
+                'max': float(gusts.max()) if len(gusts) else None,
+            }
+
+            # Directions only count for winds above the threshold with a known
+            # direction (calm hours report drct=0, variable wind has no drct)
+            directional = group.loc[
+                (group['sknt'] > self.WIND_DIRECTION_MIN_KNOTS) & group['drct'].notna(),
+                'drct']
+            half_step = self.WIND_DIRECTION_STEP / 2
+            sectors = (((directional + half_step) // self.WIND_DIRECTION_STEP)
+                       .astype(int) % num_sectors)
+            counts = sectors.value_counts()
+            direction[int(key)] = [
+                float(counts.get(i, 0) / n) for i in range(num_sectors)
+            ]
+
+        return {'speed': speed, 'gust': gust, 'direction': direction}
 
     def get_hourly_wind_statistics(self, month: int) -> dict:
         """Compute per-UTC-hour wind distributions for the given month.
@@ -161,72 +230,45 @@ class METARAnalyzer:
 
         df = self.hourly_summary
         df = df.loc[df.index.month == month]
-
-        num_sectors = 360 // self.WIND_DIRECTION_STEP
-        hourly_speed = {}
-        hourly_gust = {}
-        hourly_direction = {}
-
-        for hour, group in df.groupby(df.index.hour):
-            speeds = group['sknt'].dropna()
-            n = len(speeds)
-            if n == 0:
-                continue
-
-            hourly_speed[int(hour)] = {
-                label: float(((speeds > low) & (speeds <= high)).sum() / n)
-                for label, low, high in self.WIND_SPEED_BINS
-            }
-
-            gusts = group['gust'].dropna()
-            hourly_gust[int(hour)] = {
-                'freq': float(len(gusts) / n),
-                'median': float(gusts.median()) if len(gusts) else None,
-                'max': float(gusts.max()) if len(gusts) else None,
-            }
-
-            # Directions only count for winds above the threshold with a known
-            # direction (calm hours report drct=0, variable wind has no drct)
-            directional = group.loc[
-                (group['sknt'] > self.WIND_DIRECTION_MIN_KNOTS) & group['drct'].notna(),
-                'drct']
-            half_step = self.WIND_DIRECTION_STEP / 2
-            sectors = (((directional + half_step) // self.WIND_DIRECTION_STEP)
-                       .astype(int) % num_sectors)
-            counts = sectors.value_counts()
-            hourly_direction[int(hour)] = [
-                float(counts.get(i, 0) / n) for i in range(num_sectors)
-            ]
+        stats = self._wind_statistics(df, df.index.hour)
 
         return {
             'speed_bins': [label for label, _, _ in self.WIND_SPEED_BINS],
-            'hourly_speed': hourly_speed,
-            'hourly_gust': hourly_gust,
+            'hourly_speed': stats['speed'],
+            'hourly_gust': stats['gust'],
             'direction_step': self.WIND_DIRECTION_STEP,
             'direction_min_kt': self.WIND_DIRECTION_MIN_KNOTS,
-            'hourly_direction': hourly_direction,
+            'hourly_direction': stats['direction'],
         }
 
-    def get_hourly_temperature_statistics(self, month: int) -> dict:
-        """Compute per-UTC-hour temperature/dewpoint distributions.
+    def get_monthly_wind_statistics(self) -> dict:
+        """Compute per-calendar-month wind distributions, pooling all hours
+        of the day together (unlike get_hourly_wind_statistics, which is
+        scoped to a single month and broken out by hour of day).
 
-        A percentile band (rather than a single average) is used because
-        conditions vary considerably day to day even at a fixed hour.
-
-        Returns a dict with 'hourly': {hour: {
-            'temp_p10'/'temp_median'/'temp_p90': degrees Fahrenheit,
-            'dewpoint_p10'/'dewpoint_median'/'dewpoint_p90': degrees Fahrenheit or None,
-        }}
+        Returns the same shape as get_hourly_wind_statistics, but keyed by
+        month (1-12) via 'monthly_speed', 'monthly_gust', 'monthly_direction'.
         """
-        if 'tmpf' not in self.hourly_summary.columns:
+        if 'sknt' not in self.hourly_summary.columns:
             raise ValueError(
-                'Cached summary has no temperature data; clear the cache to regenerate')
+                'Cached summary has no wind data; clear the cache to regenerate')
 
         df = self.hourly_summary
-        df = df.loc[df.index.month == month]
+        stats = self._wind_statistics(df, df.index.month)
 
-        hourly = {}
-        for hour, group in df.groupby(df.index.hour):
+        return {
+            'speed_bins': [label for label, _, _ in self.WIND_SPEED_BINS],
+            'monthly_speed': stats['speed'],
+            'monthly_gust': stats['gust'],
+            'direction_step': self.WIND_DIRECTION_STEP,
+            'direction_min_kt': self.WIND_DIRECTION_MIN_KNOTS,
+            'monthly_direction': stats['direction'],
+        }
+
+    def _temperature_statistics(self, df: pd.DataFrame, group_key) -> dict:
+        """Shared temperature/dewpoint computation for the hourly and monthly views."""
+        result = {}
+        for key, group in df.groupby(group_key):
             temps = group['tmpf'].dropna()
             if len(temps) == 0:
                 continue
@@ -247,9 +289,72 @@ class METARAnalyzer:
                 entry['dewpoint_median'] = None
                 entry['dewpoint_p90'] = None
 
-            hourly[int(hour)] = entry
+            result[int(key)] = entry
 
-        return {'hourly': hourly}
+        return result
+
+    def get_hourly_temperature_statistics(self, month: int) -> dict:
+        """Compute per-UTC-hour temperature/dewpoint distributions.
+
+        A percentile band (rather than a single average) is used because
+        conditions vary considerably day to day even at a fixed hour.
+
+        Returns a dict with 'hourly': {hour: {
+            'temp_p10'/'temp_median'/'temp_p90': degrees Fahrenheit,
+            'dewpoint_p10'/'dewpoint_median'/'dewpoint_p90': degrees Fahrenheit or None,
+        }}
+        """
+        if 'tmpf' not in self.hourly_summary.columns:
+            raise ValueError(
+                'Cached summary has no temperature data; clear the cache to regenerate')
+
+        df = self.hourly_summary
+        df = df.loc[df.index.month == month]
+
+        return {'hourly': self._temperature_statistics(df, df.index.hour)}
+
+    def get_monthly_temperature_statistics(self) -> dict:
+        """Compute per-calendar-month temperature/dewpoint distributions,
+        pooling all hours of the day together (unlike
+        get_hourly_temperature_statistics, which is scoped to a single month
+        and broken out by hour of day).
+
+        Returns the same shape as get_hourly_temperature_statistics, but
+        keyed by month (1-12) under 'monthly' instead of 'hourly'.
+        """
+        if 'tmpf' not in self.hourly_summary.columns:
+            raise ValueError(
+                'Cached summary has no temperature data; clear the cache to regenerate')
+
+        df = self.hourly_summary
+
+        return {'monthly': self._temperature_statistics(df, df.index.month)}
+
+    def _precipitation_statistics(self, df: pd.DataFrame, group_key) -> dict:
+        """Shared precipitation computation for the hourly and monthly views."""
+        result = {}
+        for key, group in df.groupby(group_key):
+            n = len(group)
+            if n == 0:
+                continue
+
+            is_measurable = group['p01i'] > self.PRECIP_MEASURABLE_THRESHOLD_IN
+            measurable = group.loc[is_measurable, 'p01i']
+
+            types = group.loc[is_measurable, 'wxcodes'].apply(self._classify_precip_type)
+            type_counts = types.value_counts()
+            type_freq = {t: float(type_counts.get(t, 0) / n) for t in self.PRECIP_TYPES}
+            type_count = {t: int(type_counts.get(t, 0)) for t in self.PRECIP_TYPES}
+
+            result[int(key)] = {
+                'freq': float(len(measurable) / n),
+                'count': int(len(measurable)),
+                'median_in': float(measurable.median()) if len(measurable) else None,
+                'type_freq': type_freq,
+                'type_count': type_count,
+            }
+
+        return result
 
     def get_hourly_precipitation_statistics(self, month: int) -> dict:
         """Compute per-UTC-hour precipitation frequency for the given month.
@@ -278,30 +383,30 @@ class METARAnalyzer:
         df = self.hourly_summary
         df = df.loc[df.index.month == month]
 
-        hourly = {}
-        for hour, group in df.groupby(df.index.hour):
-            n = len(group)
-            if n == 0:
-                continue
+        return {
+            'threshold_in': self.PRECIP_MEASURABLE_THRESHOLD_IN,
+            'types': self.PRECIP_TYPES,
+            'hourly': self._precipitation_statistics(df, df.index.hour),
+        }
 
-            is_measurable = group['p01i'] > self.PRECIP_MEASURABLE_THRESHOLD_IN
-            measurable = group.loc[is_measurable, 'p01i']
+    def get_monthly_precipitation_statistics(self) -> dict:
+        """Compute per-calendar-month precipitation frequency, pooling all
+        hours of the day together (unlike get_hourly_precipitation_statistics,
+        which is scoped to a single month and broken out by hour of day).
 
-            types = group.loc[is_measurable, 'wxcodes'].apply(self._classify_precip_type)
-            type_counts = types.value_counts()
-            type_freq = {t: float(type_counts.get(t, 0) / n) for t in self.PRECIP_TYPES}
-            type_count = {t: int(type_counts.get(t, 0)) for t in self.PRECIP_TYPES}
+        Returns the same shape as get_hourly_precipitation_statistics, but
+        keyed by month (1-12) under 'monthly' instead of 'hourly'.
+        """
+        has_precip_data = ('p01i' in self.hourly_summary.columns
+                           and 'wxcodes' in self.hourly_summary.columns)
+        if not has_precip_data:
+            raise ValueError(
+                'Cached summary has no precipitation data; clear the cache to regenerate')
 
-            hourly[int(hour)] = {
-                'freq': float(len(measurable) / n),
-                'count': int(len(measurable)),
-                'median_in': float(measurable.median()) if len(measurable) else None,
-                'type_freq': type_freq,
-                'type_count': type_count,
-            }
+        df = self.hourly_summary
 
         return {
             'threshold_in': self.PRECIP_MEASURABLE_THRESHOLD_IN,
             'types': self.PRECIP_TYPES,
-            'hourly': hourly,
+            'monthly': self._precipitation_statistics(df, df.index.month),
         }

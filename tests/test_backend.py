@@ -96,6 +96,58 @@ class TestMetarAPI(helper.CPWebCase):
                 assert 'abbr' in utc_offsets[0]
                 assert 'utc_offset_hours' in utc_offsets[0]
 
+    @patch('lib.raw_metar_retriever.requests.get')
+    @patch('appdirs.user_cache_dir')
+    def test_monthly_statistics_endpoint_success(self, mock_cache_dir, mock_requests):
+        """Test monthly_statistics endpoint with real data."""
+        mock_requests.side_effect = mock_requests_get
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            mock_cache_dir.return_value = tmpdir
+
+            self.getPage('/api/monthly_statistics?airport_code=KPAO')
+
+            self.assertStatus('200 OK')
+            self.assertHeader('Content-Type', 'application/json')
+
+            response_data = json.loads(self.body.decode('utf-8'))
+            assert response_data['airport'] == 'KPAO'
+            # No hour-of-day or timezone concepts apply to the monthly view
+            assert 'month' not in response_data
+            assert 'utc_offsets' not in response_data
+            assert 'daylight_utc' not in response_data
+
+            monthly_stats = response_data['monthly_stats']
+            assert isinstance(monthly_stats, dict)
+            assert len(monthly_stats) > 0
+            first_month = monthly_stats[list(monthly_stats.keys())[0]]
+            assert 'VFR' in first_month
+            assert 'MVFR' in first_month
+            assert 'IFR' in first_month
+            assert 'LIFR' in first_month
+
+            wind = response_data['wind']
+            assert wind['speed_bins'][0] == '0-3 kt'
+            assert len(wind['monthly_speed']) > 0
+            first_wind_month = list(wind['monthly_direction'].keys())[0]
+            assert len(wind['monthly_direction'][first_wind_month]) == 18
+
+            temperature = response_data['temperature']
+            first_temp_month = list(temperature['monthly'].keys())[0]
+            assert 'temp_median' in temperature['monthly'][first_temp_month]
+
+            precipitation = response_data['precipitation']
+            assert precipitation['threshold_in'] == 0.01
+            first_precip_month = list(precipitation['monthly'].keys())[0]
+            assert 'freq' in precipitation['monthly'][first_precip_month]
+            assert 'type_count' in precipitation['monthly'][first_precip_month]
+
+    def test_monthly_statistics_endpoint_missing_params(self):
+        """Test that missing airport_code returns an error."""
+        self.getPage('/api/monthly_statistics')
+
+        assert self.status != '200 OK'
+
     def test_statistics_endpoint_invalid_month(self):
         """Test that invalid month returns error."""
         # Make request with invalid month

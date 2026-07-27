@@ -8,11 +8,19 @@
     let selectedAirport = null;
     let currentFocusIndex = -1;
     let currentResults = [];
+    let viewMode = 'hourly'; // 'hourly' (one month, broken out by hour) or 'yearly' (12 months, all hours pooled)
+
+    const MONTH_NAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const MONTH_ABBRS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     // DOM Elements
     const searchInput = document.getElementById('airportSearch');
     const dropdown = document.getElementById('autocompleteDropdown');
-    const monthSelect = document.getElementById('monthSelect');
+    // Single combined control: "year" selects the year-round view, "1".."12"
+    // selects a month in the hourly view
+    const timeframeSelect = document.getElementById('timeframeSelect');
     const searchCard = document.getElementById('searchCard');
     const searchForm = document.getElementById('searchForm');
     const loadingState = document.getElementById('loadingState');
@@ -55,7 +63,8 @@
             });
 
             setupEventListeners();
-            setDefaultMonth();
+            setDefaultTimeframe();
+            syncTimeframeUI();
 
             // Hide loading state and show search card now that we're ready
             loadingState.classList.add('hidden');
@@ -75,13 +84,14 @@
         }
     }
 
-    // Set default month to current month
-    function setDefaultMonth() {
+    // Set default timeframe to the current calendar month
+    function setDefaultTimeframe() {
         const currentMonth = new Date().getMonth() + 1;
-        monthSelect.value = currentMonth;
+        timeframeSelect.value = String(currentMonth);
     }
 
-    // Load airport/month from URL hash (#KSMO/6)
+    // Load airport/timeframe from URL hash (#KSMO/6, or #KSMO/year for the
+    // year-round view)
     function loadFromHash() {
         const hash = window.location.hash.slice(1); // Remove #
         const parts = hash.split('/');
@@ -89,23 +99,52 @@
         if (parts.length !== 2) return;
 
         const airportCode = parts[0].toUpperCase();
-        const month = parseInt(parts[1]);
+        const timeframePart = parts[1].toLowerCase();
 
-        if (!month || month < 1 || month > 12) return;
+        if (timeframePart === 'year') {
+            timeframeSelect.value = 'year';
+        } else {
+            const month = parseInt(timeframePart);
+            if (!month || month < 1 || month > 12) return;
+            timeframeSelect.value = String(month);
+        }
 
         // Find airport by display code
         const airport = airports.find(a => a.display === airportCode);
 
         if (!airport) return;
 
-        // Set month and select the airport (which will trigger the search)
-        monthSelect.value = month;
+        // Sync UI to the timeframe and select the airport (triggers the search)
+        syncTimeframeUI();
         selectAirport(airport);
     }
 
     // Update URL hash when search is performed
-    function updateHash(display, month) {
-        history.replaceState(null, '', `#${display}/${month}`);
+    function updateHash(display, monthOrYear) {
+        history.replaceState(null, '', `#${display}/${monthOrYear}`);
+    }
+
+    // Sync viewMode and the month-navigation UI to the timeframe select's
+    // current value. Hides the arrow buttons and mobile nav in yearly mode,
+    // since neither applies when there's no single month selected.
+    function syncTimeframeUI() {
+        const isYearly = timeframeSelect.value === 'year';
+        viewMode = isYearly ? 'yearly' : 'hourly';
+
+        // Inline styles (rather than Tailwind classes) unconditionally
+        // override the responsive "hidden md:flex" classes on the month nav
+        // buttons, which a class toggle alone can't reliably beat.
+        // visibility (not display) keeps them reserving their layout space
+        // -- removing them from the flex row entirely would widen the chart
+        // card next to them and leave already-rendered Plotly charts sized
+        // for the old, narrower width.
+        prevMonthBtn.style.visibility = isYearly ? 'hidden' : '';
+        nextMonthBtn.style.visibility = isYearly ? 'hidden' : '';
+        if (isYearly) {
+            mobileMonthNav.classList.add('hidden');
+        } else if (selectedAirport) {
+            mobileMonthNav.classList.remove('hidden');
+        }
     }
 
     // Clear search input and reset state
@@ -126,10 +165,11 @@
         // Form submission
         searchForm.addEventListener('submit', handleSubmit);
 
-        // Changing the month re-runs the search if an airport is already
-        // selected (programmatic month changes don't fire 'change', so the
-        // prev/next buttons won't double-submit)
-        monthSelect.addEventListener('change', () => {
+        // Changing the timeframe (a month, or Year-Round) re-runs the search
+        // if an airport is already selected (programmatic changes don't fire
+        // 'change', so the prev/next buttons won't double-submit)
+        timeframeSelect.addEventListener('change', () => {
+            syncTimeframeUI();
             if (selectedAirport) {
                 searchForm.requestSubmit();
             }
@@ -184,9 +224,9 @@
 
     // Change month (direction: -1 for previous, 1 for next)
     function changeMonth(direction) {
-        if (!selectedAirport) return;
+        if (!selectedAirport || viewMode !== 'hourly') return;
 
-        let newMonth = parseInt(monthSelect.value) + direction;
+        let newMonth = parseInt(timeframeSelect.value) + direction;
 
         // Wrap around
         if (newMonth < 1) {
@@ -195,7 +235,7 @@
             newMonth = 1;
         }
 
-        monthSelect.value = newMonth;
+        timeframeSelect.value = String(newMonth);
         searchForm.dispatchEvent(new Event('submit', { cancelable: true }));
     }
 
@@ -403,8 +443,10 @@
 
         hideDropdown();
 
-        // Show mobile month navigation
-        mobileMonthNav.classList.remove('hidden');
+        // Show mobile month navigation (hourly view only)
+        if (viewMode === 'hourly') {
+            mobileMonthNav.classList.remove('hidden');
+        }
 
         // Auto-submit the form
         searchForm.requestSubmit();
@@ -437,12 +479,11 @@
             return;
         }
 
-        const month = monthSelect.value;
-        const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June',
-                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const month = timeframeSelect.value;
+        const isYearly = viewMode === 'yearly';
 
         // Update URL hash for shareability
-        updateHash(selectedAirport.display, month);
+        updateHash(selectedAirport.display, isYearly ? 'year' : month);
 
         // Show loading state
         hideError();
@@ -471,7 +512,9 @@
 
         try {
             // Call the API using the 'query' field (which contains the correct identifier for IEM)
-            const url = `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(selectedAirport.query)}&month=${month}`;
+            const url = isYearly
+                ? `${API_BASE_URL}monthly_statistics?airport_code=${encodeURIComponent(selectedAirport.query)}`
+                : `${API_BASE_URL}statistics?airport_code=${encodeURIComponent(selectedAirport.query)}&month=${month}`;
 
             const response = await fetch(url);
             if (!response.ok) {
@@ -485,7 +528,9 @@
             }
 
             // Update result title with display code
-            resultTitle.textContent = `${monthNames[month]} at ${selectedAirport.display} (${selectedAirport.name})`;
+            resultTitle.textContent = isYearly
+                ? `Year-round at ${selectedAirport.display} (${selectedAirport.name})`
+                : `${MONTH_NAMES[month]} at ${selectedAirport.display} (${selectedAirport.name})`;
 
             loadingState.classList.add('hidden');
             resultDisplay.classList.remove('hidden');
@@ -497,16 +542,24 @@
             resultDisplay.style.minHeight = '';
             resultDisplay.style.position = '';
 
+            const renderCharts = () => {
+                if (isYearly) {
+                    displayYearlyConditionsChart(data);
+                    displayYearlyWindCharts(data);
+                    displayYearlyWeatherCharts(data);
+                } else {
+                    displayWeatherChart(data, selectedAirport, MONTH_NAMES[month]);
+                    displayWindCharts(data);
+                    displayWeatherCharts(data);
+                }
+            };
+
             if (isReload) {
-                displayWeatherChart(data, selectedAirport, monthNames[month]);
-                displayWindCharts(data);
-                displayWeatherCharts(data);
+                renderCharts();
             } else {
                 // First load: render after container is visible and sized
                 requestAnimationFrame(() => {
-                    displayWeatherChart(data, selectedAirport, monthNames[month]);
-                    displayWindCharts(data);
-                    displayWeatherCharts(data);
+                    renderCharts();
                     requestAnimationFrame(() => {
                         resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     });
@@ -694,6 +747,8 @@
         // Show warning if there are missing hours
         const warningElement = document.getElementById('partialCoverageWarning');
         if (missingHours > 0) {
+            document.getElementById('partialCoverageText').textContent =
+                'ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.';
             warningElement.classList.remove('hidden');
         } else {
             warningElement.classList.add('hidden');
@@ -825,6 +880,10 @@
             return;
         }
         windSection.classList.remove('hidden');
+
+        document.getElementById('windDirCaption').textContent =
+            'How often the wind blows from each direction (20° bins) at each hour. ' +
+            'Light winds (≤ 5 kt), calm and variable winds are not shown.';
 
         displayWindSpeedChart(data);
         displayWindDirectionChart(data);
@@ -1017,7 +1076,11 @@
         });
 
         if (lastStatsData) {
-            displayTemperatureChart(lastStatsData);
+            if (viewMode === 'yearly') {
+                displayYearlyTemperatureChart(lastStatsData);
+            } else {
+                displayTemperatureChart(lastStatsData);
+            }
         }
     }
 
@@ -1030,6 +1093,11 @@
             return;
         }
         weatherSection.classList.remove('hidden');
+
+        document.getElementById('temperatureCaption').textContent =
+            'Shaded bands show the typical range (10th–90th percentile) at each hour; lines show the median.';
+        document.getElementById('precipitationCaption').textContent =
+            'How often measurable precipitation was reported at each hour, broken down by type.';
 
         lastStatsData = data;
         setTempUnit(tempUnit);
@@ -1223,6 +1291,334 @@
             responsive: true,
             displayModeBar: false
         });
+    }
+
+    // ---- Yearly view: same charts, but x = calendar month (Jan-Dec) with
+    // all hours of the day pooled together, instead of x = hour of day for
+    // a single selected month. No local time, timezone rows or daylight
+    // shading apply here (a calendar month is the same everywhere).
+
+    function displayYearlyConditionsChart(data) {
+        const resultImage = document.getElementById('resultImage');
+        resultImage.style.minHeight = resultImage.offsetHeight + 'px';
+        resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
+
+        const months = MONTH_ABBRS.slice(1);
+        const series = { VFR: [], MVFR: [], IFR: [], LIFR: [] };
+        let missingMonths = 0;
+
+        for (let month = 1; month <= 12; month++) {
+            const stats = data.monthly_stats[month];
+            for (const cond of Object.keys(series)) {
+                series[cond].push(stats ? stats[cond] : 0);
+            }
+            if (!stats) missingMonths++;
+        }
+
+        const warningElement = document.getElementById('partialCoverageWarning');
+        if (missingMonths > 0) {
+            document.getElementById('partialCoverageText').textContent =
+                'ⓘ This airport has missing monthly data. Some airports only publish weather data when staffed by observers.';
+        }
+        warningElement.classList.toggle('hidden', missingMonths === 0);
+
+        const isMobile = window.innerWidth < 768;
+        const colors = { VFR: 'green', MVFR: 'blue', IFR: 'red', LIFR: 'magenta' };
+        const traces = Object.keys(series).map(cond => ({
+            x: months,
+            y: series[cond],
+            name: cond,
+            type: 'bar',
+            marker: { color: colors[cond] },
+            hovertemplate: `%{x}<br>${cond}: %{y:.1%}<extra></extra>`
+        }));
+
+        Plotly.newPlot('plotlyChart', traces, {
+            barmode: 'stack',
+            height: isMobile ? 300 : 400,
+            xaxis: { zeroline: false, fixedrange: true },
+            yaxis: {
+                // Unlike the hourly view (one sample per day at a fixed
+                // hour), this pools every hour of every day in the month,
+                // so the denominator here is hours, not days
+                title: isMobile ? '' : { text: 'Fraction of Hours', standoff: 10 },
+                tickformat: '.0%',
+                fixedrange: true
+            },
+            legend: {
+                traceorder: 'reversed', orientation: 'h',
+                x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 40, b: 40 }
+        }, { responsive: true, displayModeBar: false }).then(() => {
+            resultImage.style.minHeight = '';
+        });
+    }
+
+    function displayYearlyWindCharts(data) {
+        const windSection = document.getElementById('windSection');
+
+        if (!data.wind) {
+            windSection.classList.add('hidden');
+            return;
+        }
+        windSection.classList.remove('hidden');
+
+        document.getElementById('windDirCaption').textContent =
+            'How often the wind blows from each direction (20° bins) in each month, pooling all hours of the day. ' +
+            'Light winds (≤ 5 kt), calm and variable winds are not shown.';
+
+        displayYearlyWindSpeedChart(data);
+        displayYearlyWindDirectionChart(data);
+    }
+
+    function displayYearlyWindSpeedChart(data) {
+        const wind = data.wind;
+        const isMobile = window.innerWidth < 768;
+        const months = MONTH_ABBRS.slice(1);
+
+        const gustFreqs = [];
+        const customdata = [];
+        for (let month = 1; month <= 12; month++) {
+            const gust = wind.monthly_gust[month];
+            gustFreqs.push(gust ? gust.freq : null);
+            let gustText = 'Gusts: none recorded';
+            if (gust && gust.freq > 0) {
+                gustText = `Gusts in ${(gust.freq * 100).toFixed(0)}% of hours` +
+                    ` (median ${Math.round(gust.median)} kt,` +
+                    ` max ${Math.round(gust.max)} kt)`;
+            }
+            customdata.push([gustText]);
+        }
+
+        const traces = wind.speed_bins.map(bin => ({
+            x: months,
+            y: months.map((_, i) => {
+                const stats = wind.monthly_speed[i + 1];
+                return stats ? stats[bin] : 0;
+            }),
+            customdata,
+            name: bin,
+            type: 'bar',
+            marker: { color: WIND_SPEED_COLORS[bin] },
+            hovertemplate: `%{x}<br>${bin}: %{y:.1%}<extra></extra>`
+        }));
+
+        traces.push({
+            x: months,
+            y: gustFreqs,
+            customdata,
+            name: 'Gusts (% of hours)',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { color: '#c2410c', width: 2 },
+            marker: { size: 6 },
+            hovertemplate: '%{x}<br>%{customdata[0]}<extra></extra>'
+        });
+
+        Plotly.newPlot('windSpeedChart', traces, {
+            barmode: 'stack',
+            height: isMobile ? 260 : 340,
+            xaxis: { zeroline: false, fixedrange: true },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Fraction of Hours', standoff: 10 },
+                tickformat: '.0%',
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
+        }, { responsive: true, displayModeBar: false });
+    }
+
+    function displayYearlyWindDirectionChart(data) {
+        const wind = data.wind;
+        const isMobile = window.innerWidth < 768;
+        const months = MONTH_ABBRS.slice(1);
+
+        const step = wind.direction_step;
+        const numSectors = 360 / step;
+        const sectorLabels = Array.from({ length: numSectors },
+            (_, s) => String(s * step).padStart(3, '0'));
+
+        const half = step / 2;
+        const rangeLabels = sectorLabels.map((_, s) => {
+            const from = String((s * step - half + 360) % 360).padStart(3, '0');
+            const to = String((s * step + half) % 360).padStart(3, '0');
+            return `${from}°–${to}°`;
+        });
+
+        const z = sectorLabels.map((_, s) =>
+            months.map((_, i) => {
+                const stats = wind.monthly_direction[i + 1];
+                return stats ? stats[s] : null;
+            }));
+        const customdata = sectorLabels.map((_, s) => months.map(() => rangeLabels[s]));
+
+        const traces = [{
+            type: 'heatmap',
+            x: months,
+            y: sectorLabels,
+            z: z,
+            customdata: customdata,
+            colorscale: [[0, '#ffffff'], [1, '#0f766e']],
+            zmin: 0,
+            xgap: 1,
+            ygap: 1,
+            hoverongaps: false,
+            showscale: false,
+            hovertemplate: '%{x}<br>From %{customdata}: %{z:.1%}<extra></extra>'
+        }];
+
+        Plotly.newPlot('windDirChart', traces, {
+            height: isMobile ? 260 : 330,
+            plot_bgcolor: '#ffffff',
+            xaxis: { zeroline: false, fixedrange: true },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Wind direction (°)', standoff: 10 },
+                type: 'category',
+                tickvals: sectorLabels.filter((_, s) => s % 3 === 0),
+                tickfont: { size: isMobile ? 8 : 10 },
+                fixedrange: true
+            },
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
+        }, { responsive: true, displayModeBar: false });
+    }
+
+    function displayYearlyWeatherCharts(data) {
+        const weatherSection = document.getElementById('weatherSection');
+
+        if (!data.temperature || !data.precipitation) {
+            weatherSection.classList.add('hidden');
+            return;
+        }
+        weatherSection.classList.remove('hidden');
+
+        document.getElementById('temperatureCaption').textContent =
+            'Shaded bands show the typical range (10th–90th percentile) in each month, ' +
+            'pooling all hours of the day; lines show the median.';
+        document.getElementById('precipitationCaption').textContent =
+            'How often measurable precipitation was reported in each month, pooling all hours ' +
+            'of the day, broken down by type.';
+
+        lastStatsData = data;
+        setTempUnit(tempUnit);
+        displayYearlyPrecipitationChart(data);
+    }
+
+    function displayYearlyTemperatureChart(data) {
+        const temperature = data.temperature;
+        const isMobile = window.innerWidth < 768;
+        const months = MONTH_ABBRS.slice(1);
+        const stats = months.map((_, i) => temperature.monthly[i + 1] || null);
+
+        // null (missing dewpoint) must pass through unchanged, since
+        // "null - 32" coerces to -32 in JS and would plot a fake value
+        const toDisplay = tempUnit === 'C'
+            ? f => f === null ? null : (f - 32) * 5 / 9
+            : f => f;
+        const unitLabel = tempUnit === 'C' ? '°C' : '°F';
+
+        function bandTraces(key, name, lineColor, bandColor) {
+            const upper = stats.map(s => s ? toDisplay(s[`${key}_p90`]) : null);
+            const lower = stats.map(s => s ? toDisplay(s[`${key}_p10`]) : null);
+            const median = stats.map(s => s ? toDisplay(s[`${key}_median`]) : null);
+            return [
+                {
+                    x: months, y: upper, mode: 'lines',
+                    line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
+                },
+                {
+                    x: months, y: lower, mode: 'lines',
+                    line: { width: 0 }, fill: 'tonexty', fillcolor: bandColor,
+                    showlegend: false, hoverinfo: 'skip'
+                },
+                {
+                    x: months, y: median, name,
+                    mode: 'lines+markers',
+                    line: { color: lineColor, width: 2 },
+                    marker: { size: 5 },
+                    hovertemplate: `%{x}<br>${name}: %{y:.0f}${unitLabel}<extra></extra>`
+                },
+            ];
+        }
+
+        const traces = [
+            ...bandTraces('temp', 'Temperature', '#dc2626', 'rgba(220,38,38,0.15)'),
+            ...bandTraces('dewpoint', 'Dewpoint', '#0369a1', 'rgba(3,105,161,0.15)'),
+        ];
+
+        Plotly.newPlot('temperatureChart', traces, {
+            height: isMobile ? 260 : 340,
+            xaxis: { zeroline: false, fixedrange: true },
+            yaxis: {
+                title: isMobile ? '' : { text: `Degrees ${tempUnit === 'C' ? 'Celsius' : 'Fahrenheit'}`, standoff: 10 },
+                zeroline: false,
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
+        }, { responsive: true, displayModeBar: false });
+    }
+
+    function displayYearlyPrecipitationChart(data) {
+        const precipitation = data.precipitation;
+        const isMobile = window.innerWidth < 768;
+        const months = MONTH_ABBRS.slice(1);
+
+        const customdata = months.map((_, i) => {
+            const stats = precipitation.monthly[i + 1];
+            let text = 'No precipitation recorded';
+            if (stats && stats.count > 0) {
+                const hourWord = stats.count === 1 ? 'hour' : 'hours';
+                text = `Measurable precipitation in ${stats.count} ${hourWord}` +
+                    ` (${(stats.freq * 100).toFixed(0)}% of this month's samples)`;
+                if (stats.median_in !== null) {
+                    text += `, typically ${stats.median_in.toFixed(2)} in`;
+                }
+            }
+            return [text];
+        });
+
+        const traces = precipitation.types.map(type => ({
+            x: months,
+            y: months.map((_, i) => {
+                const stats = precipitation.monthly[i + 1];
+                return stats ? stats.type_count[type] : 0;
+            }),
+            customdata,
+            name: type,
+            type: 'bar',
+            marker: { color: PRECIP_TYPE_COLORS[type] },
+            hovertemplate: `%{x}<br>${type}: %{y}<br>%{customdata[0]}<extra></extra>`
+        }));
+
+        const maxCount = Math.max(
+            0, ...months.map((_, i) => (precipitation.monthly[i + 1] || {}).count || 0));
+
+        Plotly.newPlot('precipitationChart', traces, {
+            barmode: 'stack',
+            height: isMobile ? 240 : 300,
+            xaxis: { zeroline: false, fixedrange: true },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Number of Hours', standoff: 10 },
+                tickformat: 'd',
+                rangemode: 'tozero',
+                range: [0, Math.max(1, maxCount) * 1.15],
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
+        }, { responsive: true, displayModeBar: false });
     }
 
     // Show error message

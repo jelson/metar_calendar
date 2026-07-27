@@ -1,4 +1,4 @@
-# Hourly METAR Predictor
+# METAR Predictor
 
 ### Installation
 

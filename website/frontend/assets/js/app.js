@@ -518,6 +518,117 @@
         return `${displayHour}${period}`;
     }
 
+    // The offset used to order the x axis by local time: the one in effect
+    // mid-month (from the backend), or null when the timezone is unknown
+    function getPrimaryOffset(data) {
+        if (data.primary_utc_offset_hours !== undefined &&
+            data.primary_utc_offset_hours !== null) {
+            return data.primary_utc_offset_hours;
+        }
+        const utcOffsets = data.utc_offsets || [];
+        return utcOffsets.length > 0 ? utcOffsets[0].utc_offset_hours : null;
+    }
+
+    // Map each UTC hour to its x position on the chart. With a known timezone
+    // the axis runs 0-23 in local time, so UTC hour u sits at (u + offset) % 24;
+    // otherwise the axis is plain UTC. Sorted by x so line traces draw cleanly.
+    function buildHourMapping(data) {
+        const offset = getPrimaryOffset(data);
+        const mapping = [];
+        for (let utc = 0; utc < 24; utc++) {
+            const x = offset === null ? utc : (((utc + offset) % 24) + 24) % 24;
+            mapping.push({ utc, x });
+        }
+        mapping.sort((a, b) => a.x - b.x);
+        return mapping;
+    }
+
+    // Convert UTC sunrise/sunset to the axis timezone
+    function localizeDaylight(daylightUtc, offset) {
+        if (!daylightUtc || offset === null) return daylightUtc;
+        const conv = h => (((h + offset) % 24) + 24) % 24;
+        return {
+            sunrise: conv(daylightUtc.sunrise),
+            sunset: conv(daylightUtc.sunset),
+        };
+    }
+
+    // Build per-hour hover labels: "14:00 UTC (2p PDT)" or "14:00 UTC" if no timezone
+    function buildHourLabels(utcOffsets) {
+        const labels = [];
+        for (let h = 0; h < 24; h++) {
+            let label = `${h}:00 UTC`;
+            if (utcOffsets.length > 0) {
+                const localParts = utcOffsets.map(o =>
+                    `${formatLocalHour(h, o.utc_offset_hours)} ${o.abbr}`
+                );
+                label += ` (${localParts.join(' / ')})`;
+            }
+            labels.push(label);
+        }
+        return labels;
+    }
+
+    // Apply multi-line x-axis tick labels with local time rows to a chart
+    // layout. The mapping determines where each UTC hour sits on the axis
+    // (ordered by local time when the timezone is known).
+    function applyTimezoneTicks(xaxis, utcOffsets, isMobile, mapping) {
+        if (utcOffsets.length === 0) return;
+
+        const tickvals = [];
+        const ticktext = [];
+
+        for (const { utc, x } of mapping) {
+            tickvals.push(x);
+            const lines = [`${utc}`];
+            for (const offset of utcOffsets) {
+                lines.push(formatLocalHour(utc, offset.utc_offset_hours));
+            }
+            ticktext.push(lines.join('<br>'));
+        }
+
+        // Label column on the left, perfectly aligned with data rows
+        const labelLines = ['<b>UTC</b>'];
+        for (const offset of utcOffsets) {
+            labelLines.push(`<b>${offset.abbr}</b>`);
+        }
+        tickvals.unshift(-1);
+        ticktext.unshift(labelLines.join('<br>'));
+
+        xaxis.tickvals = tickvals;
+        xaxis.ticktext = ticktext;
+        xaxis.tickfont = { size: isMobile ? 8 : 10 };
+        xaxis.tickangle = 0;
+        xaxis.range = [-1.5, Math.max(...tickvals) + 0.5];
+    }
+
+    // Yellow daylight background shapes (handles daylight wrapping midnight UTC)
+    function buildDaylightShapes(daylightUtc) {
+        if (!daylightUtc) return [];
+
+        const { sunrise, sunset } = daylightUtc;
+        const shapeStyle = {
+            type: 'rect',
+            xref: 'x',
+            yref: 'paper',
+            y0: 0,
+            y1: 1,
+            fillcolor: 'rgba(255, 255, 0, 0.4)',
+            line: { width: 0 },
+            layer: 'below',
+        };
+
+        if (sunrise < sunset) {
+            // Daylight doesn't wrap around midnight UTC (e.g., European airports)
+            return [{ ...shapeStyle, x0: sunrise, x1: sunset }];
+        }
+        // Daylight wraps around midnight UTC (e.g., American airports)
+        return [
+            { ...shapeStyle, x0: -0.5, x1: sunset },
+            { ...shapeStyle, x0: sunrise, x1: 23.5 },
+        ];
+    }
+
     // Display weather data as interactive Plotly chart
     function displayWeatherChart(data, airport, monthName) {
         const resultImage = document.getElementById('resultImage');
@@ -528,7 +639,10 @@
         // Create chart container
         resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
 
-        // Extract hours and data for each flight condition
+        // Extract hours and data for each flight condition, positioned on the
+        // x axis by local time when the timezone is known
+        const mapping = buildHourMapping(data);
+        const primaryOffset = getPrimaryOffset(data);
         const hours = [];
         const vfrData = [];
         const mvfrData = [];
@@ -536,9 +650,9 @@
         const lifrData = [];
         let missingHours = 0;
 
-        for (let hour = 0; hour < 24; hour++) {
-            hours.push(hour);
-            const stats = data.hourly_stats[hour];
+        for (const { utc, x } of mapping) {
+            hours.push(x);
+            const stats = data.hourly_stats[utc];
             if (stats) {
                 vfrData.push(stats.VFR);
                 mvfrData.push(stats.MVFR);
@@ -568,17 +682,10 @@
         const utcOffsets = data.utc_offsets || [];
         const hasTimezone = utcOffsets.length > 0;
 
-        // Build hover labels: "14:00 UTC (2p PDT)" or just "14:00 UTC" if no timezone
-        const hoverHours = hours.map(h => {
-            let label = `${h}:00 UTC`;
-            if (hasTimezone) {
-                const localParts = utcOffsets.map(o =>
-                    `${formatLocalHour(h, o.utc_offset_hours)} ${o.abbr}`
-                );
-                label += ` (${localParts.join(' / ')})`;
-            }
-            return [label];
-        });
+        // Build hover labels: "14:00 UTC (2p PDT)" or just "14:00 UTC" if no
+        // timezone, in the same order as the chart columns
+        const hourLabels = buildHourLabels(utcOffsets);
+        const hoverHours = mapping.map(m => [hourLabels[m.utc]]);
 
         // Create traces for each flight condition (VFR first for bottom stacking)
         const traces = [
@@ -660,62 +767,11 @@
         };
 
         // Build multi-line x-axis tick labels with local time rows
-        if (hasTimezone) {
-            const tickvals = [];
-            const ticktext = [];
-            const fontSize = isMobile ? 8 : 10;
+        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
 
-            for (let hour = 0; hour < 24; hour++) {
-                tickvals.push(hour);
-                const lines = [`${hour}`];
-                for (const offset of utcOffsets) {
-                    lines.push(formatLocalHour(hour, offset.utc_offset_hours));
-                }
-                ticktext.push(lines.join('<br>'));
-            }
-
-            // Label column on the left, perfectly aligned with data rows
-            const labelLines = ['<b>UTC</b>'];
-            for (const offset of utcOffsets) {
-                labelLines.push(`<b>${offset.abbr}</b>`);
-            }
-            tickvals.unshift(-1);
-            ticktext.unshift(labelLines.join('<br>'));
-
-            layout.xaxis.tickvals = tickvals;
-            layout.xaxis.ticktext = ticktext;
-            layout.xaxis.tickfont = { size: fontSize };
-            layout.xaxis.tickangle = 0;
-            layout.xaxis.range = [-1.5, 23.5];
-        }
-
-        // Add daylight background
-        if (data.daylight_utc) {
-            const { sunrise, sunset } = data.daylight_utc;
-            const xMin = -0.5;
-            const xMax = 23.5;
-            const shapeStyle = {
-                type: 'rect',
-                xref: 'x',
-                yref: 'paper',
-                y0: 0,
-                y1: 1,
-                fillcolor: 'rgba(255, 255, 0, 0.4)',
-                line: { width: 0 },
-                layer: 'below',
-            };
-
-            if (sunrise < sunset) {
-                // Daylight doesn't wrap around midnight UTC (e.g., European airports)
-                layout.shapes = [{ ...shapeStyle, x0: sunrise, x1: sunset }];
-            } else {
-                // Daylight wraps around midnight UTC (e.g., American airports)
-                layout.shapes = [
-                    { ...shapeStyle, x0: xMin, x1: sunset },
-                    { ...shapeStyle, x0: sunrise, x1: xMax },
-                ];
-            }
-        }
+        // Add daylight background (in axis time)
+        layout.shapes = buildDaylightShapes(
+            localizeDaylight(data.daylight_utc, primaryOffset));
 
         // Render the chart with full width
         Plotly.newPlot('plotlyChart', traces, layout, {
@@ -725,7 +781,6 @@
             resultImage.style.minHeight = '';
         });
     }
-
     // Show error message
     function showError(message) {
         errorMessage.textContent = message;

@@ -5,6 +5,31 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
+def get_utc_offset_for_mid_month(tz_name, month):
+    """Return the UTC offset (in hours) in effect on the 15th of the month.
+
+    In months with a DST transition this is the offset covering the majority
+    of the month, which makes it the natural choice for ordering chart axes.
+
+    Args:
+        tz_name: IANA timezone string (e.g., "America/Los_Angeles"), or None
+        month: Month number (1-12)
+
+    Returns:
+        Offset in hours as a float, or None if tz_name is missing or invalid.
+    """
+    if not tz_name:
+        return None
+
+    try:
+        tz = ZoneInfo(tz_name)
+    except (KeyError, Exception):
+        return None
+
+    dt = datetime(datetime.now().year, month, 15, 12, 0, 0, tzinfo=tz)
+    return dt.utcoffset().total_seconds() / 3600
+
+
 def get_utc_offsets_for_month(tz_name, month):
     """Return the distinct UTC offsets active during the given month.
 

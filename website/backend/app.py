@@ -12,7 +12,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 from lib.analyzer import METARAnalyzer  # noqa: E402
 from lib.storage import LocalFileStorage  # noqa: E402
 from lib.sun_utils import get_daylight_utc_hours  # noqa: E402
-from lib.timezone_utils import get_utc_offsets_for_month  # noqa: E402
+from lib.timezone_utils import (  # noqa: E402
+    get_utc_offset_for_mid_month, get_utc_offsets_for_month)
 from lib.utils import say  # noqa: E402
 
 METADATA_PATH = Path(__file__).parent / 'data' / 'airport_metadata.parquet'
@@ -68,6 +69,7 @@ class MetarAPI:
                 'airport': hourly.attrs.get('airport'),
                 'month': hourly.attrs.get('month'),
                 'utc_offsets': utc_offsets,
+                'primary_utc_offset_hours': get_utc_offset_for_mid_month(tz_name, month),
                 'daylight_utc': daylight_utc,
                 'hourly_stats': {
                     int(hour): {

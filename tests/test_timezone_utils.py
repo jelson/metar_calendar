@@ -1,6 +1,29 @@
 import pytest
 
-from lib.timezone_utils import get_utc_offsets_for_month
+from lib.timezone_utils import get_utc_offset_for_mid_month, get_utc_offsets_for_month
+
+
+class TestGetUtcOffsetForMidMonth:
+
+    def test_winter(self):
+        assert get_utc_offset_for_mid_month("America/Los_Angeles", 1) == -8.0
+
+    def test_summer(self):
+        assert get_utc_offset_for_mid_month("America/Los_Angeles", 7) == -7.0
+
+    def test_dst_transition_picks_majority_offset(self):
+        """US DST starts in early March and ends in early November, so the
+        mid-month offset covers the majority of both months."""
+        assert get_utc_offset_for_mid_month("America/Los_Angeles", 3) == -7.0
+        assert get_utc_offset_for_mid_month("America/Los_Angeles", 11) == -8.0
+
+    def test_half_hour_timezone(self):
+        assert get_utc_offset_for_mid_month("Asia/Kolkata", 6) == 5.5
+
+    def test_missing_or_invalid_tz(self):
+        assert get_utc_offset_for_mid_month(None, 6) is None
+        assert get_utc_offset_for_mid_month("", 6) is None
+        assert get_utc_offset_for_mid_month("Not/AZone", 6) is None
 
 
 class TestGetUtcOffsetsForMonth:

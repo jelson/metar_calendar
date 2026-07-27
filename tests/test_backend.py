@@ -55,6 +55,10 @@ class TestMetarAPI(helper.CPWebCase):
             assert 'IFR' in first_hour
             assert 'LIFR' in first_hour
 
+            # The test queries by ICAO code (KPAO), which is not in the
+            # metadata index (keyed by IEM code PAO), so no timezone is found
+            assert response_data['primary_utc_offset_hours'] is None
+
             # Check utc_offsets is present and has correct structure
             assert 'utc_offsets' in response_data
             utc_offsets = response_data['utc_offsets']

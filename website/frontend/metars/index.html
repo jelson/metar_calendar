@@ -89,17 +89,17 @@ title: Home
             <p class="mt-4 text-gray-600">Loading...</p>
         </div>
 
-        <div id="resultDisplay" class="hidden">
+        <div id="resultDisplay" class="hidden" style="margin-bottom:2rem;">
             <div class="flex items-center gap-4">
                 <!-- Previous month button (desktop only) -->
-                <button id="prevMonthBtn" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Previous month">
+                <button id="prevMonthBtn" style="align-self:flex-start; position:sticky; top:45vh;" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Previous month">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
                 <!-- Main content -->
-                <div class="backdrop-blur-card rounded-xl card-enhanced px-4 pt-4 pb-0 md:px-12 md:pb-0 flex-grow">
+                <div style="padding-bottom:1.5rem;" class="backdrop-blur-card rounded-xl card-enhanced px-4 pt-4 md:px-12 flex-grow">
                     <h2 class="text-base md:text-2xl font-bold text-gray-800" id="resultTitle"></h2>
                     <div id="partialCoverageWarning" class="hidden mt-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
                         <p class="text-xs md:text-sm text-yellow-800">
@@ -112,7 +112,7 @@ title: Home
                 </div>
 
                 <!-- Next month button (desktop only) -->
-                <button id="nextMonthBtn" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Next month">
+                <button id="nextMonthBtn" style="align-self:flex-start; position:sticky; top:45vh;" class="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-blue-50 hover:shadow-lg transition-all flex-shrink-0" title="Next month">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>

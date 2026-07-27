@@ -55,3 +55,7 @@ Select a month, search for an airport by its code (ICAO or IATA) or name, and cl
 The autocomplete search prioritizes exact code matches first, followed by airports whose names start with your search term. For example, typing NEW matches Lakefront Airport (KNEW) first, followed by airports whose names begin with "New" such as Newark and Newport. The search is fuzzy and typo-tolerant, so even partial or slightly misspelled queries will find relevant results.
 
 **Note:** The autocomplete only shows airports that have historical METAR data available. Our database includes approximately 4,300 airports with weather data out of the 80,000+ airports worldwide from [OurAirports](https://ourairports.com/data/). If your airport doesn't appear in the search, it is likely because there's no historical METAR data available for it from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/).
+
+## Source Code
+
+The predictor is open source. The code—including this website, the analysis library, and a command-line version—is available on GitHub at [jelson/metar_calendar](https://github.com/jelson/metar_calendar).

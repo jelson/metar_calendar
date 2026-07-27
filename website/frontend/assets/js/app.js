@@ -126,6 +126,15 @@
         // Form submission
         searchForm.addEventListener('submit', handleSubmit);
 
+        // Changing the month re-runs the search if an airport is already
+        // selected (programmatic month changes don't fire 'change', so the
+        // prev/next buttons won't double-submit)
+        monthSelect.addEventListener('change', () => {
+            if (selectedAirport) {
+                searchForm.requestSubmit();
+            }
+        });
+
         // Month navigation buttons (desktop)
         prevMonthBtn.addEventListener('click', () => changeMonth(-1));
         nextMonthBtn.addEventListener('click', () => changeMonth(1));
@@ -439,8 +448,11 @@
             // Overlay a visible spinner inside the invisible container
             const spinner = document.createElement('div');
             spinner.id = 'reloadSpinner';
-            spinner.style.cssText = 'visibility:visible; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;';
-            spinner.innerHTML = '<div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><p class="mt-4 text-gray-600">Loading...</p>';
+            // The overlay spans the whole (possibly taller-than-viewport)
+            // hidden result area; the sticky inner box keeps the spinner
+            // pinned inside the visible part of the screen
+            spinner.style.cssText = 'visibility:visible; position:absolute; inset:0;';
+            spinner.innerHTML = '<div style="position:sticky; top:35vh; display:flex; flex-direction:column; align-items:center;"><div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><p class="mt-4 text-gray-600">Loading...</p></div>';
             resultDisplay.appendChild(spinner);
         } else {
             loadingState.classList.remove('hidden');

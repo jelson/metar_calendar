@@ -79,7 +79,8 @@ class MetarAPI:
                         'LIFR': float(row['LIFR']),
                     }
                     for hour, row in hourly.iterrows()
-                }
+                },
+                'wind': analyzer.get_hourly_wind_statistics(month),
             }
         except Exception as e:
             say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')

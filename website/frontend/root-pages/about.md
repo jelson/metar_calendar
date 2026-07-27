@@ -39,6 +39,8 @@ Of course, the best way to escape June Gloom at Santa Monica is not to divert to
 
 The predictor downloads several years of historical METAR data from the [Iowa Environmental Mesonet ASOS network](https://mesonet.agron.iastate.edu/request/download.phtml) for your selected airport and month, then calculates the fraction of observations that fall into each flight condition (VFR, MVFR, IFR, LIFR) for each hour of the day. The stacked bar chart makes it easy to see patterns like morning marine layers, afternoon thunderstorms, or consistently good (or bad) conditions.
 
+Below the flight conditions, two more charts show historical wind: how often the wind blew from each direction at each hour of the day, and the distribution of wind speeds, including how often gusts were reported.
+
 Flight conditions are determined by ceiling and visibility, with the more restrictive condition defining the overall flight condition:
 
 | Condition | Ceiling | Visibility |

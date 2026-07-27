@@ -9,7 +9,7 @@ title: Home
             Hourly METAR Predictor
         </h1>
         <p class="text-base md:text-lg text-gray-600">
-            Predict cloud coverage based on historical patterns
+            Predict cloud coverage and wind based on historical patterns
         </p>
     </div>
 
@@ -106,8 +106,16 @@ title: Home
                             ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.
                         </p>
                     </div>
+                    <h3 class="text-base md:text-xl font-bold text-gray-800 mt-2">Flight Conditions</h3>
                     <div id="resultImage" class="flex justify-center items-center bg-gray-100/50 rounded-lg">
                         <p class="text-gray-500">Image will appear here</p>
+                    </div>
+                    <div id="windSection" class="hidden">
+                        <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Wind Direction</h3>
+                        <p class="text-xs md:text-sm text-gray-600">How often the wind blows from each direction (20° bins) at each hour. Light winds (≤ 5 kt), calm and variable winds are not shown.</p>
+                        <div id="windDirChart" class="bg-gray-100/50 rounded-lg"></div>
+                        <h3 style="margin-top:2.5rem;" class="text-base md:text-xl font-bold text-gray-800">Wind Speed</h3>
+                        <div id="windSpeedChart" class="bg-gray-100/50 rounded-lg"></div>
                     </div>
                 </div>
 

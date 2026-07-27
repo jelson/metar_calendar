@@ -121,6 +121,93 @@ class TestMETARAnalyzer:
             total = sum(row[condition] for condition in FLIGHT_CONDITIONS)
             assert abs(total - 1.0) < 0.001, f"Hour {hour} sums to {total}, not 1.0"
 
+    @pytest.mark.parametrize("airport", get_test_airports())
+    @patch('lib.raw_metar_retriever.requests.get')
+    def test_wind_stats_structure(self, mock_requests, storage, airport):
+        """Test that get_hourly_wind_statistics returns a well-formed result."""
+        mock_requests.side_effect = mock_requests_get
+
+        analyzer = METARAnalyzer(airport, storage)
+        result = analyzer.get_hourly_wind_statistics(6)
+
+        assert result['speed_bins'] == [
+            '0-3 kt', '4-8 kt', '9-13 kt', '14-18 kt', '>18 kt']
+        assert result['direction_step'] == 20
+
+        assert len(result['hourly_speed']) > 0
+        for hour, bins in result['hourly_speed'].items():
+            assert 0 <= hour <= 23
+            # Speed bins cover all speeds, so fractions sum to 1
+            assert abs(sum(bins.values()) - 1.0) < 0.001
+
+        for hour, gust in result['hourly_gust'].items():
+            assert 0 <= gust['freq'] <= 1
+            if gust['freq'] > 0:
+                assert 0 < gust['median'] <= gust['max']
+
+        for hour, sectors in result['hourly_direction'].items():
+            assert len(sectors) == 18
+            # Calm/variable winds aren't directional, so sums can be below 1
+            assert sum(sectors) <= 1.001
+
+    def _make_summary_parquet(self, storage, airport, df):
+        """Store a pre-built hourly summary in the cache for an airport."""
+        import io
+        buffer = io.BytesIO()
+        df.to_parquet(buffer)
+        storage.put(f'{airport}.summarized.v2.parquet', buffer.getvalue())
+
+    def test_wind_stats_calm_and_direction_wrapping(self, storage):
+        """Calm/light hours have no direction; 355 and 005 both bin to 000."""
+        index = pd.DatetimeIndex([
+            f'2025-06-{day:02d} 10:00' for day in range(1, 7)], tz='UTC')
+        df = pd.DataFrame({
+            'vsby': [10.0] * 6,
+            'ceiling': [10000.0] * 6,
+            #        calm  light east  north-ish  north-ish  south  no data
+            'sknt': [0.0,  4.0,        10.0,      12.0,      22.0,  float('nan')],
+            'drct': [0.0,  90.0,       355.0,     5.0,       180.0, float('nan')],
+            'gust': [float('nan'), float('nan'), float('nan'), 25.0,
+                     float('nan'), float('nan')],
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        result = analyzer.get_hourly_wind_statistics(6)
+
+        # 5 hours have wind data (the NaN hour is excluded). sknt values are
+        # 0, 4, 10, 12, 22; 10 and 12 both fall in the 9-13 kt bucket.
+        speed = result['hourly_speed'][10]
+        assert speed['0-3 kt'] == 0.2
+        assert speed['4-8 kt'] == 0.2
+        assert speed['9-13 kt'] == pytest.approx(0.4)
+        assert speed['14-18 kt'] == 0.0
+        assert speed['>18 kt'] == 0.2
+
+        gust = result['hourly_gust'][10]
+        assert gust['freq'] == 0.2
+        assert gust['median'] == 25.0
+        assert gust['max'] == 25.0
+
+        # 355 and 005 are both within 5 degrees of north: same sector.
+        # Calm and light (<= 5 kt) winds must not count towards any sector.
+        sectors = result['hourly_direction'][10]
+        assert sectors[0] == pytest.approx(0.4)  # 355 and 005
+        assert sectors[5] == 0  # the 4 kt easterly (090) is ignored
+        assert sectors[9] == pytest.approx(0.2)  # 180
+        # calm, light and missing don't contribute
+        assert sum(sectors) == pytest.approx(0.6)
+
+    def test_wind_stats_raises_without_wind_columns(self, storage):
+        """A stale cached summary without wind columns raises a clear error."""
+        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
+        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        with pytest.raises(ValueError, match='no wind data'):
+            analyzer.get_hourly_wind_statistics(6)
+
     @patch('lib.raw_metar_retriever.requests.get')
     def test_multiple_months(self, mock_requests, storage):
         """Test that we can request statistics for different months from same analyzer."""

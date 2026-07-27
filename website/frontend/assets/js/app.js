@@ -491,10 +491,12 @@
 
             if (isReload) {
                 displayWeatherChart(data, selectedAirport, monthNames[month]);
+                displayWindCharts(data);
             } else {
                 // First load: render after container is visible and sized
                 requestAnimationFrame(() => {
                     displayWeatherChart(data, selectedAirport, monthNames[month]);
+                    displayWindCharts(data);
                     requestAnimationFrame(() => {
                         resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     });
@@ -755,6 +757,7 @@
                     standoff: 10
                 },
                 dtick: 1,
+                zeroline: false,
                 range: [-0.5, 23.5],
                 fixedrange: true
             },
@@ -793,6 +796,200 @@
             resultImage.style.minHeight = '';
         });
     }
+
+    // Sequential ramp for wind speed bins (light = light air, dark = strong wind)
+    const WIND_SPEED_COLORS = {
+        '0-3 kt': '#e5e7eb',
+        '4-8 kt': '#a7dbd4',
+        '9-13 kt': '#6cc0b7',
+        '14-18 kt': '#3d9d96',
+        '>18 kt': '#0b4f4c',
+    };
+
+    // Display the two wind charts (speed distribution + direction heatmap)
+    function displayWindCharts(data) {
+        const windSection = document.getElementById('windSection');
+
+        if (!data.wind) {
+            windSection.classList.add('hidden');
+            return;
+        }
+        windSection.classList.remove('hidden');
+
+        displayWindSpeedChart(data);
+        displayWindDirectionChart(data);
+    }
+
+    // Stacked bars of wind speed bins per UTC hour, gust details in hover
+    function displayWindSpeedChart(data) {
+        const wind = data.wind;
+        const isMobile = window.innerWidth < 768;
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+        const hourLabels = buildHourLabels(utcOffsets);
+
+        const mapping = buildHourMapping(data);
+        const hours = [];
+        const gustFreqs = [];
+        // customdata rows: [hour label, gust description]
+        const customdata = [];
+        for (const { utc, x } of mapping) {
+            hours.push(x);
+            const gust = wind.hourly_gust[utc];
+            gustFreqs.push(gust ? gust.freq : null);
+            let gustText = 'Gusts: none recorded';
+            if (gust && gust.freq > 0) {
+                gustText = `Gusts in ${(gust.freq * 100).toFixed(0)}% of hours` +
+                    ` (median ${Math.round(gust.median)} kt,` +
+                    ` max ${Math.round(gust.max)} kt)`;
+            }
+            customdata.push([hourLabels[utc], gustText]);
+        }
+
+        const traces = wind.speed_bins.map(bin => ({
+            x: hours,
+            y: mapping.map(m => wind.hourly_speed[m.utc] ? wind.hourly_speed[m.utc][bin] : 0),
+            customdata: customdata,
+            name: bin,
+            type: 'bar',
+            marker: { color: WIND_SPEED_COLORS[bin] },
+            hovertemplate: `%{customdata[0]}<br>${bin}: %{y:.1%}<extra></extra>`
+        }));
+
+        // Overlay the fraction of hours with gusts as a line (same 0-100% axis)
+        traces.push({
+            x: hours,
+            y: gustFreqs,
+            customdata: customdata,
+            name: 'Gusts (% of hours)',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { color: '#c2410c', width: 2 },
+            marker: { size: 6 },
+            hovertemplate: '%{customdata[0]}<br>%{customdata[1]}<extra></extra>'
+        });
+
+        const extraRowHeight = isMobile ? 12 : 16;
+        const baseBottom = hasTimezone ? 25 : 70;
+        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+
+        const layout = {
+            barmode: 'stack',
+            height: isMobile ? 260 : 340,
+            xaxis: {
+                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
+                dtick: 1,
+                zeroline: false,
+                range: [-0.5, 23.5],
+                fixedrange: true
+            },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Fraction of Days', standoff: 10 },
+                tickformat: '.0%',
+                fixedrange: true
+            },
+            legend: {
+                orientation: 'h',
+                x: 0.5,
+                xanchor: 'center',
+                y: 1.02,
+                yanchor: 'bottom'
+            },
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
+        };
+
+        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
+
+        Plotly.newPlot('windSpeedChart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
+    // Heatmap of wind direction frequency: x = UTC hour, y = direction in
+    // degrees (20° bins), color = fraction of observations from that direction
+    function displayWindDirectionChart(data) {
+        const wind = data.wind;
+        const isMobile = window.innerWidth < 768;
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+        const hourLabels = buildHourLabels(utcOffsets);
+
+        const step = wind.direction_step;
+        const numSectors = 360 / step;
+        const mapping = buildHourMapping(data);
+        const hours = mapping.map(m => m.x);
+
+        // Sector labels "000", "020", ... "340"
+        const sectorLabels = Array.from({ length: numSectors },
+            (_, s) => String(s * step).padStart(3, '0'));
+
+        // z[sector][column]; null (gap) for hours without data
+        const z = sectorLabels.map((_, s) =>
+            mapping.map(m => wind.hourly_direction[m.utc]
+                ? wind.hourly_direction[m.utc][s] : null));
+
+        // Sector labels are bin centers; hovers show the full range so
+        // "000" is unambiguous (it covers 350°-010°)
+        const half = step / 2;
+        const rangeLabels = sectorLabels.map((_, s) => {
+            const from = String((s * step - half + 360) % 360).padStart(3, '0');
+            const to = String((s * step + half) % 360).padStart(3, '0');
+            return `${from}°–${to}°`;
+        });
+        const customdata = sectorLabels.map((_, s) =>
+            mapping.map(m => [hourLabels[m.utc], rangeLabels[s]]));
+
+        const traces = [{
+            type: 'heatmap',
+            x: hours,
+            y: sectorLabels,
+            z: z,
+            customdata: customdata,
+            colorscale: [[0, '#ffffff'], [1, '#0f766e']],
+            zmin: 0,
+            xgap: 1,
+            ygap: 1,
+            hoverongaps: false,
+            showscale: false,
+            hovertemplate: '%{customdata[0]}<br>From %{customdata[1]}: %{z:.1%}<extra></extra>'
+        }];
+
+        const extraRowHeight = isMobile ? 12 : 16;
+        const baseBottom = hasTimezone ? 25 : 70;
+        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+
+        const layout = {
+            height: isMobile ? 260 : 330,
+            // White instead of plotly's default gray, so hours without any
+            // data (transparent gap columns) don't show up as gray bars
+            plot_bgcolor: '#ffffff',
+            xaxis: {
+                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
+                dtick: 1,
+                zeroline: false,
+                range: [-0.5, 23.5],
+                fixedrange: true
+            },
+            yaxis: {
+                title: isMobile ? '' : { text: 'Wind direction (°)', standoff: 10 },
+                type: 'category',
+                tickvals: sectorLabels.filter((_, s) => s % 3 === 0),
+                tickfont: { size: isMobile ? 8 : 10 },
+                fixedrange: true
+            },
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
+        };
+
+        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
+
+        Plotly.newPlot('windDirChart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
     // Show error message
     function showError(message) {
         errorMessage.textContent = message;

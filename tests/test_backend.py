@@ -55,6 +55,18 @@ class TestMetarAPI(helper.CPWebCase):
             assert 'IFR' in first_hour
             assert 'LIFR' in first_hour
 
+            # Check wind block is present and has correct structure
+            wind = response_data['wind']
+            assert wind['speed_bins'][0] == '0-3 kt'
+            assert wind['direction_step'] == 20
+            assert wind['direction_min_kt'] == 5
+            assert len(wind['hourly_speed']) > 0
+            first_wind_hour = list(wind['hourly_direction'].keys())[0]
+            assert len(wind['hourly_direction'][first_wind_hour]) == 18
+            assert 'freq' in wind['hourly_gust'][first_wind_hour]
+            assert 'median' in wind['hourly_gust'][first_wind_hour]
+            assert 'max' in wind['hourly_gust'][first_wind_hour]
+
             # The test queries by ICAO code (KPAO), which is not in the
             # metadata index (keyed by IEM code PAO), so no timezone is found
             assert response_data['primary_utc_offset_hours'] is None

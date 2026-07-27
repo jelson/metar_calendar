@@ -10,6 +10,7 @@ Have you ever planned a flight into a coastal airport and wondered, "What time w
 
 This predictor solves that problem by analyzing several years of historical METAR data to show you typical weather patterns for any month at airports with available data.
 It generates a stacked bar chart, one bar for each hour of the day, color-coded by flight condition.
+The website also charts the hourly distribution of wind direction and speed, including gusts.
 
 ### Example: Santa Monica vs Van Nuys in June
 

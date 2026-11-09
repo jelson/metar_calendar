@@ -8,7 +8,6 @@
     let selectedAirport = null;
     let currentFocusIndex = -1;
     let currentResults = [];
-    let viewMode = 'hourly'; // 'hourly' (one month, broken out by hour) or 'yearly' (12 months, all hours pooled)
 
     const MONTH_NAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -108,14 +107,16 @@
             if (!month || month < 1 || month > 12) return;
             timeframeSelect.value = String(month);
         }
+        // Sync right away, not after the airport lookup: the timeframe sticks
+        // even if the airport isn't found
+        syncTimeframeUI();
 
         // Find airport by display code
         const airport = airports.find(a => a.display === airportCode);
 
         if (!airport) return;
 
-        // Sync UI to the timeframe and select the airport (triggers the search)
-        syncTimeframeUI();
+        // Select the airport (triggers the search)
         selectAirport(airport);
     }
 
@@ -124,12 +125,18 @@
         history.replaceState(null, '', `#${display}/${monthOrYear}`);
     }
 
-    // Sync viewMode and the month-navigation UI to the timeframe select's
-    // current value. Hides the arrow buttons and mobile nav in yearly mode,
-    // since neither applies when there's no single month selected.
+    // Whether the year-round view is selected (rather than a single month).
+    // Always read from the timeframe select itself, so the view can never
+    // disagree with what the dropdown shows.
+    function isYearlyView() {
+        return timeframeSelect.value === 'year';
+    }
+
+    // Sync the month-navigation UI to the timeframe select's current value.
+    // Hides the arrow buttons and mobile nav in yearly mode, since neither
+    // applies when there's no single month selected.
     function syncTimeframeUI() {
-        const isYearly = timeframeSelect.value === 'year';
-        viewMode = isYearly ? 'yearly' : 'hourly';
+        const isYearly = isYearlyView();
 
         // Inline styles (rather than Tailwind classes) unconditionally
         // override the responsive "hidden md:flex" classes on the month nav
@@ -224,7 +231,7 @@
 
     // Change month (direction: -1 for previous, 1 for next)
     function changeMonth(direction) {
-        if (!selectedAirport || viewMode !== 'hourly') return;
+        if (!selectedAirport || isYearlyView()) return;
 
         let newMonth = parseInt(timeframeSelect.value) + direction;
 
@@ -444,7 +451,7 @@
         hideDropdown();
 
         // Show mobile month navigation (hourly view only)
-        if (viewMode === 'hourly') {
+        if (!isYearlyView()) {
             mobileMonthNav.classList.remove('hidden');
         }
 
@@ -480,7 +487,7 @@
         }
 
         const month = timeframeSelect.value;
-        const isYearly = viewMode === 'yearly';
+        const isYearly = isYearlyView();
 
         // Update URL hash for shareability
         updateHash(selectedAirport.display, isYearly ? 'year' : month);

@@ -88,10 +88,12 @@ class MetarSummarizer:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
 
-        # Convert sky condition codes to strings to avoid any mixed type issues
+        # Convert sky condition codes to strings to avoid any mixed type
+        # issues, stripping whitespace: IEM pads vertical visibility to three
+        # characters ("VV "), which would otherwise not match "VV"
         for col in ['skyc1', 'skyc2', 'skyc3', 'skyc4']:
             if col in df.columns:
-                df[col] = df[col].astype(str)
+                df[col] = df[col].astype(str).str.strip()
 
         # Present-weather codes (e.g. "-RA", "+TSRA", "SN") as a plain string,
         # empty for observations that reported none
@@ -132,6 +134,17 @@ class MetarSummarizer:
 
         return hourly
 
+    @staticmethod
+    def cache_key(airport: str) -> str:
+        """Cache filename of an airport's summary (airport code normalized).
+
+        The version suffix changes whenever the summary's contents do, so
+        summaries cached by older code are recomputed from the raw data.
+        v5: vertical visibility ("VV ") counts as a ceiling (v4 added
+        wxcodes; v3 added tmpf, dwpf, p01i; v2 added sknt, gust, drct)
+        """
+        return f"{airport}.summarized.v5.parquet"
+
     def get(self, airport: str) -> pd.DataFrame:
         """Get hourly summarized METAR data for an airport.
 
@@ -144,8 +157,7 @@ class MetarSummarizer:
             DataFrame indexed by day and hour with columns: vsby, ceiling
         """
         airport = airport.upper().strip()
-        # v4: adds wxcodes (v3 added tmpf, dwpf, p01i; v2 added sknt, gust, drct)
-        cache_key = f"{airport}.summarized.v4.parquet"
+        cache_key = self.cache_key(airport)
 
         def compute_and_serialize() -> bytes:
             """Compute the summary and serialize to parquet bytes."""

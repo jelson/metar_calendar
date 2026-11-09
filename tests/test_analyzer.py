@@ -4,6 +4,7 @@ import tempfile
 from unittest.mock import patch
 
 from lib.analyzer import METARAnalyzer, FlightCondition
+from lib.metar_summarizer import MetarSummarizer
 from lib.storage import LocalFileStorage
 from .test_utils import FLIGHT_CONDITIONS, get_test_airports, mock_requests_get
 
@@ -161,7 +162,7 @@ class TestMETARAnalyzer:
         import io
         buffer = io.BytesIO()
         df.to_parquet(buffer)
-        storage.put(f'{airport}.summarized.v4.parquet', buffer.getvalue())
+        storage.put(MetarSummarizer.cache_key(airport), buffer.getvalue())
 
     @pytest.mark.parametrize("month,valid_keys", VIEWS)
     @pytest.mark.parametrize("airport", get_test_airports())

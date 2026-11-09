@@ -94,8 +94,8 @@ class TestMetarSummarizer:
         assert mock_requests.call_count == 2
 
         # Verify separate cache files exist
-        assert cache.storage.get("KPAO.summarized.v4.parquet") is not None
-        assert cache.storage.get("KMSN.summarized.v4.parquet") is not None
+        assert cache.storage.get(MetarSummarizer.cache_key("KPAO")) is not None
+        assert cache.storage.get(MetarSummarizer.cache_key("KMSN")) is not None
 
         # Fetch again - should hit cache
         df1_cached = summarizer.get("KPAO")
@@ -119,7 +119,7 @@ class TestMetarSummarizer:
         df1 = summarizer.get("  kpao  ")
 
         # Verify cache key was normalized
-        assert cache.storage.get("KPAO.summarized.v4.parquet") is not None
+        assert cache.storage.get(MetarSummarizer.cache_key("KPAO")) is not None
 
         # Fetch with normalized code should hit same cache
         df2 = summarizer.get("KPAO")
@@ -192,7 +192,7 @@ KTEST,2025-01-01 12:00,2.0,VV,300,,,,,,,,,,45.0,44.0,0.01,
 KTEST,2025-01-01 12:15,6.0,BKN,1000,OVC,2000,,,,,210,6,25,47.0,46.0,0.00,-SN
 KTEST,2025-01-01 12:30,10.0,FEW,500,SCT,1500,BKN,5000,,,220,10,,49.0,48.0,T,
 KTEST,2025-01-01 12:45,8.0,SCT,2000,OVC,6000,,,,,230,8,,51.0,50.0,0.00,+TSRA
-KTEST,2025-01-01 13:05,1.0,VV,200,,,,,,,,,,30.0,29.0,,
+KTEST,2025-01-01 13:05,1.0,VV ,200,,,,,,,,,,30.0,29.0,,
 KTEST,2025-01-01 13:20,4.0,BKN,800,,,,,,,,,,32.0,31.0,,
 KTEST,2025-01-01 13:40,5.0,OVC,1200,,,,,,,,,,34.0,33.0,,
 """
@@ -258,7 +258,8 @@ KTEST,2025-01-01 13:40,5.0,OVC,1200,,,,,,,,,,34.0,33.0,,
         assert hour3['wxcodes'] == '-SN +TSRA'
 
         # Hour 4 (13:00): visibility min(1.0, 4.0, 5.0) = 1.0
-        #                 ceiling min(200, 800, 1200) = 200
+        #                 ceiling min(200, 800, 1200) = 200 (the 200 is
+        #                 vertical visibility, padded "VV " as IEM sends it)
         #                 no wind or precipitation observations at all
         #                 temp mean(30,32,34) = 32.0, dewpoint mean = 31.0
         hour4 = df.loc[df.index[3]]

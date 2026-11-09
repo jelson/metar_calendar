@@ -31,9 +31,10 @@ class METARAnalyzer:
     # distribution: light winds meander and their direction is mostly noise.
     WIND_DIRECTION_MIN_KNOTS = 5
 
-    # An hour counts as having measurable precipitation above this amount
-    # (inches); this excludes trace amounts, which METAR itself distinguishes
-    # from measurable precipitation.
+    # An hour counts as having measurable precipitation at or above this
+    # amount (inches). 0.01" is the smallest measurable amount and the most
+    # common one reported; traces are reported as "T", which the summarizer
+    # coerces to NaN, so they never count.
     PRECIP_MEASURABLE_THRESHOLD_IN = 0.01
 
     # Precipitation types, most significant first. When an hour's wxcodes
@@ -338,7 +339,7 @@ class METARAnalyzer:
             if n == 0:
                 continue
 
-            is_measurable = group['p01i'] > self.PRECIP_MEASURABLE_THRESHOLD_IN
+            is_measurable = group['p01i'] >= self.PRECIP_MEASURABLE_THRESHOLD_IN
             measurable = group.loc[is_measurable, 'p01i']
 
             types = group.loc[is_measurable, 'wxcodes'].apply(self._classify_precip_type)
@@ -360,8 +361,8 @@ class METARAnalyzer:
         """Compute per-UTC-hour precipitation frequency for the given month.
 
         Returns a dict with:
-            threshold_in: precipitation amounts at or below this (inches)
-                don't count as measurable
+            threshold_in: precipitation amounts below this (inches) don't
+                count as measurable
             types: ordered list of precipitation type labels
             hourly: {hour: {
                 'freq': fraction of hours with measurable precipitation,

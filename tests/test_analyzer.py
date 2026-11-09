@@ -374,15 +374,16 @@ class TestMETARAnalyzer:
     def test_precipitation_stats_synthetic(self, storage):
         """Frequency and median only count measurable precipitation."""
         index = pd.DatetimeIndex([
-            f'2025-06-{day:02d} 10:00' for day in range(1, 6)], tz='UTC')
+            f'2025-06-{day:02d} 10:00' for day in range(1, 7)], tz='UTC')
         df = pd.DataFrame({
-            'vsby': [10.0] * 5,
-            'ceiling': [10000.0] * 5,
-            'tmpf': [50.0] * 5,
-            'dwpf': [40.0] * 5,
-            # trace (below threshold), dry, measurable, measurable, missing
-            'p01i': [0.005, 0.0, 0.10, 0.20, float('nan')],
-            'wxcodes': ['-RA', '', '-RA', '+TSRA', ''],
+            'vsby': [10.0] * 6,
+            'ceiling': [10000.0] * 6,
+            'tmpf': [50.0] * 6,
+            'dwpf': [40.0] * 6,
+            # below threshold, dry, minimum measurable (0.01" counts),
+            # measurable, measurable, missing (e.g. a "T" trace report)
+            'p01i': [0.005, 0.0, 0.01, 0.10, 0.20, float('nan')],
+            'wxcodes': ['-RA', '', '-DZ', '-RA', '+TSRA', ''],
         }, index=index)
         self._make_summary_parquet(storage, 'KTEST', df)
 
@@ -390,13 +391,16 @@ class TestMETARAnalyzer:
         result = analyzer.get_hourly_precipitation_statistics(6)
 
         stats = result['hourly'][10]
-        assert stats['freq'] == pytest.approx(0.4)  # 2 of 5 hours
-        assert stats['count'] == 2
-        assert stats['median_in'] == pytest.approx(0.15)
-        # The two measurable hours are Rain (0.10) and Thunderstorm (0.20)
-        assert stats['type_freq']['Rain'] == pytest.approx(0.2)
-        assert stats['type_freq']['Thunderstorm'] == pytest.approx(0.2)
+        assert stats['freq'] == pytest.approx(0.5)  # 3 of 6 hours
+        assert stats['count'] == 3
+        assert stats['median_in'] == pytest.approx(0.10)
+        # The three measurable hours are Drizzle (0.01), Rain (0.10) and
+        # Thunderstorm (0.20)
+        assert stats['type_freq']['Drizzle'] == pytest.approx(1 / 6)
+        assert stats['type_freq']['Rain'] == pytest.approx(1 / 6)
+        assert stats['type_freq']['Thunderstorm'] == pytest.approx(1 / 6)
         assert stats['type_freq']['Snow/Ice'] == 0.0
+        assert stats['type_count']['Drizzle'] == 1
         assert stats['type_count']['Rain'] == 1
         assert stats['type_count']['Thunderstorm'] == 1
         assert stats['type_count']['Snow/Ice'] == 0

@@ -1149,6 +1149,10 @@
                 // floor and give a little headroom above the tallest bar
                 rangemode: 'tozero',
                 range: [0, Math.max(1, maxCount) * 1.15],
+                // Counts are whole numbers: with a small range Plotly would
+                // pick fractional tick steps, which tickformat 'd' rounds
+                // into duplicate labels ("0 0 0 1 1 1")
+                ...(maxCount < 5 && { dtick: 1 }),
             },
             barmode: 'stack',
         }));

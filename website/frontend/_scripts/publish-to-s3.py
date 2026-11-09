@@ -14,6 +14,15 @@ HTACCESS_FUNC_NAME = 'AvMapperHTAccess'
 BUCKET = 'avmapper.com'
 DISTRIBUTION_ID = 'E39PVZW9UJ3RUQ'
 
+# The bucket also hosts sites published by other projects. The sync below
+# runs with --delete, which removes anything in the bucket that this Jekyll
+# build didn't produce -- except paths matching these patterns. Add every
+# other project's prefix here. (Bucket versioning is off: anything deleted
+# is gone for good.)
+EXCLUDED_FROM_SYNC = [
+    'plusv-dangers/*',  # ~/projects/approach-study/html_output
+]
+
 def get_cloudfront_function(htaccess_path):
     with open(os.path.join(os.path.dirname(__file__), "cloudfront-function-template.js")) as ifh:
         template = ifh.read()
@@ -47,8 +56,10 @@ def main():
         cloudfront_function = get_cloudfront_function(os.path.join(tmpdir, ".htaccess"))
 
         print("Syncing to s3")
+        excludes = [arg for pattern in EXCLUDED_FROM_SYNC
+                    for arg in ("--exclude", pattern)]
         subprocess.check_call([
-            "aws", "s3", "sync", "--delete", tmpdir, f"s3://{BUCKET}",
+            "aws", "s3", "sync", "--delete", *excludes, tmpdir, f"s3://{BUCKET}",
         ])
 
         session = boto3.Session(profile_name=AWS_PROFILE)

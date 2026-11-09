@@ -122,7 +122,12 @@ class METARAnalyzer:
     def _condition_statistics(self, month: int | None) -> pd.DataFrame:
         """Fraction of each flight condition per group (see _select)."""
         df, group_key = self._select(month)
-        df = df.copy()
+
+        # Hours without a visibility report (e.g. an AUTO station whose sensor
+        # is out) can't be classified: NaN fails every threshold below and
+        # would land in LIFR. Leave them out so they don't count as anything.
+        has_visibility = df['vsby'].notna()
+        df, group_key = df.loc[has_visibility].copy(), group_key[has_visibility]
 
         # Classify each row based on pre-computed ceiling and visibility
         # (the summarizer already found the minimum ceiling and visibility for each hour)

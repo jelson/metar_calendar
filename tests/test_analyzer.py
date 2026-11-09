@@ -109,6 +109,29 @@ class TestMETARAnalyzer:
         assert analyzer._classify_flight_condition(200, 10) == FlightCondition.LIFR  # Low ceiling, good visibility
         assert analyzer._classify_flight_condition(5000, 0.5) == FlightCondition.LIFR  # Good ceiling, low visibility
 
+    @pytest.mark.parametrize("month,key", [(6, 10), (None, 6)], ids=['hourly', 'monthly'])
+    def test_conditions_exclude_hours_without_visibility(self, storage, month, key):
+        """An hour with no visibility report isn't classified (as LIFR or
+        anything else); the fractions come from the other hours."""
+        index = pd.DatetimeIndex([
+            f'2025-06-{day:02d} 10:00' for day in range(1, 5)], tz='UTC')
+        df = pd.DataFrame({
+            'vsby': [10.0, 10.0, 2.0, float('nan')],
+            'ceiling': [100000.0] * 4,
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        if month is None:
+            row = analyzer.get_monthly_statistics().loc[key]
+        else:
+            row = analyzer.get_hourly_statistics(month).loc[key]
+
+        assert row['VFR'] == pytest.approx(2 / 3)
+        assert row['IFR'] == pytest.approx(1 / 3)
+        assert row['MVFR'] == 0.0
+        assert row['LIFR'] == 0.0
+
     @patch('lib.raw_metar_retriever.requests.get')
     def test_percentages_sum_to_one(self, mock_requests, storage):
         """Test that percentages for each hour sum to 1."""

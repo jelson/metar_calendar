@@ -546,7 +546,8 @@
                 const axis = buildAxis(data, isYearly);
                 displayConditionsChart(data, axis);
                 displayWindCharts(data, axis);
-                displayWeatherCharts(data, axis);
+                displayTemperatureSection(data, axis);
+                displayPrecipitationSection(data, axis);
             };
 
             if (isReload) {
@@ -862,16 +863,18 @@
         '>18 kt': '#0b4f4c',
     };
 
+    // Show a chart section only when the API returned its stats (it returns
+    // null when the airport has no such data, e.g. precipitation amounts
+    // outside the US). Returns whether the section is shown.
+    function showSection(sectionId, stats) {
+        document.getElementById(sectionId).classList.toggle('hidden', !stats);
+        return Boolean(stats);
+    }
+
     // Display the two wind charts (speed distribution + direction heatmap)
     function displayWindCharts(data, axis) {
-        const windSection = document.getElementById('windSection');
         const wind = data.wind;
-
-        if (!wind) {
-            windSection.classList.add('hidden');
-            return;
-        }
-        windSection.classList.remove('hidden');
+        if (!showSection('windSection', wind)) return;
 
         document.getElementById('windDirCaption').textContent =
             `How often the wind blows from each direction (${wind.direction_step}° bins) ` +
@@ -1009,25 +1012,27 @@
         }
     }
 
-    // Display the two weather charts (temperature/dewpoint + precipitation)
-    function displayWeatherCharts(data, axis) {
-        const weatherSection = document.getElementById('weatherSection');
-
-        if (!data.temperature || !data.precipitation) {
-            weatherSection.classList.add('hidden');
-            return;
-        }
-        weatherSection.classList.remove('hidden');
+    // Display the temperature/dewpoint chart in the current unit
+    function displayTemperatureSection(data, axis) {
+        displayedTemperature = null;
+        if (!showSection('temperatureSection', data.temperature)) return;
 
         document.getElementById('temperatureCaption').textContent =
             `Shaded bands show the typical range (10th–90th percentile) ${axis.periodPhrase}; ` +
             'lines show the median.';
+
+        displayedTemperature = { temperature: data.temperature, axis };
+        setTempUnit(tempUnit);
+    }
+
+    // Display the precipitation chart
+    function displayPrecipitationSection(data, axis) {
+        if (!showSection('precipitationSection', data.precipitation)) return;
+
         document.getElementById('precipitationCaption').textContent =
             `How often measurable precipitation was reported ${axis.periodPhrase}, ` +
             'broken down by type.';
 
-        displayedTemperature = { temperature: data.temperature, axis };
-        setTempUnit(tempUnit);
         displayPrecipitationChart(data.precipitation, axis);
     }
 

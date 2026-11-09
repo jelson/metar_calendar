@@ -74,14 +74,9 @@ class TestMetarAPI(helper.CPWebCase):
             assert 'temp_median' in temp_stats
             assert 'dewpoint_median' in temp_stats
 
-            precipitation = response_data['precipitation']
-            assert precipitation['threshold_in'] == 0.01
-            assert 'Rain' in precipitation['types']
-            first_precip_hour = list(precipitation['periods'].keys())[0]
-            assert 'freq' in precipitation['periods'][first_precip_hour]
-            assert 'count' in precipitation['periods'][first_precip_hour]
-            assert 'type_freq' in precipitation['periods'][first_precip_hour]
-            assert 'type_count' in precipitation['periods'][first_precip_hour]
+            # KPAO doesn't report precipitation amounts, so there's no
+            # precipitation block (the frontend hides that chart)
+            assert response_data['precipitation'] is None
 
             # The test queries by ICAO code (KPAO), which is not in the
             # metadata index (keyed by IEM code PAO), so no timezone is found
@@ -136,11 +131,8 @@ class TestMetarAPI(helper.CPWebCase):
             first_temp_month = list(temperature['periods'].keys())[0]
             assert 'temp_median' in temperature['periods'][first_temp_month]
 
-            precipitation = response_data['precipitation']
-            assert precipitation['threshold_in'] == 0.01
-            first_precip_month = list(precipitation['periods'].keys())[0]
-            assert 'freq' in precipitation['periods'][first_precip_month]
-            assert 'type_count' in precipitation['periods'][first_precip_month]
+            # KPAO doesn't report precipitation amounts
+            assert response_data['precipitation'] is None
 
     def test_monthly_statistics_endpoint_missing_params(self):
         """Test that missing airport_code returns an error."""

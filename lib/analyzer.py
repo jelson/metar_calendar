@@ -164,11 +164,12 @@ class METARAnalyzer:
         monthly.index = monthly.index.rename('Month')
         return monthly
 
-    def get_wind_statistics(self, month: int | None = None) -> dict:
+    def get_wind_statistics(self, month: int | None = None) -> dict | None:
         """Wind distributions per group: per UTC hour for the given month, or
         per calendar month if month is None (see _select).
 
-        Returns a dict with:
+        Returns None if there's no wind data for the selection; otherwise a
+        dict with:
             speed_bins: ordered list of speed bin labels
             speed: {key: {bin_label: fraction}} over hours with wind data
             gust: {key: {'freq': fraction of hours with a gust,
@@ -219,6 +220,9 @@ class METARAnalyzer:
                 float(counts.get(i, 0) / n) for i in range(num_sectors)
             ]
 
+        if not speed:
+            return None
+
         return {
             'speed_bins': [label for label, _, _ in self.WIND_SPEED_BINS],
             'speed': speed,
@@ -228,14 +232,15 @@ class METARAnalyzer:
             'direction': direction,
         }
 
-    def get_temperature_statistics(self, month: int | None = None) -> dict:
+    def get_temperature_statistics(self, month: int | None = None) -> dict | None:
         """Temperature/dewpoint distributions per group: per UTC hour for the
         given month, or per calendar month if month is None (see _select).
 
         A percentile band (rather than a single average) is used because
         conditions vary considerably day to day even at a fixed hour.
 
-        Returns a dict with 'periods': {key: {
+        Returns None if there's no temperature data for the selection;
+        otherwise a dict with 'periods': {key: {
             'temp_p10'/'temp_median'/'temp_p90': degrees Fahrenheit,
             'dewpoint_p10'/'dewpoint_median'/'dewpoint_p90': degrees Fahrenheit or None,
         }}
@@ -262,13 +267,30 @@ class METARAnalyzer:
 
             periods[int(key)] = entry
 
+        if not periods:
+            return None
+
         return {'periods': periods}
 
-    def get_precipitation_statistics(self, month: int | None = None) -> dict:
+    def reports_precipitation_amounts(self) -> bool:
+        """Whether this station reports hourly precipitation amounts (p01i).
+
+        Only US METARs carry the amount (the "Pxxxx" remark), and some US
+        stations (e.g. many AWOS sites) don't either. IEM reports 0 rather
+        than empty for stations without it, so "no data" looks the same as
+        "no precipitation". Checking the whole record rather than the
+        selected month tells them apart: a station that measures
+        precipitation reports a nonzero amount at some point in several
+        years, while a dry month at such a station still gets a chart.
+        """
+        return bool((self.hourly_summary['p01i'] > 0).any())
+
+    def get_precipitation_statistics(self, month: int | None = None) -> dict | None:
         """Precipitation frequency per group: per UTC hour for the given
         month, or per calendar month if month is None (see _select).
 
-        Returns a dict with:
+        Returns None if the station doesn't report precipitation amounts
+        (see reports_precipitation_amounts); otherwise a dict with:
             threshold_in: precipitation amounts below this (inches) don't
                 count as measurable
             types: ordered list of precipitation type labels
@@ -283,6 +305,9 @@ class METARAnalyzer:
                     type}, summing to 'count',
             }}
         """
+        if not self.reports_precipitation_amounts():
+            return None
+
         df, group_key = self._select(month)
         periods = {}
 

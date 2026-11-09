@@ -289,6 +289,11 @@ class TestMETARAnalyzer:
         analyzer = METARAnalyzer(airport, storage)
         result = analyzer.get_precipitation_statistics(month)
 
+        # Some test stations (e.g. KPAO) don't report precipitation amounts
+        if not analyzer.reports_precipitation_amounts():
+            assert result is None
+            return
+
         assert result['threshold_in'] == 0.01
         assert result['types'] == [
             'Thunderstorm', 'Freezing', 'Snow/Ice', 'Rain', 'Drizzle', 'Other / Unspecified']
@@ -336,6 +341,57 @@ class TestMETARAnalyzer:
         assert stats['type_count']['Rain'] == 1
         assert stats['type_count']['Thunderstorm'] == 1
         assert stats['type_count']['Snow/Ice'] == 0
+
+    def test_precipitation_stats_none_without_amounts(self, storage):
+        """Stations that never report an amount (IEM fills in 0, e.g. outside
+        the US) get no precipitation stats, even though wxcodes show rain."""
+        index = pd.DatetimeIndex([
+            f'2025-{month:02d}-01 10:00' for month in (1, 6)], tz='UTC')
+        df = pd.DataFrame({
+            'vsby': [10.0] * 2,
+            'ceiling': [10000.0] * 2,
+            'p01i': [0.0, 0.0],
+            'wxcodes': ['-RA', 'RA'],
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        assert not analyzer.reports_precipitation_amounts()
+        assert analyzer.get_precipitation_statistics(6) is None
+        assert analyzer.get_precipitation_statistics() is None
+
+    def test_precipitation_stats_dry_month_at_reporting_station(self, storage):
+        """A dry month at a station that does report amounts still gets
+        (all-zero) stats: availability is judged over the whole record."""
+        index = pd.DatetimeIndex([
+            f'2025-{month:02d}-01 10:00' for month in (1, 6)], tz='UTC')
+        df = pd.DataFrame({
+            'vsby': [10.0] * 2,
+            'ceiling': [10000.0] * 2,
+            'p01i': [0.25, 0.0],  # wet January, dry June
+            'wxcodes': ['RA', ''],
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        result = analyzer.get_precipitation_statistics(6)
+        assert result['periods'][10]['count'] == 0
+
+    def test_wind_and_temperature_stats_none_without_data(self, storage):
+        """A selection with no wind or temperature readings returns None."""
+        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
+        nan = float('nan')
+        df = pd.DataFrame({
+            'vsby': [10.0], 'ceiling': [10000.0],
+            'sknt': [nan], 'gust': [nan], 'drct': [nan],
+            'tmpf': [nan], 'dwpf': [nan],
+        }, index=index)
+        self._make_summary_parquet(storage, 'KTEST', df)
+
+        analyzer = METARAnalyzer('KTEST', storage)
+        for month in (6, None):
+            assert analyzer.get_wind_statistics(month) is None
+            assert analyzer.get_temperature_statistics(month) is None
 
     @pytest.mark.parametrize("wxcodes,expected", [
         ('', 'Other / Unspecified'),      # no wx code at all, e.g. a gauge-only station

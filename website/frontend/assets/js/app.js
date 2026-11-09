@@ -543,15 +543,10 @@
             resultDisplay.style.position = '';
 
             const renderCharts = () => {
-                if (isYearly) {
-                    displayYearlyConditionsChart(data);
-                    displayYearlyWindCharts(data);
-                    displayYearlyWeatherCharts(data);
-                } else {
-                    displayWeatherChart(data, selectedAirport, MONTH_NAMES[month]);
-                    displayWindCharts(data);
-                    displayWeatherCharts(data);
-                }
+                const axis = buildAxis(data, isYearly);
+                displayConditionsChart(data, axis);
+                displayWindCharts(data, axis);
+                displayWeatherCharts(data, axis);
             };
 
             if (isReload) {
@@ -706,158 +701,154 @@
         ];
     }
 
-    // Display weather data as interactive Plotly chart
-    function displayWeatherChart(data, airport, monthName) {
+    // ---- Chart axis: everything that differs between the hourly view (one
+    // month, x = hour of day, in local time when the timezone is known) and
+    // the year-round view (x = calendar month, all hours of the day pooled).
+    // Every chart function takes an axis and looks up each column's stats by
+    // axis.keys (UTC hour or month number, matching the API's keys).
+    function buildAxis(data, isYearly) {
+        const isMobile = window.innerWidth < 768;
+
+        if (isYearly) {
+            return {
+                isMobile,
+                keys: MONTH_NAMES.slice(1).map((_, i) => i + 1),
+                x: MONTH_ABBRS.slice(1),
+                hoverLabels: MONTH_NAMES.slice(1),
+                conditions: data.monthly_stats,
+                // Every hour of every day in the month is one sample
+                sampleUnit: 'Hours',
+                periodPhrase: 'in each month, pooling all hours of the day',
+                periodNoun: 'month',
+                missingDataNoun: 'monthly',
+                bottomMargin: 40,
+                daylightShapes: [],
+                xaxis: () => ({ zeroline: false, fixedrange: true }),
+            };
+        }
+
+        const utcOffsets = data.utc_offsets || [];
+        const hasTimezone = utcOffsets.length > 0;
+        const mapping = buildHourMapping(data);
+        const hourLabels = buildHourLabels(utcOffsets);
+        // Base for tick labels, plus extra per timezone row (no x-axis title
+        // when timezone rows are shown)
+        const extraRowHeight = isMobile ? 12 : 16;
+
+        return {
+            isMobile,
+            keys: mapping.map(m => m.utc),
+            x: mapping.map(m => m.x),
+            hoverLabels: mapping.map(m => hourLabels[m.utc]),
+            conditions: data.hourly_stats,
+            // One sample per day at a fixed hour
+            sampleUnit: 'Days',
+            periodPhrase: 'at each hour',
+            periodNoun: 'hour',
+            missingDataNoun: 'hourly',
+            bottomMargin: hasTimezone ? 25 + utcOffsets.length * extraRowHeight : 70,
+            daylightShapes: buildDaylightShapes(
+                localizeDaylight(data.daylight_utc, getPrimaryOffset(data))),
+            xaxis: () => {
+                const xaxis = {
+                    title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
+                    dtick: 1,
+                    zeroline: false,
+                    range: [-0.5, 23.5],
+                    fixedrange: true
+                };
+                // Multi-line x-axis tick labels with local time rows
+                applyTimezoneTicks(xaxis, utcOffsets, isMobile, mapping);
+                return xaxis;
+            },
+        };
+    }
+
+    const LEGEND_ABOVE = {
+        orientation: 'h',
+        x: 0.5,
+        xanchor: 'center',
+        y: 1.02,
+        yanchor: 'bottom'
+    };
+
+    // Layout shared by every chart; options override the chart-specific parts
+    function chartLayout(axis, {
+        height, mobileHeight, yTitle, yaxis = {}, top = 10, legend = LEGEND_ABOVE, ...extra
+    }) {
+        const isMobile = axis.isMobile;
+        return {
+            height: isMobile ? mobileHeight : height,
+            xaxis: axis.xaxis(),
+            yaxis: {
+                title: isMobile ? '' : { text: yTitle, standoff: 10 },
+                fixedrange: true,
+                ...yaxis
+            },
+            legend,
+            hovermode: 'closest',
+            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: top, b: axis.bottomMargin },
+            ...extra
+        };
+    }
+
+    function plotChart(elementId, traces, layout) {
+        return Plotly.newPlot(elementId, traces, layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    }
+
+    // Per-column hover label rows, for use as a trace's customdata
+    function hoverCustomdata(axis) {
+        return axis.hoverLabels.map(label => [label]);
+    }
+
+    const CONDITION_COLORS = { VFR: 'green', MVFR: 'blue', IFR: 'red', LIFR: 'magenta' };
+
+    // Stacked bars of flight condition fractions per column
+    function displayConditionsChart(data, axis) {
         const resultImage = document.getElementById('resultImage');
 
         // Lock container height to prevent page reflow during content swap
         resultImage.style.minHeight = resultImage.offsetHeight + 'px';
-
-        // Create chart container
         resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
 
-        // Extract hours and data for each flight condition, positioned on the
-        // x axis by local time when the timezone is known
-        const mapping = buildHourMapping(data);
-        const primaryOffset = getPrimaryOffset(data);
-        const hours = [];
-        const vfrData = [];
-        const mvfrData = [];
-        const ifrData = [];
-        const lifrData = [];
-        let missingHours = 0;
+        const stats = axis.keys.map(k => axis.conditions[k]);
+        const missingColumns = stats.filter(s => !s).length;
 
-        for (const { utc, x } of mapping) {
-            hours.push(x);
-            const stats = data.hourly_stats[utc];
-            if (stats) {
-                vfrData.push(stats.VFR);
-                mvfrData.push(stats.MVFR);
-                ifrData.push(stats.IFR);
-                lifrData.push(stats.LIFR);
-            } else {
-                vfrData.push(0);
-                mvfrData.push(0);
-                ifrData.push(0);
-                lifrData.push(0);
-                missingHours++;
-            }
-        }
-
-        // Show warning if there are missing hours
         const warningElement = document.getElementById('partialCoverageWarning');
-        if (missingHours > 0) {
+        if (missingColumns > 0) {
             document.getElementById('partialCoverageText').textContent =
-                'ⓘ This airport has missing hourly data. Some airports only publish weather data when staffed by observers.';
-            warningElement.classList.remove('hidden');
-        } else {
-            warningElement.classList.add('hidden');
+                `ⓘ This airport has missing ${axis.missingDataNoun} data. ` +
+                'Some airports only publish weather data when staffed by observers.';
         }
+        warningElement.classList.toggle('hidden', missingColumns === 0);
 
-        // Detect mobile viewport
-        const isMobile = window.innerWidth < 768;
+        // VFR first for bottom stacking
+        const customdata = hoverCustomdata(axis);
+        const traces = Object.entries(CONDITION_COLORS).map(([cond, color]) => ({
+            x: axis.x,
+            y: stats.map(s => s ? s[cond] : 0),
+            customdata,
+            name: cond,
+            type: 'bar',
+            marker: { color },
+            hovertemplate: `%{customdata[0]}<br>${cond}: %{y:.1%}<extra></extra>`
+        }));
 
-        // Timezone offsets from backend
-        const utcOffsets = data.utc_offsets || [];
-        const hasTimezone = utcOffsets.length > 0;
-
-        // Build hover labels: "14:00 UTC (2p PDT)" or just "14:00 UTC" if no
-        // timezone, in the same order as the chart columns
-        const hourLabels = buildHourLabels(utcOffsets);
-        const hoverHours = mapping.map(m => [hourLabels[m.utc]]);
-
-        // Create traces for each flight condition (VFR first for bottom stacking)
-        const traces = [
-            {
-                x: hours,
-                y: vfrData,
-                customdata: hoverHours,
-                name: 'VFR',
-                type: 'bar',
-                marker: { color: 'green' },
-                hovertemplate: '%{customdata[0]}<br>VFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: mvfrData,
-                customdata: hoverHours,
-                name: 'MVFR',
-                type: 'bar',
-                marker: { color: 'blue' },
-                hovertemplate: '%{customdata[0]}<br>MVFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: ifrData,
-                customdata: hoverHours,
-                name: 'IFR',
-                type: 'bar',
-                marker: { color: 'red' },
-                hovertemplate: '%{customdata[0]}<br>IFR: %{y:.1%}<extra></extra>'
-            },
-            {
-                x: hours,
-                y: lifrData,
-                customdata: hoverHours,
-                name: 'LIFR',
-                type: 'bar',
-                marker: { color: 'magenta' },
-                hovertemplate: '%{customdata[0]}<br>LIFR: %{y:.1%}<extra></extra>'
-            }
-        ];
-
-        // Bottom margin: base for tick labels, plus extra per timezone row (no x-axis title when tz shown)
-        const extraRowHeight = isMobile ? 12 : 16;
-        const baseBottom = hasTimezone ? 25 : 70;
-        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
-        const leftMargin = isMobile ? 40 : 70;
-
-        // Layout configuration
-        const layout = {
+        const layout = chartLayout(axis, {
+            height: 400,
+            mobileHeight: 300,
+            yTitle: `Fraction of ${axis.sampleUnit}`,
+            yaxis: { tickformat: '.0%' },
+            top: 40,
+            legend: { ...LEGEND_ABOVE, traceorder: 'reversed' },
             barmode: 'stack',
-            height: isMobile ? 300 : 400,
-            xaxis: {
-                title: hasTimezone ? '' : {
-                    text: 'UTC hour',
-                    standoff: 10
-                },
-                dtick: 1,
-                zeroline: false,
-                range: [-0.5, 23.5],
-                fixedrange: true
-            },
-            yaxis: {
-                title: isMobile ? '' : {
-                    text: 'Fraction of Days',
-                    standoff: 10
-                },
-                tickformat: '.0%',
-                fixedrange: true
-            },
-            legend: {
-                traceorder: 'reversed',
-                orientation: 'h',
-                x: 0.5,
-                xanchor: 'center',
-                y: 1.02,
-                yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: leftMargin, r: isMobile ? 5 : 10, t: 40, b: bottomMargin }
-        };
+            shapes: axis.daylightShapes,
+        });
 
-        // Build multi-line x-axis tick labels with local time rows
-        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
-
-        // Add daylight background (in axis time)
-        layout.shapes = buildDaylightShapes(
-            localizeDaylight(data.daylight_utc, primaryOffset));
-
-        // Render the chart with full width
-        Plotly.newPlot('plotlyChart', traces, layout, {
-            responsive: true,
-            displayModeBar: false
-        }).then(() => {
+        plotChart('plotlyChart', traces, layout).then(() => {
             resultImage.style.minHeight = '';
         });
     }
@@ -872,39 +863,32 @@
     };
 
     // Display the two wind charts (speed distribution + direction heatmap)
-    function displayWindCharts(data) {
+    function displayWindCharts(data, axis) {
         const windSection = document.getElementById('windSection');
+        const wind = data.wind;
 
-        if (!data.wind) {
+        if (!wind) {
             windSection.classList.add('hidden');
             return;
         }
         windSection.classList.remove('hidden');
 
         document.getElementById('windDirCaption').textContent =
-            'How often the wind blows from each direction (20° bins) at each hour. ' +
-            'Light winds (≤ 5 kt), calm and variable winds are not shown.';
+            `How often the wind blows from each direction (${wind.direction_step}° bins) ` +
+            `${axis.periodPhrase}. Light winds (≤ ${wind.direction_min_kt} kt), calm and ` +
+            'variable winds are not shown.';
 
-        displayWindSpeedChart(data);
-        displayWindDirectionChart(data);
+        displayWindSpeedChart(wind, axis);
+        displayWindDirectionChart(wind, axis);
     }
 
-    // Stacked bars of wind speed bins per UTC hour, gust details in hover
-    function displayWindSpeedChart(data) {
-        const wind = data.wind;
-        const isMobile = window.innerWidth < 768;
-        const utcOffsets = data.utc_offsets || [];
-        const hasTimezone = utcOffsets.length > 0;
-        const hourLabels = buildHourLabels(utcOffsets);
-
-        const mapping = buildHourMapping(data);
-        const hours = [];
-        const gustFreqs = [];
-        // customdata rows: [hour label, gust description]
+    // Stacked bars of wind speed bins per column, gust details in hover
+    function displayWindSpeedChart(wind, axis) {
+        // customdata rows: [column label, gust description]
         const customdata = [];
-        for (const { utc, x } of mapping) {
-            hours.push(x);
-            const gust = wind.hourly_gust[utc];
+        const gustFreqs = [];
+        axis.keys.forEach((key, i) => {
+            const gust = wind.gust[key];
             gustFreqs.push(gust ? gust.freq : null);
             let gustText = 'Gusts: none recorded';
             if (gust && gust.freq > 0) {
@@ -912,13 +896,13 @@
                     ` (median ${Math.round(gust.median)} kt,` +
                     ` max ${Math.round(gust.max)} kt)`;
             }
-            customdata.push([hourLabels[utc], gustText]);
-        }
+            customdata.push([axis.hoverLabels[i], gustText]);
+        });
 
         const traces = wind.speed_bins.map(bin => ({
-            x: hours,
-            y: mapping.map(m => wind.hourly_speed[m.utc] ? wind.hourly_speed[m.utc][bin] : 0),
-            customdata: customdata,
+            x: axis.x,
+            y: axis.keys.map(k => wind.speed[k] ? wind.speed[k][bin] : 0),
+            customdata,
             name: bin,
             type: 'bar',
             marker: { color: WIND_SPEED_COLORS[bin] },
@@ -927,9 +911,9 @@
 
         // Overlay the fraction of hours with gusts as a line (same 0-100% axis)
         traces.push({
-            x: hours,
+            x: axis.x,
             y: gustFreqs,
-            customdata: customdata,
+            customdata,
             name: 'Gusts (% of hours)',
             type: 'scatter',
             mode: 'lines+markers',
@@ -938,66 +922,24 @@
             hovertemplate: '%{customdata[0]}<br>%{customdata[1]}<extra></extra>'
         });
 
-        const extraRowHeight = isMobile ? 12 : 16;
-        const baseBottom = hasTimezone ? 25 : 70;
-        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
-
-        const layout = {
+        plotChart('windSpeedChart', traces, chartLayout(axis, {
+            height: 340,
+            mobileHeight: 260,
+            yTitle: `Fraction of ${axis.sampleUnit}`,
+            yaxis: { tickformat: '.0%' },
             barmode: 'stack',
-            height: isMobile ? 260 : 340,
-            xaxis: {
-                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
-                dtick: 1,
-                zeroline: false,
-                range: [-0.5, 23.5],
-                fixedrange: true
-            },
-            yaxis: {
-                title: isMobile ? '' : { text: 'Fraction of Days', standoff: 10 },
-                tickformat: '.0%',
-                fixedrange: true
-            },
-            legend: {
-                orientation: 'h',
-                x: 0.5,
-                xanchor: 'center',
-                y: 1.02,
-                yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
-        };
-
-        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
-
-        Plotly.newPlot('windSpeedChart', traces, layout, {
-            responsive: true,
-            displayModeBar: false
-        });
+        }));
     }
 
-    // Heatmap of wind direction frequency: x = UTC hour, y = direction in
+    // Heatmap of wind direction frequency: x = column, y = direction in
     // degrees (20° bins), color = fraction of observations from that direction
-    function displayWindDirectionChart(data) {
-        const wind = data.wind;
-        const isMobile = window.innerWidth < 768;
-        const utcOffsets = data.utc_offsets || [];
-        const hasTimezone = utcOffsets.length > 0;
-        const hourLabels = buildHourLabels(utcOffsets);
-
+    function displayWindDirectionChart(wind, axis) {
         const step = wind.direction_step;
         const numSectors = 360 / step;
-        const mapping = buildHourMapping(data);
-        const hours = mapping.map(m => m.x);
 
         // Sector labels "000", "020", ... "340"
         const sectorLabels = Array.from({ length: numSectors },
             (_, s) => String(s * step).padStart(3, '0'));
-
-        // z[sector][column]; null (gap) for hours without data
-        const z = sectorLabels.map((_, s) =>
-            mapping.map(m => wind.hourly_direction[m.utc]
-                ? wind.hourly_direction[m.utc][s] : null));
 
         // Sector labels are bin centers; hovers show the full range so
         // "000" is unambiguous (it covers 350°-010°)
@@ -1007,15 +949,19 @@
             const to = String((s * step + half) % 360).padStart(3, '0');
             return `${from}°–${to}°`;
         });
+
+        // z[sector][column]; null (gap) for columns without data
+        const z = sectorLabels.map((_, s) =>
+            axis.keys.map(k => wind.direction[k] ? wind.direction[k][s] : null));
         const customdata = sectorLabels.map((_, s) =>
-            mapping.map(m => [hourLabels[m.utc], rangeLabels[s]]));
+            axis.hoverLabels.map(label => [label, rangeLabels[s]]));
 
         const traces = [{
             type: 'heatmap',
-            x: hours,
+            x: axis.x,
             y: sectorLabels,
-            z: z,
-            customdata: customdata,
+            z,
+            customdata,
             colorscale: [[0, '#ffffff'], [1, '#0f766e']],
             zmin: 0,
             xgap: 1,
@@ -1025,43 +971,26 @@
             hovertemplate: '%{customdata[0]}<br>From %{customdata[1]}: %{z:.1%}<extra></extra>'
         }];
 
-        const extraRowHeight = isMobile ? 12 : 16;
-        const baseBottom = hasTimezone ? 25 : 70;
-        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
-
-        const layout = {
-            height: isMobile ? 260 : 330,
-            // White instead of plotly's default gray, so hours without any
-            // data (transparent gap columns) don't show up as gray bars
-            plot_bgcolor: '#ffffff',
-            xaxis: {
-                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
-                dtick: 1,
-                zeroline: false,
-                range: [-0.5, 23.5],
-                fixedrange: true
-            },
+        plotChart('windDirChart', traces, chartLayout(axis, {
+            height: 330,
+            mobileHeight: 260,
+            yTitle: 'Wind direction (°)',
             yaxis: {
-                title: isMobile ? '' : { text: 'Wind direction (°)', standoff: 10 },
                 type: 'category',
                 tickvals: sectorLabels.filter((_, s) => s % 3 === 0),
-                tickfont: { size: isMobile ? 8 : 10 },
-                fixedrange: true
+                tickfont: { size: axis.isMobile ? 8 : 10 },
             },
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
-        };
-
-        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
-
-        Plotly.newPlot('windDirChart', traces, layout, {
-            responsive: true,
-            displayModeBar: false
-        });
+            // White instead of plotly's default gray, so columns without any
+            // data (transparent gap columns) don't show up as gray bars
+            plot_bgcolor: '#ffffff',
+        }));
     }
 
     // Temperature unit toggle: persisted in localStorage, defaults to Celsius
     let tempUnit = localStorage.getItem('metarTempUnit') === 'F' ? 'F' : 'C';
-    let lastStatsData = null;
+    // The temperature chart currently displayed, kept together with the axis
+    // it was drawn on so a unit change redraws it exactly as it was
+    let displayedTemperature = null;
 
     function setTempUnit(unit) {
         tempUnit = unit;
@@ -1075,17 +1004,13 @@
             btn.classList.toggle('text-gray-600', !active);
         });
 
-        if (lastStatsData) {
-            if (viewMode === 'yearly') {
-                displayYearlyTemperatureChart(lastStatsData);
-            } else {
-                displayTemperatureChart(lastStatsData);
-            }
+        if (displayedTemperature) {
+            displayTemperatureChart(displayedTemperature.temperature, displayedTemperature.axis);
         }
     }
 
     // Display the two weather charts (temperature/dewpoint + precipitation)
-    function displayWeatherCharts(data) {
+    function displayWeatherCharts(data, axis) {
         const weatherSection = document.getElementById('weatherSection');
 
         if (!data.temperature || !data.precipitation) {
@@ -1095,28 +1020,22 @@
         weatherSection.classList.remove('hidden');
 
         document.getElementById('temperatureCaption').textContent =
-            'Shaded bands show the typical range (10th–90th percentile) at each hour; lines show the median.';
+            `Shaded bands show the typical range (10th–90th percentile) ${axis.periodPhrase}; ` +
+            'lines show the median.';
         document.getElementById('precipitationCaption').textContent =
-            'How often measurable precipitation was reported at each hour, broken down by type.';
+            `How often measurable precipitation was reported ${axis.periodPhrase}, ` +
+            'broken down by type.';
 
-        lastStatsData = data;
+        displayedTemperature = { temperature: data.temperature, axis };
         setTempUnit(tempUnit);
-        displayPrecipitationChart(data);
+        displayPrecipitationChart(data.precipitation, axis);
     }
 
     // Temperature and dewpoint as median lines with a 10th-90th percentile
     // shaded band (a single average would hide day-to-day spread)
-    function displayTemperatureChart(data) {
-        const temperature = data.temperature;
-        const isMobile = window.innerWidth < 768;
-        const utcOffsets = data.utc_offsets || [];
-        const hasTimezone = utcOffsets.length > 0;
-        const hourLabels = buildHourLabels(utcOffsets);
-
-        const mapping = buildHourMapping(data);
-        const hours = mapping.map(m => m.x);
-        const stats = mapping.map(m => temperature.hourly[m.utc] || null);
-        const customdata = mapping.map(m => [hourLabels[m.utc]]);
+    function displayTemperatureChart(temperature, axis) {
+        const stats = axis.keys.map(k => temperature.periods[k] || null);
+        const customdata = hoverCustomdata(axis);
 
         // API values are Fahrenheit; convert to Celsius here if that's the
         // active display unit (percentiles are order-preserving under this
@@ -1133,21 +1052,19 @@
         // draw the band; showlegend is false on both so only the median
         // line's legend entry appears.
         function bandTraces(key, name, lineColor, bandColor) {
-            const upper = stats.map(s => s ? toDisplay(s[`${key}_p90`]) : null);
-            const lower = stats.map(s => s ? toDisplay(s[`${key}_p10`]) : null);
-            const median = stats.map(s => s ? toDisplay(s[`${key}_median`]) : null);
+            const series = suffix => stats.map(s => s ? toDisplay(s[`${key}_${suffix}`]) : null);
             return [
                 {
-                    x: hours, y: upper, mode: 'lines',
+                    x: axis.x, y: series('p90'), mode: 'lines',
                     line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
                 },
                 {
-                    x: hours, y: lower, mode: 'lines',
+                    x: axis.x, y: series('p10'), mode: 'lines',
                     line: { width: 0 }, fill: 'tonexty', fillcolor: bandColor,
                     showlegend: false, hoverinfo: 'skip'
                 },
                 {
-                    x: hours, y: median, customdata, name,
+                    x: axis.x, y: series('median'), customdata, name,
                     mode: 'lines+markers',
                     line: { color: lineColor, width: 2 },
                     marker: { size: 5 },
@@ -1161,41 +1078,12 @@
             ...bandTraces('dewpoint', 'Dewpoint', '#0369a1', 'rgba(3,105,161,0.15)'),
         ];
 
-        const extraRowHeight = isMobile ? 12 : 16;
-        const baseBottom = hasTimezone ? 25 : 70;
-        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
-
-        const layout = {
-            height: isMobile ? 260 : 340,
-            xaxis: {
-                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
-                dtick: 1,
-                zeroline: false,
-                range: [-0.5, 23.5],
-                fixedrange: true
-            },
-            yaxis: {
-                title: isMobile ? '' : { text: `Degrees ${tempUnit === 'C' ? 'Celsius' : 'Fahrenheit'}`, standoff: 10 },
-                zeroline: false,
-                fixedrange: true
-            },
-            legend: {
-                orientation: 'h',
-                x: 0.5,
-                xanchor: 'center',
-                y: 1.02,
-                yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
-        };
-
-        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
-
-        Plotly.newPlot('temperatureChart', traces, layout, {
-            responsive: true,
-            displayModeBar: false
-        });
+        plotChart('temperatureChart', traces, chartLayout(axis, {
+            height: 340,
+            mobileHeight: 260,
+            yTitle: `Degrees ${tempUnit === 'C' ? 'Celsius' : 'Fahrenheit'}`,
+            yaxis: { zeroline: false },
+        }));
     }
 
     // Sequential-by-severity categorical colors for precipitation type
@@ -1208,37 +1096,26 @@
         'Other / Unspecified': '#9ca3af',
     };
 
-    // Stacked bars of precipitation frequency per hour, broken down by type
-    function displayPrecipitationChart(data) {
-        const precipitation = data.precipitation;
-        const isMobile = window.innerWidth < 768;
-        const utcOffsets = data.utc_offsets || [];
-        const hasTimezone = utcOffsets.length > 0;
-        const hourLabels = buildHourLabels(utcOffsets);
+    // Stacked bars of precipitation counts per column, broken down by type
+    function displayPrecipitationChart(precipitation, axis) {
+        const stats = axis.keys.map(k => precipitation.periods[k] || null);
 
-        const mapping = buildHourMapping(data);
-        const hours = mapping.map(m => m.x);
-
-        const customdata = mapping.map(m => {
-            const stats = precipitation.hourly[m.utc];
+        const customdata = stats.map((s, i) => {
             let text = 'No precipitation recorded';
-            if (stats && stats.count > 0) {
-                const hourWord = stats.count === 1 ? 'hour' : 'hours';
-                text = `Measurable precipitation in ${stats.count} ${hourWord}` +
-                    ` (${(stats.freq * 100).toFixed(0)}% of this hour's samples)`;
-                if (stats.median_in !== null) {
-                    text += `, typically ${stats.median_in.toFixed(2)} in`;
+            if (s && s.count > 0) {
+                const hourWord = s.count === 1 ? 'hour' : 'hours';
+                text = `Measurable precipitation in ${s.count} ${hourWord}` +
+                    ` (${(s.freq * 100).toFixed(0)}% of this ${axis.periodNoun}'s samples)`;
+                if (s.median_in !== null) {
+                    text += `, typically ${s.median_in.toFixed(2)} in`;
                 }
             }
-            return [hourLabels[m.utc], text];
+            return [axis.hoverLabels[i], text];
         });
 
         const traces = precipitation.types.map(type => ({
-            x: hours,
-            y: mapping.map(m => {
-                const stats = precipitation.hourly[m.utc];
-                return stats ? stats.type_count[type] : 0;
-            }),
+            x: axis.x,
+            y: stats.map(s => s ? s.type_count[type] : 0),
             customdata,
             name: type,
             type: 'bar',
@@ -1246,379 +1123,23 @@
             hovertemplate: `%{customdata[0]}<br>${type}: %{y}<br>%{customdata[1]}<extra></extra>`
         }));
 
-        const extraRowHeight = isMobile ? 12 : 16;
-        const baseBottom = hasTimezone ? 25 : 70;
-        const bottomMargin = baseBottom + (hasTimezone ? utcOffsets.length * extraRowHeight : 0);
+        // Tallest stacked bar (total count per column), for the y-axis ceiling
+        const maxCount = Math.max(0, ...stats.map(s => s ? s.count : 0));
 
-        // Tallest stacked bar (total count per hour), for the y-axis ceiling
-        const maxCount = Math.max(
-            0, ...mapping.map(m => (precipitation.hourly[m.utc] || {}).count || 0));
-
-        const layout = {
-            barmode: 'stack',
-            height: isMobile ? 240 : 300,
-            xaxis: {
-                title: hasTimezone ? '' : { text: 'UTC hour', standoff: 10 },
-                dtick: 1,
-                zeroline: false,
-                range: [-0.5, 23.5],
-                fixedrange: true
-            },
+        plotChart('precipitationChart', traces, chartLayout(axis, {
+            height: 300,
+            mobileHeight: 240,
+            yTitle: 'Number of Hours',
             yaxis: {
-                title: isMobile ? '' : { text: 'Number of Hours', standoff: 10 },
                 tickformat: 'd',
                 // rangemode 'tozero' isn't enough when every value is 0 (Plotly
                 // still autoscales to an arbitrary range), so pin an explicit
                 // floor and give a little headroom above the tallest bar
                 rangemode: 'tozero',
                 range: [0, Math.max(1, maxCount) * 1.15],
-                fixedrange: true
             },
-            legend: {
-                orientation: 'h',
-                x: 0.5,
-                xanchor: 'center',
-                y: 1.02,
-                yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: bottomMargin }
-        };
-
-        applyTimezoneTicks(layout.xaxis, utcOffsets, isMobile, mapping);
-
-        Plotly.newPlot('precipitationChart', traces, layout, {
-            responsive: true,
-            displayModeBar: false
-        });
-    }
-
-    // ---- Yearly view: same charts, but x = calendar month (Jan-Dec) with
-    // all hours of the day pooled together, instead of x = hour of day for
-    // a single selected month. No local time, timezone rows or daylight
-    // shading apply here (a calendar month is the same everywhere).
-
-    function displayYearlyConditionsChart(data) {
-        const resultImage = document.getElementById('resultImage');
-        resultImage.style.minHeight = resultImage.offsetHeight + 'px';
-        resultImage.innerHTML = '<div id="plotlyChart" style="width: 100%; height: 100%;"></div>';
-
-        const months = MONTH_ABBRS.slice(1);
-        const series = { VFR: [], MVFR: [], IFR: [], LIFR: [] };
-        let missingMonths = 0;
-
-        for (let month = 1; month <= 12; month++) {
-            const stats = data.monthly_stats[month];
-            for (const cond of Object.keys(series)) {
-                series[cond].push(stats ? stats[cond] : 0);
-            }
-            if (!stats) missingMonths++;
-        }
-
-        const warningElement = document.getElementById('partialCoverageWarning');
-        if (missingMonths > 0) {
-            document.getElementById('partialCoverageText').textContent =
-                'ⓘ This airport has missing monthly data. Some airports only publish weather data when staffed by observers.';
-        }
-        warningElement.classList.toggle('hidden', missingMonths === 0);
-
-        const isMobile = window.innerWidth < 768;
-        const colors = { VFR: 'green', MVFR: 'blue', IFR: 'red', LIFR: 'magenta' };
-        const traces = Object.keys(series).map(cond => ({
-            x: months,
-            y: series[cond],
-            name: cond,
-            type: 'bar',
-            marker: { color: colors[cond] },
-            hovertemplate: `%{x}<br>${cond}: %{y:.1%}<extra></extra>`
-        }));
-
-        Plotly.newPlot('plotlyChart', traces, {
             barmode: 'stack',
-            height: isMobile ? 300 : 400,
-            xaxis: { zeroline: false, fixedrange: true },
-            yaxis: {
-                // Unlike the hourly view (one sample per day at a fixed
-                // hour), this pools every hour of every day in the month,
-                // so the denominator here is hours, not days
-                title: isMobile ? '' : { text: 'Fraction of Hours', standoff: 10 },
-                tickformat: '.0%',
-                fixedrange: true
-            },
-            legend: {
-                traceorder: 'reversed', orientation: 'h',
-                x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 40, b: 40 }
-        }, { responsive: true, displayModeBar: false }).then(() => {
-            resultImage.style.minHeight = '';
-        });
-    }
-
-    function displayYearlyWindCharts(data) {
-        const windSection = document.getElementById('windSection');
-
-        if (!data.wind) {
-            windSection.classList.add('hidden');
-            return;
-        }
-        windSection.classList.remove('hidden');
-
-        document.getElementById('windDirCaption').textContent =
-            'How often the wind blows from each direction (20° bins) in each month, pooling all hours of the day. ' +
-            'Light winds (≤ 5 kt), calm and variable winds are not shown.';
-
-        displayYearlyWindSpeedChart(data);
-        displayYearlyWindDirectionChart(data);
-    }
-
-    function displayYearlyWindSpeedChart(data) {
-        const wind = data.wind;
-        const isMobile = window.innerWidth < 768;
-        const months = MONTH_ABBRS.slice(1);
-
-        const gustFreqs = [];
-        const customdata = [];
-        for (let month = 1; month <= 12; month++) {
-            const gust = wind.monthly_gust[month];
-            gustFreqs.push(gust ? gust.freq : null);
-            let gustText = 'Gusts: none recorded';
-            if (gust && gust.freq > 0) {
-                gustText = `Gusts in ${(gust.freq * 100).toFixed(0)}% of hours` +
-                    ` (median ${Math.round(gust.median)} kt,` +
-                    ` max ${Math.round(gust.max)} kt)`;
-            }
-            customdata.push([gustText]);
-        }
-
-        const traces = wind.speed_bins.map(bin => ({
-            x: months,
-            y: months.map((_, i) => {
-                const stats = wind.monthly_speed[i + 1];
-                return stats ? stats[bin] : 0;
-            }),
-            customdata,
-            name: bin,
-            type: 'bar',
-            marker: { color: WIND_SPEED_COLORS[bin] },
-            hovertemplate: `%{x}<br>${bin}: %{y:.1%}<extra></extra>`
         }));
-
-        traces.push({
-            x: months,
-            y: gustFreqs,
-            customdata,
-            name: 'Gusts (% of hours)',
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: { color: '#c2410c', width: 2 },
-            marker: { size: 6 },
-            hovertemplate: '%{x}<br>%{customdata[0]}<extra></extra>'
-        });
-
-        Plotly.newPlot('windSpeedChart', traces, {
-            barmode: 'stack',
-            height: isMobile ? 260 : 340,
-            xaxis: { zeroline: false, fixedrange: true },
-            yaxis: {
-                title: isMobile ? '' : { text: 'Fraction of Hours', standoff: 10 },
-                tickformat: '.0%',
-                fixedrange: true
-            },
-            legend: {
-                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
-        }, { responsive: true, displayModeBar: false });
-    }
-
-    function displayYearlyWindDirectionChart(data) {
-        const wind = data.wind;
-        const isMobile = window.innerWidth < 768;
-        const months = MONTH_ABBRS.slice(1);
-
-        const step = wind.direction_step;
-        const numSectors = 360 / step;
-        const sectorLabels = Array.from({ length: numSectors },
-            (_, s) => String(s * step).padStart(3, '0'));
-
-        const half = step / 2;
-        const rangeLabels = sectorLabels.map((_, s) => {
-            const from = String((s * step - half + 360) % 360).padStart(3, '0');
-            const to = String((s * step + half) % 360).padStart(3, '0');
-            return `${from}°–${to}°`;
-        });
-
-        const z = sectorLabels.map((_, s) =>
-            months.map((_, i) => {
-                const stats = wind.monthly_direction[i + 1];
-                return stats ? stats[s] : null;
-            }));
-        const customdata = sectorLabels.map((_, s) => months.map(() => rangeLabels[s]));
-
-        const traces = [{
-            type: 'heatmap',
-            x: months,
-            y: sectorLabels,
-            z: z,
-            customdata: customdata,
-            colorscale: [[0, '#ffffff'], [1, '#0f766e']],
-            zmin: 0,
-            xgap: 1,
-            ygap: 1,
-            hoverongaps: false,
-            showscale: false,
-            hovertemplate: '%{x}<br>From %{customdata}: %{z:.1%}<extra></extra>'
-        }];
-
-        Plotly.newPlot('windDirChart', traces, {
-            height: isMobile ? 260 : 330,
-            plot_bgcolor: '#ffffff',
-            xaxis: { zeroline: false, fixedrange: true },
-            yaxis: {
-                title: isMobile ? '' : { text: 'Wind direction (°)', standoff: 10 },
-                type: 'category',
-                tickvals: sectorLabels.filter((_, s) => s % 3 === 0),
-                tickfont: { size: isMobile ? 8 : 10 },
-                fixedrange: true
-            },
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
-        }, { responsive: true, displayModeBar: false });
-    }
-
-    function displayYearlyWeatherCharts(data) {
-        const weatherSection = document.getElementById('weatherSection');
-
-        if (!data.temperature || !data.precipitation) {
-            weatherSection.classList.add('hidden');
-            return;
-        }
-        weatherSection.classList.remove('hidden');
-
-        document.getElementById('temperatureCaption').textContent =
-            'Shaded bands show the typical range (10th–90th percentile) in each month, ' +
-            'pooling all hours of the day; lines show the median.';
-        document.getElementById('precipitationCaption').textContent =
-            'How often measurable precipitation was reported in each month, pooling all hours ' +
-            'of the day, broken down by type.';
-
-        lastStatsData = data;
-        setTempUnit(tempUnit);
-        displayYearlyPrecipitationChart(data);
-    }
-
-    function displayYearlyTemperatureChart(data) {
-        const temperature = data.temperature;
-        const isMobile = window.innerWidth < 768;
-        const months = MONTH_ABBRS.slice(1);
-        const stats = months.map((_, i) => temperature.monthly[i + 1] || null);
-
-        // null (missing dewpoint) must pass through unchanged, since
-        // "null - 32" coerces to -32 in JS and would plot a fake value
-        const toDisplay = tempUnit === 'C'
-            ? f => f === null ? null : (f - 32) * 5 / 9
-            : f => f;
-        const unitLabel = tempUnit === 'C' ? '°C' : '°F';
-
-        function bandTraces(key, name, lineColor, bandColor) {
-            const upper = stats.map(s => s ? toDisplay(s[`${key}_p90`]) : null);
-            const lower = stats.map(s => s ? toDisplay(s[`${key}_p10`]) : null);
-            const median = stats.map(s => s ? toDisplay(s[`${key}_median`]) : null);
-            return [
-                {
-                    x: months, y: upper, mode: 'lines',
-                    line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
-                },
-                {
-                    x: months, y: lower, mode: 'lines',
-                    line: { width: 0 }, fill: 'tonexty', fillcolor: bandColor,
-                    showlegend: false, hoverinfo: 'skip'
-                },
-                {
-                    x: months, y: median, name,
-                    mode: 'lines+markers',
-                    line: { color: lineColor, width: 2 },
-                    marker: { size: 5 },
-                    hovertemplate: `%{x}<br>${name}: %{y:.0f}${unitLabel}<extra></extra>`
-                },
-            ];
-        }
-
-        const traces = [
-            ...bandTraces('temp', 'Temperature', '#dc2626', 'rgba(220,38,38,0.15)'),
-            ...bandTraces('dewpoint', 'Dewpoint', '#0369a1', 'rgba(3,105,161,0.15)'),
-        ];
-
-        Plotly.newPlot('temperatureChart', traces, {
-            height: isMobile ? 260 : 340,
-            xaxis: { zeroline: false, fixedrange: true },
-            yaxis: {
-                title: isMobile ? '' : { text: `Degrees ${tempUnit === 'C' ? 'Celsius' : 'Fahrenheit'}`, standoff: 10 },
-                zeroline: false,
-                fixedrange: true
-            },
-            legend: {
-                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
-        }, { responsive: true, displayModeBar: false });
-    }
-
-    function displayYearlyPrecipitationChart(data) {
-        const precipitation = data.precipitation;
-        const isMobile = window.innerWidth < 768;
-        const months = MONTH_ABBRS.slice(1);
-
-        const customdata = months.map((_, i) => {
-            const stats = precipitation.monthly[i + 1];
-            let text = 'No precipitation recorded';
-            if (stats && stats.count > 0) {
-                const hourWord = stats.count === 1 ? 'hour' : 'hours';
-                text = `Measurable precipitation in ${stats.count} ${hourWord}` +
-                    ` (${(stats.freq * 100).toFixed(0)}% of this month's samples)`;
-                if (stats.median_in !== null) {
-                    text += `, typically ${stats.median_in.toFixed(2)} in`;
-                }
-            }
-            return [text];
-        });
-
-        const traces = precipitation.types.map(type => ({
-            x: months,
-            y: months.map((_, i) => {
-                const stats = precipitation.monthly[i + 1];
-                return stats ? stats.type_count[type] : 0;
-            }),
-            customdata,
-            name: type,
-            type: 'bar',
-            marker: { color: PRECIP_TYPE_COLORS[type] },
-            hovertemplate: `%{x}<br>${type}: %{y}<br>%{customdata[0]}<extra></extra>`
-        }));
-
-        const maxCount = Math.max(
-            0, ...months.map((_, i) => (precipitation.monthly[i + 1] || {}).count || 0));
-
-        Plotly.newPlot('precipitationChart', traces, {
-            barmode: 'stack',
-            height: isMobile ? 240 : 300,
-            xaxis: { zeroline: false, fixedrange: true },
-            yaxis: {
-                title: isMobile ? '' : { text: 'Number of Hours', standoff: 10 },
-                tickformat: 'd',
-                rangemode: 'tozero',
-                range: [0, Math.max(1, maxCount) * 1.15],
-                fixedrange: true
-            },
-            legend: {
-                orientation: 'h', x: 0.5, xanchor: 'center', y: 1.02, yanchor: 'bottom'
-            },
-            hovermode: 'closest',
-            margin: { l: isMobile ? 40 : 70, r: isMobile ? 5 : 10, t: 10, b: 40 }
-        }, { responsive: true, displayModeBar: false });
     }
 
     // Show error message

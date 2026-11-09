@@ -60,28 +60,28 @@ class TestMetarAPI(helper.CPWebCase):
             assert wind['speed_bins'][0] == '0-3 kt'
             assert wind['direction_step'] == 20
             assert wind['direction_min_kt'] == 5
-            assert len(wind['hourly_speed']) > 0
-            first_wind_hour = list(wind['hourly_direction'].keys())[0]
-            assert len(wind['hourly_direction'][first_wind_hour]) == 18
-            assert 'freq' in wind['hourly_gust'][first_wind_hour]
-            assert 'median' in wind['hourly_gust'][first_wind_hour]
-            assert 'max' in wind['hourly_gust'][first_wind_hour]
+            assert len(wind['speed']) > 0
+            first_wind_hour = list(wind['direction'].keys())[0]
+            assert len(wind['direction'][first_wind_hour]) == 18
+            assert 'freq' in wind['gust'][first_wind_hour]
+            assert 'median' in wind['gust'][first_wind_hour]
+            assert 'max' in wind['gust'][first_wind_hour]
 
             # Check temperature and precipitation blocks
             temperature = response_data['temperature']
-            first_temp_hour = list(temperature['hourly'].keys())[0]
-            temp_stats = temperature['hourly'][first_temp_hour]
+            first_temp_hour = list(temperature['periods'].keys())[0]
+            temp_stats = temperature['periods'][first_temp_hour]
             assert 'temp_median' in temp_stats
             assert 'dewpoint_median' in temp_stats
 
             precipitation = response_data['precipitation']
             assert precipitation['threshold_in'] == 0.01
             assert 'Rain' in precipitation['types']
-            first_precip_hour = list(precipitation['hourly'].keys())[0]
-            assert 'freq' in precipitation['hourly'][first_precip_hour]
-            assert 'count' in precipitation['hourly'][first_precip_hour]
-            assert 'type_freq' in precipitation['hourly'][first_precip_hour]
-            assert 'type_count' in precipitation['hourly'][first_precip_hour]
+            first_precip_hour = list(precipitation['periods'].keys())[0]
+            assert 'freq' in precipitation['periods'][first_precip_hour]
+            assert 'count' in precipitation['periods'][first_precip_hour]
+            assert 'type_freq' in precipitation['periods'][first_precip_hour]
+            assert 'type_count' in precipitation['periods'][first_precip_hour]
 
             # The test queries by ICAO code (KPAO), which is not in the
             # metadata index (keyed by IEM code PAO), so no timezone is found
@@ -128,19 +128,19 @@ class TestMetarAPI(helper.CPWebCase):
 
             wind = response_data['wind']
             assert wind['speed_bins'][0] == '0-3 kt'
-            assert len(wind['monthly_speed']) > 0
-            first_wind_month = list(wind['monthly_direction'].keys())[0]
-            assert len(wind['monthly_direction'][first_wind_month]) == 18
+            assert len(wind['speed']) > 0
+            first_wind_month = list(wind['direction'].keys())[0]
+            assert len(wind['direction'][first_wind_month]) == 18
 
             temperature = response_data['temperature']
-            first_temp_month = list(temperature['monthly'].keys())[0]
-            assert 'temp_median' in temperature['monthly'][first_temp_month]
+            first_temp_month = list(temperature['periods'].keys())[0]
+            assert 'temp_median' in temperature['periods'][first_temp_month]
 
             precipitation = response_data['precipitation']
             assert precipitation['threshold_in'] == 0.01
-            first_precip_month = list(precipitation['monthly'].keys())[0]
-            assert 'freq' in precipitation['monthly'][first_precip_month]
-            assert 'type_count' in precipitation['monthly'][first_precip_month]
+            first_precip_month = list(precipitation['periods'].keys())[0]
+            assert 'freq' in precipitation['periods'][first_precip_month]
+            assert 'type_count' in precipitation['periods'][first_precip_month]
 
     def test_monthly_statistics_endpoint_missing_params(self):
         """Test that missing airport_code returns an error."""

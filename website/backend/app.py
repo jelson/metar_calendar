@@ -23,6 +23,41 @@ PRODUCTION_FRONTEND = 'https://www.avmapper.com'
 DEV_FRONTEND = 'http://localhost:4000'
 
 
+def _json_or_error(airport_code, compute):
+    """Return compute()'s result, or a 400 JSON error if it raises."""
+    try:
+        return compute()
+    except Exception as e:
+        say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
+        traceback.print_exc()
+        cherrypy.response.status = 400
+        return {'error': str(e)}
+
+
+def _conditions_to_dict(conditions):
+    """Convert a flight-condition DataFrame (one row per hour or month) to a
+    JSON-serializable dict keyed by the row index."""
+    return {
+        int(key): {
+            'VFR': float(row['VFR']),
+            'MVFR': float(row['MVFR']),
+            'IFR': float(row['IFR']),
+            'LIFR': float(row['LIFR']),
+        }
+        for key, row in conditions.iterrows()
+    }
+
+
+def _weather_statistics(analyzer, month):
+    """Wind, temperature and precipitation stats for one view: per UTC hour
+    for the given month, or per calendar month if month is None."""
+    return {
+        'wind': analyzer.get_wind_statistics(month),
+        'temperature': analyzer.get_temperature_statistics(month),
+        'precipitation': analyzer.get_precipitation_statistics(month),
+    }
+
+
 class MetarAPI:
     def __init__(self, dev_mode=False):
         self.dev_mode = dev_mode
@@ -42,53 +77,7 @@ class MetarAPI:
     @cherrypy.tools.json_out()
     def statistics(self, airport_code, month):
         """GET /api/statistics?airport_code=KSMO&month=6"""
-        try:
-            month = int(month)
-            if not (1 <= month <= 12):
-                raise ValueError("Month must be between 1 and 12")
-
-            analyzer = METARAnalyzer(airport_code, self.storage)
-            hourly = analyzer.get_hourly_statistics(month)
-
-            # Look up airport metadata for timezone and daylight computation
-            tz_name = None
-            daylight_utc = None
-            if airport_code in self.airport_metadata.index:
-                meta = self.airport_metadata.loc[airport_code]
-                tz_name = meta.get('tz')
-                if pd.isna(tz_name):
-                    tz_name = None
-                lat = meta.get('lat')
-                lon = meta.get('lon')
-                if lat is not None and lon is not None and not pd.isna(lat) and not pd.isna(lon):
-                    daylight_utc = get_daylight_utc_hours(float(lat), float(lon), month)
-            utc_offsets = get_utc_offsets_for_month(tz_name, month)
-
-            # Convert DataFrame to JSON-serializable dict
-            return {
-                'airport': hourly.attrs.get('airport'),
-                'month': hourly.attrs.get('month'),
-                'utc_offsets': utc_offsets,
-                'primary_utc_offset_hours': get_utc_offset_for_mid_month(tz_name, month),
-                'daylight_utc': daylight_utc,
-                'hourly_stats': {
-                    int(hour): {
-                        'VFR': float(row['VFR']),
-                        'MVFR': float(row['MVFR']),
-                        'IFR': float(row['IFR']),
-                        'LIFR': float(row['LIFR']),
-                    }
-                    for hour, row in hourly.iterrows()
-                },
-                'wind': analyzer.get_hourly_wind_statistics(month),
-                'temperature': analyzer.get_hourly_temperature_statistics(month),
-                'precipitation': analyzer.get_hourly_precipitation_statistics(month),
-            }
-        except Exception as e:
-            say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
-            traceback.print_exc()
-            cherrypy.response.status = 400
-            return {'error': str(e)}
+        return _json_or_error(airport_code, lambda: self._statistics(airport_code, month))
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -101,30 +90,49 @@ class MetarAPI:
         (a calendar month is the same everywhere), so no timezone or
         daylight fields are returned.
         """
-        try:
-            analyzer = METARAnalyzer(airport_code, self.storage)
-            monthly = analyzer.get_monthly_statistics()
+        return _json_or_error(airport_code, lambda: self._monthly_statistics(airport_code))
 
-            return {
-                'airport': monthly.attrs.get('airport'),
-                'monthly_stats': {
-                    int(month): {
-                        'VFR': float(row['VFR']),
-                        'MVFR': float(row['MVFR']),
-                        'IFR': float(row['IFR']),
-                        'LIFR': float(row['LIFR']),
-                    }
-                    for month, row in monthly.iterrows()
-                },
-                'wind': analyzer.get_monthly_wind_statistics(),
-                'temperature': analyzer.get_monthly_temperature_statistics(),
-                'precipitation': analyzer.get_monthly_precipitation_statistics(),
-            }
-        except Exception as e:
-            say(f'API error for {airport_code}: {type(e).__name__}: {str(e)}')
-            traceback.print_exc()
-            cherrypy.response.status = 400
-            return {'error': str(e)}
+    def _statistics(self, airport_code, month):
+        month = int(month)
+        if not (1 <= month <= 12):
+            raise ValueError("Month must be between 1 and 12")
+
+        analyzer = METARAnalyzer(airport_code, self.storage)
+        hourly = analyzer.get_hourly_statistics(month)
+
+        # Look up airport metadata for timezone and daylight computation
+        tz_name = None
+        daylight_utc = None
+        if airport_code in self.airport_metadata.index:
+            meta = self.airport_metadata.loc[airport_code]
+            tz_name = meta.get('tz')
+            if pd.isna(tz_name):
+                tz_name = None
+            lat = meta.get('lat')
+            lon = meta.get('lon')
+            if lat is not None and lon is not None and not pd.isna(lat) and not pd.isna(lon):
+                daylight_utc = get_daylight_utc_hours(float(lat), float(lon), month)
+        utc_offsets = get_utc_offsets_for_month(tz_name, month)
+
+        return {
+            'airport': hourly.attrs.get('airport'),
+            'month': hourly.attrs.get('month'),
+            'utc_offsets': utc_offsets,
+            'primary_utc_offset_hours': get_utc_offset_for_mid_month(tz_name, month),
+            'daylight_utc': daylight_utc,
+            'hourly_stats': _conditions_to_dict(hourly),
+            **_weather_statistics(analyzer, month),
+        }
+
+    def _monthly_statistics(self, airport_code):
+        analyzer = METARAnalyzer(airport_code, self.storage)
+        monthly = analyzer.get_monthly_statistics()
+
+        return {
+            'airport': monthly.attrs.get('airport'),
+            'monthly_stats': _conditions_to_dict(monthly),
+            **_weather_statistics(analyzer, None),
+        }
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

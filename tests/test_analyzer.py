@@ -148,34 +148,13 @@ class TestMETARAnalyzer:
             total = sum(row[condition] for condition in FLIGHT_CONDITIONS)
             assert abs(total - 1.0) < 0.001, f"Month {month} sums to {total}, not 1.0"
 
-    @pytest.mark.parametrize("airport", get_test_airports())
-    @patch('lib.raw_metar_retriever.requests.get')
-    def test_wind_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_hourly_wind_statistics returns a well-formed result."""
-        mock_requests.side_effect = mock_requests_get
-
-        analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_hourly_wind_statistics(6)
-
-        assert result['speed_bins'] == [
-            '0-3 kt', '4-8 kt', '9-13 kt', '14-18 kt', '>18 kt']
-        assert result['direction_step'] == 20
-
-        assert len(result['hourly_speed']) > 0
-        for hour, bins in result['hourly_speed'].items():
-            assert 0 <= hour <= 23
-            # Speed bins cover all speeds, so fractions sum to 1
-            assert abs(sum(bins.values()) - 1.0) < 0.001
-
-        for hour, gust in result['hourly_gust'].items():
-            assert 0 <= gust['freq'] <= 1
-            if gust['freq'] > 0:
-                assert 0 < gust['median'] <= gust['max']
-
-        for hour, sectors in result['hourly_direction'].items():
-            assert len(sectors) == 18
-            # Calm/variable winds aren't directional, so sums can be below 1
-            assert sum(sectors) <= 1.001
+    # The weather stats methods share one code path for both views: with a
+    # month they're keyed by UTC hour (0-23), with month=None by calendar
+    # month (1-12). Structure tests run against both.
+    VIEWS = [
+        pytest.param(6, range(0, 24), id='hourly'),
+        pytest.param(None, range(1, 13), id='monthly'),
+    ]
 
     def _make_summary_parquet(self, storage, airport, df):
         """Store a pre-built hourly summary in the cache for an airport."""
@@ -183,6 +162,36 @@ class TestMETARAnalyzer:
         buffer = io.BytesIO()
         df.to_parquet(buffer)
         storage.put(f'{airport}.summarized.v4.parquet', buffer.getvalue())
+
+    @pytest.mark.parametrize("month,valid_keys", VIEWS)
+    @pytest.mark.parametrize("airport", get_test_airports())
+    @patch('lib.raw_metar_retriever.requests.get')
+    def test_wind_stats_structure(self, mock_requests, storage, airport, month, valid_keys):
+        """Test that get_wind_statistics returns a well-formed result."""
+        mock_requests.side_effect = mock_requests_get
+
+        analyzer = METARAnalyzer(airport, storage)
+        result = analyzer.get_wind_statistics(month)
+
+        assert result['speed_bins'] == [
+            '0-3 kt', '4-8 kt', '9-13 kt', '14-18 kt', '>18 kt']
+        assert result['direction_step'] == 20
+
+        assert len(result['speed']) > 0
+        for key, bins in result['speed'].items():
+            assert key in valid_keys
+            # Speed bins cover all speeds, so fractions sum to 1
+            assert abs(sum(bins.values()) - 1.0) < 0.001
+
+        for key, gust in result['gust'].items():
+            assert 0 <= gust['freq'] <= 1
+            if gust['freq'] > 0:
+                assert 0 < gust['median'] <= gust['max']
+
+        for key, sectors in result['direction'].items():
+            assert len(sectors) == 18
+            # Calm/variable winds aren't directional, so sums can be below 1
+            assert sum(sectors) <= 1.001
 
     def test_wind_stats_calm_and_direction_wrapping(self, storage):
         """Calm/light hours have no direction; 355 and 005 both bin to 000."""
@@ -200,90 +209,47 @@ class TestMETARAnalyzer:
         self._make_summary_parquet(storage, 'KTEST', df)
 
         analyzer = METARAnalyzer('KTEST', storage)
-        result = analyzer.get_hourly_wind_statistics(6)
+        result = analyzer.get_wind_statistics(6)
 
         # 5 hours have wind data (the NaN hour is excluded). sknt values are
         # 0, 4, 10, 12, 22; 10 and 12 both fall in the 9-13 kt bucket.
-        speed = result['hourly_speed'][10]
+        speed = result['speed'][10]
         assert speed['0-3 kt'] == 0.2
         assert speed['4-8 kt'] == 0.2
         assert speed['9-13 kt'] == pytest.approx(0.4)
         assert speed['14-18 kt'] == 0.0
         assert speed['>18 kt'] == 0.2
 
-        gust = result['hourly_gust'][10]
+        gust = result['gust'][10]
         assert gust['freq'] == 0.2
         assert gust['median'] == 25.0
         assert gust['max'] == 25.0
 
         # 355 and 005 are both within 5 degrees of north: same sector.
         # Calm and light (<= 5 kt) winds must not count towards any sector.
-        sectors = result['hourly_direction'][10]
+        sectors = result['direction'][10]
         assert sectors[0] == pytest.approx(0.4)  # 355 and 005
         assert sectors[5] == 0  # the 4 kt easterly (090) is ignored
         assert sectors[9] == pytest.approx(0.2)  # 180
         # calm, light and missing don't contribute
         assert sum(sectors) == pytest.approx(0.6)
 
-    def test_wind_stats_raises_without_wind_columns(self, storage):
-        """A stale cached summary without wind columns raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
+        # The year-round view pools the same rows under their month (June)
+        assert analyzer.get_wind_statistics()['speed'] == {6: speed}
 
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no wind data'):
-            analyzer.get_hourly_wind_statistics(6)
-
+    @pytest.mark.parametrize("month,valid_keys", VIEWS)
     @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
-    def test_monthly_wind_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_monthly_wind_statistics returns a well-formed result."""
+    def test_temperature_stats_structure(self, mock_requests, storage, airport, month, valid_keys):
+        """Test that get_temperature_statistics returns a well-formed result."""
         mock_requests.side_effect = mock_requests_get
 
         analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_monthly_wind_statistics()
+        result = analyzer.get_temperature_statistics(month)
 
-        assert result['speed_bins'] == [
-            '0-3 kt', '4-8 kt', '9-13 kt', '14-18 kt', '>18 kt']
-        assert result['direction_step'] == 20
-
-        assert len(result['monthly_speed']) > 0
-        for month, bins in result['monthly_speed'].items():
-            assert 1 <= month <= 12
-            assert abs(sum(bins.values()) - 1.0) < 0.001
-
-        for month, gust in result['monthly_gust'].items():
-            assert 0 <= gust['freq'] <= 1
-            if gust['freq'] > 0:
-                assert 0 < gust['median'] <= gust['max']
-
-        for month, sectors in result['monthly_direction'].items():
-            assert len(sectors) == 18
-            assert sum(sectors) <= 1.001
-
-    def test_monthly_wind_stats_raises_without_wind_columns(self, storage):
-        """A stale cached summary without wind columns raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
-
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no wind data'):
-            analyzer.get_monthly_wind_statistics()
-
-    @pytest.mark.parametrize("airport", get_test_airports())
-    @patch('lib.raw_metar_retriever.requests.get')
-    def test_temperature_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_hourly_temperature_statistics returns a well-formed result."""
-        mock_requests.side_effect = mock_requests_get
-
-        analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_hourly_temperature_statistics(6)
-
-        assert len(result['hourly']) > 0
-        for hour, stats in result['hourly'].items():
-            assert 0 <= hour <= 23
+        assert len(result['periods']) > 0
+        for key, stats in result['periods'].items():
+            assert key in valid_keys
             assert stats['temp_p10'] <= stats['temp_median'] <= stats['temp_p90']
             if stats['dewpoint_median'] is not None:
                 assert stats['dewpoint_p10'] <= stats['dewpoint_median'] <= stats['dewpoint_p90']
@@ -304,65 +270,31 @@ class TestMETARAnalyzer:
         self._make_summary_parquet(storage, 'KTEST', df)
 
         analyzer = METARAnalyzer('KTEST', storage)
-        result = analyzer.get_hourly_temperature_statistics(6)
+        result = analyzer.get_temperature_statistics(6)
 
-        stats = result['hourly'][10]
+        stats = result['periods'][10]
         assert stats['temp_median'] == pytest.approx(59.0)
         assert stats['temp_p10'] == pytest.approx(51.8)
         assert stats['temp_p90'] == pytest.approx(66.2)
         assert stats['dewpoint_median'] == pytest.approx(49.0)
 
-    def test_temperature_stats_raises_without_temperature_column(self, storage):
-        """A stale cached summary without temperature data raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
-
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no temperature data'):
-            analyzer.get_hourly_temperature_statistics(6)
-
+    @pytest.mark.parametrize("month,valid_keys", VIEWS)
     @pytest.mark.parametrize("airport", get_test_airports())
     @patch('lib.raw_metar_retriever.requests.get')
-    def test_monthly_temperature_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_monthly_temperature_statistics returns a well-formed result."""
+    def test_precipitation_stats_structure(
+            self, mock_requests, storage, airport, month, valid_keys):
+        """Test that get_precipitation_statistics returns a well-formed result."""
         mock_requests.side_effect = mock_requests_get
 
         analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_monthly_temperature_statistics()
-
-        assert len(result['monthly']) > 0
-        for month, stats in result['monthly'].items():
-            assert 1 <= month <= 12
-            assert stats['temp_p10'] <= stats['temp_median'] <= stats['temp_p90']
-            if stats['dewpoint_median'] is not None:
-                assert stats['dewpoint_p10'] <= stats['dewpoint_median'] <= stats['dewpoint_p90']
-
-    def test_monthly_temperature_stats_raises_without_temperature_column(self, storage):
-        """A stale cached summary without temperature data raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
-
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no temperature data'):
-            analyzer.get_monthly_temperature_statistics()
-
-    @pytest.mark.parametrize("airport", get_test_airports())
-    @patch('lib.raw_metar_retriever.requests.get')
-    def test_precipitation_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_hourly_precipitation_statistics returns a well-formed result."""
-        mock_requests.side_effect = mock_requests_get
-
-        analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_hourly_precipitation_statistics(6)
+        result = analyzer.get_precipitation_statistics(month)
 
         assert result['threshold_in'] == 0.01
         assert result['types'] == [
             'Thunderstorm', 'Freezing', 'Snow/Ice', 'Rain', 'Drizzle', 'Other / Unspecified']
-        assert len(result['hourly']) > 0
-        for hour, stats in result['hourly'].items():
-            assert 0 <= hour <= 23
+        assert len(result['periods']) > 0
+        for key, stats in result['periods'].items():
+            assert key in valid_keys
             assert 0 <= stats['freq'] <= 1
             assert stats['count'] >= 0
             if stats['freq'] > 0:
@@ -388,9 +320,9 @@ class TestMETARAnalyzer:
         self._make_summary_parquet(storage, 'KTEST', df)
 
         analyzer = METARAnalyzer('KTEST', storage)
-        result = analyzer.get_hourly_precipitation_statistics(6)
+        result = analyzer.get_precipitation_statistics(6)
 
-        stats = result['hourly'][10]
+        stats = result['periods'][10]
         assert stats['freq'] == pytest.approx(0.5)  # 3 of 6 hours
         assert stats['count'] == 3
         assert stats['median_in'] == pytest.approx(0.10)
@@ -404,48 +336,6 @@ class TestMETARAnalyzer:
         assert stats['type_count']['Rain'] == 1
         assert stats['type_count']['Thunderstorm'] == 1
         assert stats['type_count']['Snow/Ice'] == 0
-
-    def test_precipitation_stats_raises_without_precipitation_column(self, storage):
-        """A stale cached summary without precipitation data raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
-
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no precipitation data'):
-            analyzer.get_hourly_precipitation_statistics(6)
-
-    @pytest.mark.parametrize("airport", get_test_airports())
-    @patch('lib.raw_metar_retriever.requests.get')
-    def test_monthly_precipitation_stats_structure(self, mock_requests, storage, airport):
-        """Test that get_monthly_precipitation_statistics returns a well-formed result."""
-        mock_requests.side_effect = mock_requests_get
-
-        analyzer = METARAnalyzer(airport, storage)
-        result = analyzer.get_monthly_precipitation_statistics()
-
-        assert result['threshold_in'] == 0.01
-        assert result['types'] == [
-            'Thunderstorm', 'Freezing', 'Snow/Ice', 'Rain', 'Drizzle', 'Other / Unspecified']
-        assert len(result['monthly']) > 0
-        for month, stats in result['monthly'].items():
-            assert 1 <= month <= 12
-            assert 0 <= stats['freq'] <= 1
-            assert stats['count'] >= 0
-            if stats['freq'] > 0:
-                assert stats['median_in'] > 0
-            assert sum(stats['type_freq'].values()) == pytest.approx(stats['freq'])
-            assert sum(stats['type_count'].values()) == stats['count']
-
-    def test_monthly_precipitation_stats_raises_without_precipitation_column(self, storage):
-        """A stale cached summary without precipitation data raises a clear error."""
-        index = pd.DatetimeIndex(['2025-06-01 10:00'], tz='UTC')
-        df = pd.DataFrame({'vsby': [10.0], 'ceiling': [10000.0]}, index=index)
-        self._make_summary_parquet(storage, 'KTEST', df)
-
-        analyzer = METARAnalyzer('KTEST', storage)
-        with pytest.raises(ValueError, match='no precipitation data'):
-            analyzer.get_monthly_precipitation_statistics()
 
     @pytest.mark.parametrize("wxcodes,expected", [
         ('', 'Other / Unspecified'),      # no wx code at all, e.g. a gauge-only station

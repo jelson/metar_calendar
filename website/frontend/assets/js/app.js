@@ -1108,51 +1108,54 @@
         'Other / Unspecified': '#9ca3af',
     };
 
-    // Stacked bars of precipitation counts per column, broken down by type
+    // Stacked bars of precipitation frequency per column, broken down by type.
+    // Frequencies rather than counts: columns don't all have the same number
+    // of samples (months in the fetch window get 3 or 4 years of data, and
+    // part-time airports report fewer night hours), so raw counts would make
+    // better-sampled columns look wetter.
     function displayPrecipitationChart(precipitation, axis) {
         const stats = axis.keys.map(k => precipitation.periods[k] || null);
 
-        const customdata = stats.map((s, i) => {
-            let text = 'No precipitation recorded';
-            if (s && s.count > 0) {
-                const hourWord = s.count === 1 ? 'hour' : 'hours';
-                text = `Measurable precipitation in ${s.count} ${hourWord}` +
-                    ` (${(s.freq * 100).toFixed(0)}% of this ${axis.periodNoun}'s samples)`;
-                if (s.median_in !== null) {
-                    text += `, typically ${s.median_in.toFixed(2)} in`;
-                }
+        const summaries = stats.map(s => {
+            if (!s || s.count === 0) return 'No precipitation recorded';
+            const hourWord = s.count === 1 ? 'hour' : 'hours';
+            let text = `Measurable precipitation in ${(s.freq * 100).toFixed(1)}%` +
+                ` of this ${axis.periodNoun}'s samples (${s.count} ${hourWord})`;
+            if (s.median_in !== null) {
+                text += `, typically ${s.median_in.toFixed(2)} in`;
             }
-            return [axis.hoverLabels[i], text];
+            return text;
         });
 
         const traces = precipitation.types.map(type => ({
             x: axis.x,
-            y: stats.map(s => s ? s.type_count[type] : 0),
-            customdata,
+            y: stats.map(s => s ? s.type_freq[type] : 0),
+            // customdata rows: [column label, this type's count, column summary]
+            customdata: stats.map((s, i) =>
+                [axis.hoverLabels[i], s ? s.type_count[type] : 0, summaries[i]]),
             name: type,
             type: 'bar',
             marker: { color: PRECIP_TYPE_COLORS[type] },
-            hovertemplate: `%{customdata[0]}<br>${type}: %{y}<br>%{customdata[1]}<extra></extra>`
+            hovertemplate: `%{customdata[0]}<br>${type}: %{y:.1%} (%{customdata[1]})` +
+                '<br>%{customdata[2]}<extra></extra>'
         }));
 
-        // Tallest stacked bar (total count per column), for the y-axis ceiling
-        const maxCount = Math.max(0, ...stats.map(s => s ? s.count : 0));
+        // Tallest stacked bar (total frequency per column), for the y-axis ceiling
+        const maxFreq = Math.max(0, ...stats.map(s => s ? s.freq : 0));
 
         plotChart('precipitationChart', traces, chartLayout(axis, {
             height: 300,
             mobileHeight: 240,
-            yTitle: 'Number of Hours',
+            yTitle: `Fraction of ${axis.sampleUnit}`,
             yaxis: {
-                tickformat: 'd',
+                // '~' trims trailing zeros, so small ranges get "0.5%" ticks
+                // rather than ".0%" rounding them into duplicate "0% 0% 1%"
+                tickformat: '.1~%',
                 // rangemode 'tozero' isn't enough when every value is 0 (Plotly
                 // still autoscales to an arbitrary range), so pin an explicit
                 // floor and give a little headroom above the tallest bar
                 rangemode: 'tozero',
-                range: [0, Math.max(1, maxCount) * 1.15],
-                // Counts are whole numbers: with a small range Plotly would
-                // pick fractional tick steps, which tickformat 'd' rounds
-                // into duplicate labels ("0 0 0 1 1 1")
-                ...(maxCount < 5 && { dtick: 1 }),
+                range: [0, Math.max(0.01, maxFreq) * 1.15],
             },
             barmode: 'stack',
         }));

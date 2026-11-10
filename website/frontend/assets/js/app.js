@@ -686,7 +686,13 @@
     function buildDaylightShapes(daylightUtc) {
         if (!daylightUtc) return [];
 
-        const { sunrise, sunset } = daylightUtc;
+        // Each bar covers a whole hour (the "6a" bar holds observations from
+        // 6:00 to 6:59) but is drawn centered on its hour, spanning 5.5-6.5,
+        // so a clock time sits half an hour left of its own value on the
+        // axis: a 6:40 sunrise belongs two-thirds of the way across "6a"
+        const toAxis = hour => hour - 0.5;
+        const sunrise = toAxis(daylightUtc.sunrise);
+        const sunset = toAxis(daylightUtc.sunset);
         const shapeStyle = {
             type: 'rect',
             xref: 'x',

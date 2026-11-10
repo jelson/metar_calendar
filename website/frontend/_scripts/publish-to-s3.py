@@ -20,7 +20,7 @@ DISTRIBUTION_ID = 'E39PVZW9UJ3RUQ'
 # other project's prefix here. (Bucket versioning is off: anything deleted
 # is gone for good.)
 EXCLUDED_FROM_SYNC = [
-    'plusv-dangers/*',  # ~/projects/approach-study/html_output
+    'plusv-dangers/*',  # ~/projects/approach-study/publish.sh
 ]
 
 def get_cloudfront_function(htaccess_path):
